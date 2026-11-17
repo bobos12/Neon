@@ -1,10 +1,14 @@
-# Render Blueprint — backend API + Redis on the free tier.
-# Frontend runs on Vercel, Postgres on Neon, media on Supabase Storage (S3 API).
+# Render Blueprint — Neon backend API + Redis on the free tier.
+# Frontend runs on Vercel (neonhq.app); this API is api.neonhq.app.
+# Postgres and media both live in Supabase: DATABASE_URL is the Supavisor
+# *session* pooler (port 5432, IPv4 — Render has no IPv6 egress, and the
+# transaction pooler breaks `prisma migrate deploy`); media uses Supabase
+# Storage through its S3 API.
 # Render → New → Blueprint → pick this repo. Values marked `sync: false` are
 # prompted for on first deploy.
 services:
   - type: web
-    name: crm-backend
+    name: neon-backend
     runtime: docker
     plan: free
     region: frankfurt
@@ -18,7 +22,7 @@ services:
       - key: REDIS_URL
         fromService:
           type: keyvalue
-          name: crm-redis
+          name: neon-redis
           property: connectionString
       - key: DATABASE_URL
         sync: false
@@ -65,9 +69,23 @@ services:
         sync: false
       - key: GROQ_API_KEY
         sync: false
+      - key: GROQ_MODEL
+        sync: false
+      - key: DEV_SUPERUSER_NAME
+        value: Developer
+      - key: WA_DEFAULT_REGION
+        value: SA
+      # Web push (browser notifications). Generate a pair with
+      #   npx web-push generate-vapid-keys
+      - key: VAPID_PUBLIC_KEY
+        sync: false
+      - key: VAPID_PRIVATE_KEY
+        sync: false
+      - key: VAPID_SUBJECT
+        sync: false
 
   - type: keyvalue
-    name: crm-redis
+    name: neon-redis
     plan: free
     region: frankfurt
     # Bull queues must never have jobs evicted.

@@ -81,3 +81,4 @@ New XLSX Worksheet.xlsx
 # Local-only secrets
 hostinger-recovery-codes.txt
 apps/frontend/certificates/
+deploy.production.env.local
