@@ -15,7 +15,7 @@
     "eyebrow": "Workspace setup",
     "title": "Connect your WhatsApp number",
     "subtitle": "Everything in this CRM runs through your WhatsApp Business number. Connect it once and your whole team uses it.",
-    "time": "About 5 minutes",
+    "time": "About 2 minutes",
     "signOut": "Sign out",
     "close": "Close",
     "stepOf": "Step {{n}} of 3",
@@ -25,11 +25,11 @@
       "finish": "Go live"
     },
     "why": {
-      "title": "What we do with these",
+      "title": "How it works",
       "items": [
-        "Find your WhatsApp numbers for you",
-        "Set up incoming messages automatically",
-        "Store the token encrypted — no one sees it again"
+        "Log in with Facebook — nothing to copy or paste",
+        "We set up incoming messages for you",
+        "Your connection is stored encrypted"
       ]
     },
     "credentials": {
@@ -105,7 +105,8 @@
       "attentionBody": "Your number is connected, but this needs fixing before everything works.",
       "skip": "Continue to the CRM — I'll fix it later",
       "failedTitle": "We couldn't connect this number",
-      "tryAgain": "Try again"
+      "tryAgain": "Try again",
+      "titleQuick": "Connecting your number"
     },
     "register": {
       "title": "Move your number to this CRM",
@@ -132,6 +133,24 @@
       "title": "Add a payment method in Meta",
       "body": "Meta blocks messages you start — templates and campaigns — until the WhatsApp account has a working payment method. Replies to customers who message you still work.",
       "open": "Open billing"
+    },
+    "quick": {
+      "title": "Connect your WhatsApp number",
+      "body": "Meta opens a secure window where you log in and choose your number. We take care of everything else.",
+      "steps": [
+        "Log in with the Facebook account that manages your business.",
+        "Choose your business and the WhatsApp number to use — or add a new one.",
+        "Confirm the number with the code Meta sends it by SMS or call."
+      ],
+      "cta": "Connect WhatsApp",
+      "ctaBusinessApp": "My number is on the WhatsApp Business app",
+      "waiting": "Finish in the Meta window…",
+      "note": "Using a new number? It can't be active in the WhatsApp or WhatsApp Business app at the same time — delete it from the app first.",
+      "manual": "I have my own Meta app",
+      "backToQuick": "One-click connect",
+      "cancelled": "The Meta window was closed before you finished. Click Connect WhatsApp to try again.",
+      "sdkFailed": "Couldn't load Meta's sign-in. Turn off any ad or tracking blocker for this site and reload the page.",
+      "loading": "Loading"
     }
   },
   "errors": {
@@ -149,7 +168,10 @@
     "VALIDATION_ERROR": "Some details look wrong. Check the highlighted fields.",
     "network": "Can't reach the server. Check your connection and try again.",
     "generic": "Something went wrong. Please try again.",
-    "PHONE_NUMBER_ID_TAKEN": "This number is already connected to another workspace on this platform."
+    "PHONE_NUMBER_ID_TAKEN": "This number is already connected to another workspace on this platform.",
+    "SIGNUP_CODE_INVALID": "Meta didn't confirm the signup. Please click Connect WhatsApp and try again.",
+    "SIGNUP_NO_NUMBER": "No WhatsApp number was chosen in the Meta window. Try again and pick or add a number at the last step.",
+    "EMBEDDED_SIGNUP_DISABLED": "One-click connect is not available on this server yet. Use “I have my own Meta app” instead."
   },
   "health": {
     "title": "Connection health",

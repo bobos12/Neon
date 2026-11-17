@@ -23,6 +23,7 @@ import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
 import ImpersonationBanner from '@/components/layout/ImpersonationBanner';
 import { useWhatsAppConnection } from '../WhatsAppConnectProvider';
 import SetupWizard from './SetupWizard';
+import NeonMark from '../../brand/NeonMark';
 
 const WAITING_POLL_MS = 15_000;
 
@@ -63,7 +64,7 @@ function Frame({ children }: { children: ReactNode }) {
   const { t } = useTranslation('whatsapp');
   const { t: tNav } = useTranslation('sidebar');
   return (
-    <div className="fixed inset-0 z-[60] overflow-y-auto bg-canvas">
+    <div className="nx-wash fixed inset-0 z-[60] overflow-y-auto">
       {/* An operator viewing a client that isn't set up still needs the way back. */}
       <ImpersonationBanner />
       {/* A single soft wash of the brand colour behind the header — enough to say
@@ -71,9 +72,10 @@ function Frame({ children }: { children: ReactNode }) {
       <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[420px] bg-[radial-gradient(60%_100%_at_50%_0%,rgb(var(--brand)/0.10),transparent)]" />
       <header className="relative mx-auto box-content flex h-16 max-w-6xl pt-safe items-center justify-between gap-3 px-4 sm:px-6">
         <div className="flex min-w-0 items-center gap-2.5">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/icons/logo-tight.png" alt="" className="h-7 w-7 shrink-0" />
-          <span className="truncate text-[15px] font-semibold tracking-[-0.01em] text-ink">{tNav('appName')}</span>
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-neon-deep shadow-[inset_0_1px_0_rgb(255_255_255/0.08)]">
+            <NeonMark className="h-[18px] w-auto" />
+          </span>
+          <span dir="ltr" className="truncate text-[15px] font-bold tracking-[0.16em] text-ink">{tNav('appName')}</span>
         </div>
         <div className="flex items-center gap-1">
           <LanguageSwitcher />

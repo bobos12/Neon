@@ -7,8 +7,8 @@ import { cn } from '@/lib/utils';
 
 // ── Page scaffolding ─────────────────────────────────────────────────────────
 // Every screen opens the same way: a compact title row with the primary action
-// at the end. Titles are 20px, not 30px — this is a tool people sit in all day,
-// and every pixel spent on a heading is a row of data pushed below the fold.
+// at the end. Titles are set in display weight at 26px — big enough to say
+// "you are here" at a glance, small enough not to push data below the fold.
 
 export function PageHeader({
   title,
@@ -28,7 +28,7 @@ export function PageHeader({
   className?: string;
 }) {
   return (
-    <header className={cn('mb-5 flex flex-wrap items-end justify-between gap-x-4 gap-y-3', className)}>
+    <header className={cn('enter mb-6 flex flex-wrap items-end justify-between gap-x-4 gap-y-3', className)}>
       {/* min width forces the actions onto their own line before the title gets squeezed */}
       <div className="min-w-[min(100%,20rem)] flex-1">
         {back && (
@@ -42,11 +42,11 @@ export function PageHeader({
         )}
         {/* Top-level pages: the phone app bar already shows the title, so it isn't repeated here. */}
         <div className={cn('flex min-w-0 flex-wrap items-center gap-2', !back && 'max-sm:hidden')}>
-          <h1 className="truncate text-xl font-semibold tracking-[-0.01em] text-ink">{title}</h1>
+          <h1 className="display truncate text-[22px] leading-tight sm:text-[26px]">{title}</h1>
           {meta}
         </div>
         {/* Phones keep the description to two lines so the content starts above the fold. */}
-        {description && <p className="mt-1 line-clamp-2 max-w-2xl text-[13px] leading-5 text-ink-3 sm:line-clamp-none">{description}</p>}
+        {description && <p className="mt-1.5 line-clamp-2 max-w-2xl text-[13.5px] leading-5 text-ink-3 sm:line-clamp-none">{description}</p>}
       </div>
       {actions && <div className="flex max-w-full shrink-0 flex-wrap items-center gap-2">{actions}</div>}
     </header>
@@ -80,7 +80,7 @@ export function Panel({
         {(title || actions) && (
           <div className="mb-3 flex items-end justify-between gap-3 px-0.5">
             <div className="min-w-0">
-              {title && <h2 className="truncate text-[15px] font-semibold tracking-[-0.01em] text-ink">{title}</h2>}
+              {title && <h2 className="truncate text-[15px] font-semibold tracking-[-0.015em] text-ink">{title}</h2>}
               {description && <p className="mt-0.5 truncate text-xs text-ink-3">{description}</p>}
             </div>
             {actions && <div className="flex shrink-0 items-center gap-1.5">{actions}</div>}
@@ -124,12 +124,17 @@ export function EmptyState({
   return (
     <div className={cn('flex flex-col items-center justify-center text-center', compact ? 'gap-2 px-4 py-8' : 'gap-3 px-6 py-14', className)}>
       {Icon && (
-        <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-raised text-ink-3">
-          <Icon className="h-[18px] w-[18px]" aria-hidden="true" />
+        // A small lit tile: the neon is off-centre behind it, so an empty
+        // screen still feels like part of the product rather than a hole.
+        <span className="relative flex h-12 w-12 items-center justify-center">
+          <span aria-hidden="true" className="absolute -inset-4 rounded-full bg-[radial-gradient(closest-side,rgb(var(--brand)/0.3),transparent)] dark:bg-[radial-gradient(closest-side,rgb(var(--brand)/0.12),transparent)]" />
+          <span className="relative flex h-12 w-12 items-center justify-center rounded-2xl bg-surface text-ink-2 shadow-glass [--surface-a:0.9]">
+            <Icon className="h-5 w-5" aria-hidden="true" />
+          </span>
         </span>
       )}
       <div className="max-w-sm">
-        <p className="text-[13px] font-semibold text-ink">{title}</p>
+        <p className="text-[14px] font-semibold tracking-[-0.01em] text-ink">{title}</p>
         {description && <p className="mt-1 text-xs leading-5 text-ink-3">{description}</p>}
       </div>
       {action && <div className="mt-1">{action}</div>}
@@ -193,7 +198,7 @@ export function Metric({
     <div className={cn('min-w-0', className)}>
       <p className="eyebrow truncate">{label}</p>
       <p className={cn(
-        'mt-1 text-[22px] font-semibold leading-none tracking-[-0.02em] text-ink',
+        'display mt-1 text-[24px] leading-none',
         tone === 'brand' && 'text-brand',
         tone === 'warn' && 'text-amber-600 dark:text-amber-400',
         tone === 'danger' && 'text-red-600 dark:text-red-400',
@@ -230,7 +235,7 @@ export function Switch({
         'relative inline-flex shrink-0 items-center rounded-full transition-colors duration-base ease-swift',
         'focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-brand/25',
         sm ? 'h-4 w-7' : 'h-5 w-9',
-        checked ? 'bg-brand' : 'bg-line-strong',
+        checked ? 'bg-brand shadow-[inset_0_0_0_1px_rgb(var(--brand-edge)/0.3)]' : 'bg-line-strong',
         disabled && 'cursor-not-allowed opacity-50',
       )}
     >
@@ -261,12 +266,12 @@ export function MetricStrip({
 }) {
   const cols = items.length >= 5 ? 'sm:grid-cols-5' : items.length === 4 ? 'sm:grid-cols-4' : 'sm:grid-cols-3';
   return (
-    <div className={cn('grid grid-cols-2 gap-x-6 gap-y-4 border-y border-line py-5', cols, className)}>
+    <div className={cn('panel grid grid-cols-2 gap-x-6 gap-y-4 px-5 py-5', cols, className)}>
       {items.map((m, i) => (
         <div key={i} className="min-w-0">
           <p className="truncate text-2xs font-medium text-ink-3">{m.label}</p>
           <p className={cn(
-            'mt-1 flex items-center gap-2 truncate text-2xl font-semibold tabular-nums tracking-[-0.02em] text-ink',
+            'display mt-1 flex items-center gap-2 truncate text-[26px] tabular-nums leading-tight',
             m.tone === 'brand' && 'text-brand',
             m.tone === 'warn' && 'text-amber-700 dark:text-amber-400',
             m.tone === 'danger' && 'text-red-600 dark:text-red-400',

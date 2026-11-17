@@ -4,6 +4,10 @@
 // globals.css) so one class — `bg-surface`, `text-ink-3` — is correct in both
 // light and dark, and opacity modifiers (`bg-brand/10`) still work.
 const v = (name) => `rgb(var(--${name}) / <alpha-value>)`;
+// Glass: the backgrounds also multiply by a per-token alpha (`--surface-a`), so
+// every `bg-surface` in the product is translucent over the ambient light, and a
+// floating context can turn it solid again just by resetting that variable.
+const glass = (name) => `rgb(var(--${name}) / calc(<alpha-value> * var(--${name}-a, 1)))`;
 
 module.exports = {
   darkMode: 'class',
@@ -42,31 +46,37 @@ module.exports = {
         98: '0.98',
       },
       fontFamily: {
-        // The system UI font carries both scripts at shared metrics.
-        sans: ['"Segoe UI"', 'system-ui', '-apple-system', '"SF Arabic"', '"Geeza Pro"', 'sans-serif'],
-        arabic: ['"Segoe UI"', 'system-ui', '-apple-system', '"SF Arabic"', '"Geeza Pro"', 'sans-serif'],
-        mono: ['"IBM Plex Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+        // Inter for Latin, Almarai (the brand's Arabic face) for Arabic — one
+        // stack, so mixed-script lines never jump between fallbacks.
+        sans: ['var(--font-inter)', 'var(--font-plex-ar)', 'system-ui', '-apple-system', '"SF Arabic"', '"Segoe UI"', 'sans-serif'],
+        arabic: ['var(--font-inter)', 'var(--font-plex-ar)', 'system-ui', '-apple-system', '"SF Arabic"', '"Segoe UI"', 'sans-serif'],
+        mono: ['"SF Mono"', 'ui-monospace', '"Cascadia Code"', 'Menlo', 'monospace'],
       },
       fontSize: {
         '2xs': ['0.6875rem', { lineHeight: '1rem' }],
       },
       colors: {
-        /* ── Nexus semantic tokens ─────────────────────────────────────── */
+        /* ── NEON semantic tokens ──────────────────────────────────────── */
         canvas: v('canvas'),
         surface: v('surface'),
         raised: v('raised'),
         overlay: v('overlay'),
         line: { DEFAULT: v('line'), strong: v('line-strong') },
         ink: { DEFAULT: v('ink'), 2: v('ink-2'), 3: v('ink-3'), 4: v('ink-4') },
+        /* The neon itself. `bg-brand` is the lime fill (always carrying
+           `text-brand-fg`, deep ink); text, borders and rings use `brand-ink`
+           through the per-utility maps below, so lime never sits on white as text. */
         brand: {
           DEFAULT: v('brand'),
           strong: v('brand-strong'),
           fg: v('brand-fg'),
           soft: v('brand-soft'),
-          // Static scale for charts and illustration, identical in both themes.
-          50: '#EDFBF2', 100: '#D3F5E0', 200: '#A8EAC4', 300: '#6FD9A0', 400: '#36C57A',
-          500: '#1DAE60', 600: '#128245', 700: '#0F6A39', 800: '#0E5430', 900: '#0B4428', 950: '#042514',
+          ink: v('brand-ink'),
+          // Static lime scale for charts and illustration, identical in both themes.
+          50: '#F8FEE6', 100: '#EFFCC6', 200: '#E3FB8E', 300: '#DCFC5C', 400: '#D8FC34',
+          500: '#B9E11A', 600: '#8DB30C', 700: '#5F8209', 800: '#456209', 900: '#33490B', 950: '#192802',
         },
+        neon: { DEFAULT: '#D8FC34', ink: '#0B1A02', deep: '#0B1A10' },
         bubble: { out: v('bubble-out'), in: v('bubble-in') },
         chat: v('chat-bg'),
         nav: { DEFAULT: v('nav'), ink: v('nav-ink'), muted: v('nav-muted'), line: v('nav-line'), hover: v('nav-hover') },
@@ -116,24 +126,50 @@ module.exports = {
         warning: { 50: '#FEF8EC', 500: '#D98E04', 700: '#9A5B00' },
         error:   { 50: '#FDF1F1', 500: '#DC4444', 700: '#A92A2A' },
       },
-      // Structure comes from hairlines, not shadows. Elevation is reserved for
-      // things that genuinely float: popovers, dialogs, drawers, toasts.
-      boxShadow: {
-        soft:  '0 1px 2px rgb(16 24 20 / 0.06)',
-        card:  '0 1px 2px rgb(16 24 20 / 0.05), 0 1px 1px rgb(16 24 20 / 0.03)',
-        lift:  '0 2px 4px rgb(16 24 20 / 0.06), 0 8px 24px -8px rgb(16 24 20 / 0.14)',
-        pop:   '0 0 0 1px rgb(var(--line) / 1), 0 12px 32px -8px rgb(10 16 12 / 0.22), 0 4px 8px -4px rgb(10 16 12 / 0.10)',
-        brand: '0 1px 2px rgb(18 130 69 / 0.25), inset 0 1px 0 rgb(255 255 255 / 0.12)',
-        'wa-sm': '0 1px 2px rgb(16 24 20 / 0.06)',
-        'wa-md': '0 2px 4px rgb(16 24 20 / 0.06), 0 8px 24px -8px rgb(16 24 20 / 0.14)',
+      backgroundColor: {
+        surface: glass('surface'),
+        raised: glass('raised'),
       },
-      // Tighter than Tailwind's own `xl`+ steps: controls 8px, panels 12px,
-      // dialogs 16px. Large radii read as consumer/marketing, not a work tool.
+      textColor: {
+        brand: { DEFAULT: v('brand-ink'), strong: v('brand-ink-strong') },
+      },
+      borderColor: {
+        brand: { DEFAULT: v('brand-ink') },
+      },
+      ringColor: {
+        brand: { DEFAULT: v('brand-ink') },
+      },
+      outlineColor: {
+        brand: { DEFAULT: v('brand-ink') },
+      },
+      accentColor: {
+        brand: { DEFAULT: v('brand-ink') },
+      },
+      // Elevation is light, not darkness: glass carries a 1px top highlight and
+      // a hairline edge; only things that genuinely float cast a shadow.
+      boxShadow: {
+        soft:  '0 1px 2px rgb(var(--shadow) / 0.06)',
+        card:  '0 1px 2px rgb(var(--shadow) / 0.05), 0 1px 1px rgb(var(--shadow) / 0.03)',
+        lift:  '0 2px 4px rgb(var(--shadow) / 0.06), 0 12px 32px -12px rgb(var(--shadow) / 0.22)',
+        glass: 'inset 0 1px 0 rgb(255 255 255 / var(--glass-hi)), 0 0 0 1px rgb(var(--glass-edge) / var(--glass-edge-a)), 0 1px 2px rgb(var(--shadow) / 0.04)',
+        pop:   'inset 0 1px 0 rgb(255 255 255 / var(--glass-hi)), 0 0 0 1px rgb(var(--glass-edge) / calc(var(--glass-edge-a) + 0.04)), 0 24px 48px -12px rgb(var(--shadow) / 0.30), 0 6px 14px -6px rgb(var(--shadow) / 0.14)',
+        brand: 'inset 0 1px 0 rgb(255 255 255 / 0.45), inset 0 0 0 1px rgb(var(--brand-edge) / 0.35), 0 1px 2px rgb(var(--shadow) / 0.12)',
+        neon:  '0 0 0 1px rgb(var(--brand) / 0.55), 0 0 18px -2px rgb(var(--brand) / 0.55)',
+        'wa-sm': '0 1px 2px rgb(var(--shadow) / 0.06)',
+        'wa-md': '0 2px 4px rgb(var(--shadow) / 0.06), 0 8px 24px -8px rgb(var(--shadow) / 0.14)',
+      },
+      // Continuous, Apple-proportioned corners: controls 10px, panels 16px,
+      // sheets and dialogs 22px — nested radii step down with the padding.
       borderRadius: {
-        xl:   '0.75rem',
-        '2xl':'1rem',
-        '3xl':'1.25rem',
-        '4xl':'1.5rem',
+        lg:   '0.625rem',
+        xl:   '0.875rem',
+        '2xl':'1.125rem',
+        '3xl':'1.375rem',
+        '4xl':'1.75rem',
+      },
+      backdropBlur: {
+        glass: '24px',
+        thick: '40px',
       },
       transitionTimingFunction: {
         out: 'cubic-bezier(0.16, 1, 0.3, 1)',

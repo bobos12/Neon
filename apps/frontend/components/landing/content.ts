@@ -1,500 +1,1044 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Bilingual marketing content for the landing page.
-// Self-contained (not wired into the global i18n namespaces) so the marketing
-// site can evolve independently. Keyed by language; the page reads the active
-// language from useLanguage() and re-renders on switch — RTL flips seamlessly.
+// NEON landing page copy. Arabic is the primary audience and is written first,
+// not translated; English follows it.
+//
+// Rule for everything below: describe only what the product does today. No
+// customer counts, uptime figures, testimonials or logos — the product demos
+// carry the proof. Names and prices inside the demos belong to one fictional
+// oud shop, "Dar Al Oud", so every screen describes the same business.
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type LandingLang = 'en' | 'ar'
+export type LandingLang = 'ar' | 'en'
+
+interface Point { title: string; desc: string }
 
 export interface LandingContent {
+  meta: { title: string; description: string; ogAlt: string }
   nav: {
     links: { id: string; label: string }[]
     signIn: string
-    getStarted: string
+    cta: string
     menu: string
+    close: string
+    switchLabel: string
+    switchHref: string
+    skip: string
   }
+  cta: { start: string; question: string }
   hero: {
     eyebrow: string
-    titleLine1: string
-    titleLine2: string
-    subtitle: string
-    ctaPrimary: string
-    ctaSecondary: string
-    download: string
-    reassurance: string
-    /** The animated conversation beside the headline. */
-    chat: {
-      contactName: string
-      status: string
-      today: string
-      inbound1: string
-      outbound1: string
-      inbound2: string
-      aiLabel: string
-      typing: string
-      composer: string
-      repliedIn: string
-    }
-    /** The CRM record that updates as the conversation plays. */
-    crm: {
-      label: string
-      stage: string
-      stageFrom: string
-      stageTo: string
-      owner: string
-      ownerFrom: string
-      ownerTo: string
-      value: string
-      valueAmount: string
-      tag: string
-    }
+    title: [string, string]
+    brandWord: string
+    sub: string
+    cta: string
+    secondary: string
+    note: string
   }
-  stats: { value: number; suffix: string; label: string }[]
-  industries: {
+  demo: {
+    contact: string
+    initial: string
+    online: string
+    today: string
+    m1: string
+    m2: string
+    m3: string
+    t1: string
+    t2: string
+    t3: string
+    aiLabel: string
+    typing: string
+    composer: string
+    card: string
+    score: string
+    status: string
+    signals: string
+    s1: string
+    s2: string
+    owner: string
+    ownerName: string
+    summary: string
+    toastTitle: string
+    toastBody: string
+    now: string
+  }
+  trust: { lead: string; items: string[] }
+  /** Alt text for the 3D character renders. */
+  chars: { hero: string; ai: string; lead: string; campaigns: string; inbox: string; pair: string }
+  /** The bold commercial layer: hero, bento, steps and the regional section. */
+  sell: {
+    kicker: string
+    kickerTag: string
+    titleHi: string
+    titleRest: string
+    sub: string
+    cta: string
+    checks: string[]
+    bentoTitle: string
+    bentoSub: string
+    bento: { inbox: Point; ai: Point; lead: Point; camp: Point }
+    stepsTitle: string
+    steps: Point[]
+    localTitle: string
+    localSub: string
+    morning: { time: string; suffix: string; title: string; desc: string }
+    night: { time: string; suffix: string; title: string; desc: string }
+    localPoints: string[]
+    appTitle: string
+    finalTitle: string
+  }
+  /** Customer messages that arrive while no one is looking — and the few NEON catches. */
+  wall: {
     title: string
-    items: { key: string; label: string }[]
+    sub: string
+    messages: string[]
+    lit: { msg: string; tag: string }[]
+    demoTitle: string
+    demoSub: string
   }
-  /** Product tour — one tab per screen, each backed by a product screenshot. */
-  tour: {
+  switch: {
+    eyebrow: string
+    title: string
+    sub: string
+    before: string
+    after: string
+    rows: { before: string; after: string }[]
+  }
+  inbox: {
     eyebrow: string
     title: string
     titleMuted: string
-    subtitle: string
-    items: { key: string; label: string; title: string; desc: string; bullets: string[] }[]
+    sub: string
+    points: Point[]
+    mock: {
+      search: string
+      tabs: string[]
+      chats: { name: string; msg: string; time: string; unread?: number; tag?: string; hot?: boolean; bot?: boolean }[]
+      assignedTo: string
+      autoAssigned: string
+      botPaused: string
+      fahadMsg: string
+      fahadTime: string
+      contactCard: string
+      phone: string
+      score: string
+      hot: string
+      stage: string
+      stageValue: string
+      tags: string[]
+      note: string
+      noteBody: string
+      noteBy: string
+      you: string
+    }
   }
   ai: {
     eyebrow: string
     title: string
     titleMuted: string
-    subtitle: string
-    capabilities: { key: string; title: string; desc: string }[]
-    firstReply: string
-    resolved: string
+    sub: string
+    rules: {
+      title: string
+      on: string
+      identity: { k: string; v: string }[]
+      productsTitle: string
+      products: string[]
+      rulesTitle: string
+      rules: string[]
+      handoffTitle: string
+      handoff: string[]
+      pause: string
+    }
+    lead: {
+      title: string
+      sub: string
+      name: string
+      scoreLabel: string
+      status: string
+      priority: string
+      signalsLabel: string
+      signals: { label: string; on: boolean }[]
+      summaryLabel: string
+      summary: string
+      recLabel: string
+      rec: string
+    }
   }
-  workflow: {
+  day: {
+    eyebrow: string
     title: string
-    subtitle: string
-    steps: { key: string; title: string; desc: string }[]
+    sub: string
+    figureMorning: string
+    figureNight: string
+    moments: { time: string; title: string; desc: string }[]
+  }
+  campaigns: {
+    eyebrow: string
+    title: string
+    titleMuted: string
+    sub: string
+    points: Point[]
+    mock: {
+      name: string
+      status: string
+      audience: string
+      chips: string[]
+      recipients: string
+      template: string
+      approved: string
+      progress: string
+      stats: { label: string; value: string; pct: number }[]
+      failuresTitle: string
+      failures: { reason: string; count: string }[]
+      limit: string
+      limitValue: string
+    }
+  }
+  index: {
+    title: string
+    sub: string
+    groups: { title: string; items: string[] }[]
   }
   mobile: {
     eyebrow: string
     title: string
-    titleMuted: string
-    subtitle: string
-    bullets: string[]
+    sub: string
+    points: string[]
     install: string
+    hint: string
+    installed: string
+    phone: { title: string; chats: { name: string; msg: string; time: string; unread?: number }[]; push: string; pushBody: string }
   }
-  testimonials: {
-    eyebrow: string
-    title: string
-    items: { quote: string; author: string; role: string }[]
+  faq: { eyebrow: string; title: string; sub: string; ask: string; items: { q: string; a: string }[] }
+  final: { title: string; sub: string; stepsTitle: string; steps: string[]; cta: string; signIn: string }
+  footer: { tagline: string; product: string; account: string; legal: string; rights: string }
+  install: {
+    homeTitle: string
+    desktopTitle: string
+    updating: string
+    update: string
   }
-  faq: {
-    eyebrow: string
-    title: string
-    subtitle: string
-    askUs: string
-    items: { q: string; a: string }[]
-  }
-  finalCta: {
-    title: string
-    subtitle: string
-    primary: string
-    reassurance: string
-  }
-  footer: {
-    tagline: string
-    columns: { title: string; links: string[] }[]
-    rights: string
-    disclaimer: string
-    badges: string[]
-  }
-  appInstalled: string
 }
 
 export const LANDING: Record<LandingLang, LandingContent> = {
-  // ═══════════════════════════════════════════ ENGLISH ═══════════════════════
-  en: {
-    nav: {
-      links: [
-        { id: 'product', label: 'Product' },
-        { id: 'ai', label: 'AI' },
-        { id: 'customers', label: 'Customers' },
-        { id: 'faq', label: 'FAQ' },
-      ],
-      signIn: 'Sign in',
-      getStarted: 'Get started',
-      menu: 'Menu',
-    },
-    hero: {
-      eyebrow: 'WhatsApp CRM for the Gulf',
-      titleLine1: 'Your business runs on WhatsApp.',
-      titleLine2: 'Run WhatsApp like a business.',
-      subtitle:
-        'One inbox for your whole team, an AI assistant that answers in Arabic and English around the clock, and a CRM that remembers every customer — in one place.',
-      ctaPrimary: 'Talk to us on WhatsApp',
-      ctaSecondary: 'See the product',
-      download: 'Download the app',
-      reassurance: 'Set up in 10 minutes · Arabic & English · Cancel anytime',
-      chat: {
-        contactName: 'Sara Al-Otaibi',
-        status: 'online',
-        today: 'Today',
-        inbound1: 'Hi! Is my order ready?',
-        outbound1: 'Yes — order #2847 is confirmed and ships today. You’ll get tracking by 6 PM.',
-        inbound2: 'Perfect, thank you!',
-        aiLabel: 'AI assistant',
-        typing: 'typing…',
-        composer: 'Type a reply…',
-        repliedIn: 'AI replied in 2s',
-      },
-      crm: {
-        label: 'Contact record',
-        stage: 'Stage',
-        stageFrom: 'New',
-        stageTo: 'Qualified',
-        owner: 'Owner',
-        ownerFrom: 'AI assistant',
-        ownerTo: 'Omar · Sales',
-        value: 'Deal value',
-        valueAmount: 'SAR 1,240',
-        tag: 'Repeat customer',
-      },
-    },
-    stats: [
-      { value: 500, suffix: '+', label: 'businesses onboard' },
-      { value: 2, suffix: 'M+', label: 'messages a day' },
-      { value: 99.9, suffix: '%', label: 'uptime SLA' },
-      { value: 10, suffix: 'x', label: 'faster responses' },
-    ],
-    industries: {
-      title: 'Built for businesses that live on WhatsApp',
-      items: [
-        { key: 'restaurants', label: 'Restaurants & cafés' },
-        { key: 'clinics', label: 'Clinics' },
-        { key: 'realestate', label: 'Real estate' },
-        { key: 'retail', label: 'Retail' },
-        { key: 'ecommerce', label: 'E-commerce' },
-        { key: 'education', label: 'Education' },
-        { key: 'automotive', label: 'Automotive' },
-        { key: 'agencies', label: 'Agencies' },
-      ],
-    },
-    tour: {
-      eyebrow: 'Product',
-      title: 'Everything your team does on WhatsApp,',
-      titleMuted: 'in one place.',
-      subtitle: 'Pick a tool to see how it works.',
-      items: [
-        {
-          key: 'inbox',
-          label: 'Shared inbox',
-          title: 'One number. Your whole team.',
-          desc: 'Sales, support and operations work the same WhatsApp number without two people answering the same customer.',
-          bullets: ['Round-robin assignment inside working hours', 'Internal notes, tags and saved views', 'Full customer history beside every thread'],
-        },
-        {
-          key: 'automation',
-          label: 'Automation',
-          title: 'Automate the follow-up.',
-          desc: 'Trigger-based workflows qualify a lead, route it to the right team and chase it later — without anyone remembering to.',
-          bullets: ['Triggers on real events, not schedules', 'Branches on score, language and working hours', 'Delays that cancel themselves when the customer replies'],
-        },
-        {
-          key: 'deals',
-          label: 'Pipeline',
-          title: 'Turn chats into deals.',
-          desc: 'A drag-and-drop board that tracks value by stage, so you can see where the money is stuck and who is sitting on it.',
-          bullets: ['Stages that match how you actually sell', 'Value and conversion roll up automatically', 'AI-scored leads arrive already ranked'],
-        },
-        {
-          key: 'broadcasts',
-          label: 'Campaigns',
-          title: 'Broadcast at scale.',
-          desc: 'Thousands of segmented messages with per-recipient delivery tracking — and warm-up limits that keep your number alive.',
-          bullets: ['Segment by tag, stage or custom field', 'Ban-safe send pacing enforced by the sender', 'Delivered, read and replied, per campaign'],
-        },
-        {
-          key: 'analytics',
-          label: 'Analytics',
-          title: 'Measure everything.',
-          desc: 'Response times, resolution rates, agent workload, campaign results and AI impact — on one board-ready screen.',
-          bullets: ['First-response time per agent', 'Revenue traced back to the first message', 'What share of chats the AI closed alone'],
-        },
-      ],
-    },
-    ai: {
-      eyebrow: 'AI',
-      title: 'AI handles the busywork.',
-      titleMuted: 'Your team closes the deals.',
-      subtitle:
-        'The assistant reads every conversation, understands intent in Arabic and English, and acts — so your people spend their time where it counts.',
-      capabilities: [
-        { key: 'replies', title: 'Smart auto-replies', desc: 'Instant, on-brand answers to common questions.' },
-        { key: 'qualify', title: 'Lead qualification', desc: 'Scores and routes hot leads to the right agent.' },
-        { key: 'summary', title: 'Conversation summaries', desc: 'One-line recaps of long chats before you reply.' },
-        { key: 'sentiment', title: 'Sentiment detection', desc: 'Flags unhappy customers before they churn.' },
-        { key: 'suggest', title: 'Suggested replies', desc: 'Drafted responses your agents send in a tap.' },
-        { key: 'translate', title: 'Arabic ↔ English', desc: 'Understands and replies fluently in both.' },
-      ],
-      firstReply: 'average AI first reply',
-      resolved: 'resolved without an agent',
-    },
-    workflow: {
-      title: 'From first message to closed deal',
-      subtitle: 'Every step updates the next — automatically.',
-      steps: [
-        { key: 'customer', title: 'Customer messages', desc: 'Day or night, on the app they already use.' },
-        { key: 'ai', title: 'AI responds', desc: 'Answers, qualifies and gathers context.' },
-        { key: 'team', title: 'Team takes over', desc: 'Hot chats route to the right agent with full history.' },
-        { key: 'crm', title: 'CRM stays in sync', desc: 'Contacts, deals and notes update themselves.' },
-        { key: 'reports', title: 'Reports show growth', desc: 'See what works and what to scale.' },
-      ],
-    },
-    mobile: {
-      eyebrow: 'Mobile',
-      title: 'Your inbox,',
-      titleMuted: 'in your pocket.',
-      subtitle: 'Install it like a native app. The same inbox, the same CRM, the same notifications — on the phone your team already carries.',
-      bullets: [
-        'Installable app — no app store review',
-        'Push alerts for hot leads and slow replies',
-        'Keeps working offline and syncs on reconnect',
-      ],
-      install: 'Install the app',
-    },
-    testimonials: {
-      eyebrow: 'Customers',
-      title: 'Trusted by teams across the Gulf',
-      items: [
-        { quote: 'We went from juggling WhatsApp on personal phones to routing 3,000 conversations a day through one team inbox. Response time dropped by 80%.', author: 'Sara Al-Rashid', role: 'Head of Support, NovaMart' },
-        { quote: 'The broadcast templates render exactly like real WhatsApp messages — finally a tool that does not embarrass us in front of customers.', author: 'Khalid Al-Harbi', role: 'Growth Lead, Tamkeen' },
-        { quote: 'The AI handles 70% of inbound questions before a human even sees them. Our small team now performs like an enterprise call center.', author: 'Noura Al-Qahtani', role: 'CEO, FastShip Logistics' },
-      ],
-    },
-    faq: {
-      eyebrow: 'FAQ',
-      title: 'Questions, answered',
-      subtitle: 'Everything you need to know before getting started.',
-      askUs: 'Still have a question? Ask us on WhatsApp',
-      items: [
-        { q: 'Do I need the official WhatsApp Business API?', a: 'You can start in minutes by scanning a QR code with our Baileys provider, or connect the official Meta Business API for higher volume and verified templates. The platform supports both — and fails over automatically.' },
-        { q: 'Does it fully support Arabic?', a: 'Yes. The entire platform, the AI assistant and message templates are fully bilingual with native right-to-left support, built for Gulf and Arab markets.' },
-        { q: 'How long does setup take?', a: 'Most businesses are live in under 10 minutes — connect your number, import contacts, and start messaging. No developers required.' },
-        { q: 'Is my data secure and private?', a: 'Your data is encrypted in transit and at rest, hosted in compliant infrastructure. Enterprise plans can be fully self-hosted on your own servers.' },
-        { q: 'Can I migrate my existing contacts?', a: 'Absolutely. Import via CSV, sync from your current CRM, or let conversations auto-create contacts as customers message you.' },
-      ],
-    },
-    finalCta: {
-      title: 'Ready to make WhatsApp your #1 sales channel?',
-      subtitle: 'Join businesses across the Gulf delivering faster support, smarter campaigns and more closed deals — every day.',
-      primary: 'Talk to us on WhatsApp',
-      reassurance: 'Set up in 10 minutes · Arabic & English · Cancel anytime',
-    },
-    footer: {
-      tagline: 'The WhatsApp CRM for businesses across the Gulf.',
-      columns: [
-        { title: 'Product', links: ['Features', 'AI Assistant', 'Roadmap'] },
-        { title: 'Solutions', links: ['Restaurants', 'Healthcare', 'Real Estate', 'E-commerce'] },
-        { title: 'Company', links: ['About', 'Privacy', 'Terms', 'Contact'] },
-      ],
-      rights: 'All rights reserved.',
-      disclaimer: 'Not affiliated with Meta Platforms Inc.',
-      badges: ['GDPR ready', '99.9% uptime SLA', 'Hosted in-region'],
-    },
-    appInstalled: 'App installed',
-  },
-
-  // ═══════════════════════════════════════════ ARABIC ════════════════════════
+  // ═══════════════════════════════════════════ العربية ═══════════════════════
   ar: {
+    meta: {
+      title: 'NEON — نظام إدارة العملاء المبني على واتساب',
+      description:
+        'رقم واتساب واحد لفريقك كله، ومساعد ذكي يرد على عملائك بقواعدك أنت، وتقييم تلقائي للعملاء الجادّين، وحملات آمنة. نظام إدارة عملاء عربي لشركات السعودية والخليج.',
+      ogAlt: 'NEON — كل رسالة فرصة',
+    },
     nav: {
       links: [
         { id: 'product', label: 'المنتج' },
         { id: 'ai', label: 'الذكاء الاصطناعي' },
-        { id: 'customers', label: 'عملاؤنا' },
-        { id: 'faq', label: 'الأسئلة' },
+        { id: 'campaigns', label: 'الحملات' },
+        { id: 'faq', label: 'الأسئلة الشائعة' },
       ],
       signIn: 'تسجيل الدخول',
-      getStarted: 'ابدأ الآن',
-      menu: 'القائمة',
+      cta: 'ابدأ الآن',
+      menu: 'فتح القائمة',
+      close: 'إغلاق القائمة',
+      switchLabel: 'English',
+      switchHref: '/en',
+      skip: 'تخطَّ إلى المحتوى',
+    },
+    cta: {
+      start: 'مرحبًا، أرغب في البدء مع NEON',
+      question: 'مرحبًا، لدي سؤال عن NEON',
     },
     hero: {
-      eyebrow: 'نظام واتساب لإدارة العملاء في الخليج',
-      titleLine1: 'عملك يقوم على واتساب.',
-      titleLine2: 'فأدِره كما تُدار الشركات.',
-      subtitle:
-        'صندوق وارد واحد لفريقك كله، ومساعد ذكي يرد بالعربية والإنجليزية على مدار الساعة، ونظام عملاء يحفظ تفاصيل كل عميل — في مكان واحد.',
-      ctaPrimary: 'تحدّث معنا على واتساب',
-      ctaSecondary: 'شاهد المنتج',
-      download: 'حمّل التطبيق',
-      reassurance: 'الإعداد خلال 10 دقائق · عربي وإنجليزي · إلغاء في أي وقت',
-      chat: {
-        contactName: 'سارة العتيبي',
-        status: 'متصلة',
-        today: 'اليوم',
-        inbound1: 'مرحبًا! هل طلبي جاهز؟',
-        outbound1: 'أهلًا سارة — تم تأكيد الطلب رقم 2847 وسيُشحن اليوم، ويصلك رابط التتبّع قبل 6 مساءً.',
-        inbound2: 'ممتاز، شكرًا جزيلًا!',
-        aiLabel: 'المساعد الذكي',
-        typing: 'يكتب…',
-        composer: 'اكتب ردًا…',
-        repliedIn: 'ردّ المساعد خلال ثانيتين',
-      },
-      crm: {
-        label: 'ملف العميل',
-        stage: 'المرحلة',
-        stageFrom: 'جديد',
-        stageTo: 'مؤهَّل',
-        owner: 'المسؤول',
-        ownerFrom: 'المساعد الذكي',
-        ownerTo: 'عمر · المبيعات',
-        value: 'قيمة الصفقة',
-        valueAmount: '1,240 ر.س',
-        tag: 'عميل متكرر',
-      },
+      eyebrow: 'نظام إدارة العملاء المبني على واتساب',
+      title: ['كل رسالة فرصة.', 'ونيون لا يترك فرصة في الظلام.'],
+      brandWord: 'نيون',
+      sub: 'رقم واتساب واحد لفريقك كله، ومساعد ذكي يرد على عملائك بقواعدك أنت في أي ساعة، وسجلّ لكل عميل يحفظ ما قيل وما وُعد به. حتى تتحول المحادثات إلى مبيعات، بدل أن تضيع بين الجوالات.',
+      cta: 'تحدّث معنا على واتساب',
+      secondary: 'شاهد كيف يعمل',
+      note: 'نجهّز حسابك ونساعدك في ربط رقمك · عربي وإنجليزي',
     },
-    stats: [
-      { value: 500, suffix: '+', label: 'شركة منضمة' },
-      { value: 2, suffix: 'M+', label: 'رسالة يوميًا' },
-      { value: 99.9, suffix: '%', label: 'جاهزية الخدمة' },
-      { value: 10, suffix: 'x', label: 'ردود أسرع' },
-    ],
-    industries: {
-      title: 'صُمّم للأعمال التي تعيش على واتساب',
-      items: [
-        { key: 'restaurants', label: 'المطاعم والمقاهي' },
-        { key: 'clinics', label: 'العيادات' },
-        { key: 'realestate', label: 'العقارات' },
-        { key: 'retail', label: 'التجزئة' },
-        { key: 'ecommerce', label: 'التجارة الإلكترونية' },
-        { key: 'education', label: 'التعليم' },
-        { key: 'automotive', label: 'السيارات' },
-        { key: 'agencies', label: 'الوكالات' },
+    demo: {
+      contact: 'نورة العتيبي',
+      initial: 'ن',
+      online: 'متصلة الآن',
+      today: 'اليوم',
+      m1: 'السلام عليكم، عندكم دهن عود كمبودي؟ كم سعر التولة؟',
+      m2: 'وعليكم السلام يا نورة، نعم متوفر. سعر التولة 350 ريال، والتوصيل داخل الرياض خلال يوم عمل. أحجز لك؟',
+      m3: 'إيه، احجز لي تولتين',
+      t1: '11:42 م',
+      t2: '11:42 م',
+      t3: '11:43 م',
+      aiLabel: 'المساعد الذكي',
+      typing: 'يكتب…',
+      composer: 'اكتب رسالة',
+      card: 'بطاقة العميل',
+      score: 'التقييم',
+      status: 'عميل ساخن',
+      signals: 'الإشارات',
+      s1: 'طلبت السعر',
+      s2: 'جاهزة للشراء',
+      owner: 'المسؤول',
+      ownerName: 'فهد · المبيعات',
+      summary: 'تريد تولتين من دهن العود الكمبودي مع توصيل داخل الرياض.',
+      toastTitle: 'أُسندت إليك محادثة',
+      toastBody: 'نورة العتيبي · عميل ساخن',
+      now: 'الآن',
+    },
+    trust: {
+      lead: 'يعمل عبر منصة واتساب للأعمال الرسمية من Meta',
+      items: ['واجهة عربية كاملة', 'على الجوال والكمبيوتر', 'رقم واحد لفريقك كله', 'المحادثات ملك شركتك'],
+    },
+    chars: {
+      hero: 'رجل أعمال سعودي يعرض محادثة واتساب على جواله، وبجانبه سيدة أعمال سعودية',
+      ai: 'رجل أعمال سعودي يقرأ رد المساعد الذكي على جواله',
+      lead: 'سيدة أعمال سعودية تشير إلى تقييم العميل 86 على جهازها اللوحي',
+      campaigns: 'سيدة أعمال سعودية ترسل رسالة واحدة لعملاء كثيرين من جوالها',
+      inbox: 'رجل وسيدة أعمال سعوديان يعملان معًا على صندوق الوارد من حاسوب محمول',
+      pair: 'رجل أعمال سعودي وسيدة أعمال سعودية يقفان جنبًا إلى جنب',
+    },
+    sell: {
+      kicker: 'مساعد ذكي يرد على عملائك بلهجتهم',
+      kickerTag: 'جديد',
+      titleHi: 'ولا رسالة',
+      titleRest: 'تضيع بعد اليوم.',
+      sub: 'نيون يجمع فريقك كله على رقم واتساب واحد، ويرد على عملائك في أي ساعة، ويقولك مين العميل الجاد. عشان كل محادثة تتحول لبيعة.',
+      cta: 'ابدأ مع نيون',
+      checks: ['رد تلقائي 24 ساعة', 'فريقك كامل على رقم واحد', 'عربي من أول يوم'],
+      bentoTitle: 'كل اللي تحتاجه عشان تبيع على واتساب.',
+      bentoSub: 'أدوات يستخدمها فريقك كل يوم، مو مجرد رسائل.',
+      bento: {
+        inbox: { title: 'صندوق وارد واحد لفريقك كله', desc: 'كل محادثة لها مسؤول، والكل يشوف وش صار. ملاحظات داخلية، تحويل، تثبيت وتأجيل.' },
+        ai: { title: 'مساعد يرد بقواعدك أنت', desc: 'يعرف منتجاتك وأسعارك، ويحوّل للموظف لما يلزم، ويوقف لحاله إذا رد أحد من فريقك.' },
+        lead: { title: 'يقولك مين الجاد', desc: 'كل عميل له تقييم من 100 وإشارات شراء وملخص، والساخن يطلع أول.' },
+        camp: { title: 'حملات ما تخاطر برقمك', desc: 'جمهور دقيق، قوالب معتمدة من واتساب، وتقرير لكل رسالة.' },
+      },
+      stepsTitle: 'تبدأ في 3 خطوات.',
+      steps: [
+        { title: 'كلّمنا على واتساب', desc: 'قل لنا عن نشاطك وفريقك.' },
+        { title: 'نجهّز حسابك ونربط رقمك', desc: 'عبر منصة واتساب الرسمية من Meta، خطوة بخطوة معك.' },
+        { title: 'تضيف فريقك وتبدأ', desc: 'كل موظف بحسابه وصلاحياته، من الجوال أو الكمبيوتر.' },
+      ],
+      localTitle: 'مصمم لطريقة شغلك هنا.',
+      localSub: 'من دوام الصبح إلى طلبات آخر الليل، نيون مبني للسوق السعودي والخليجي.',
+      morning: { time: '9:00', suffix: 'ص', title: 'الفريق يبدأ من صندوق واحد', desc: 'محادثات الليل موزعة على الفريق، وبجانب كل عميل تقييمه وملخص كلامه.' },
+      night: { time: '11:42', suffix: 'م', title: 'المساعد يكمل عنك', desc: 'عميلة تسأل عن السعر. المساعد يرد ويحجز ويقيّمها عميل ساخن، وفهد يلقاها أول القائمة الصبح.' },
+      localPoints: ['واجهة عربية كاملة من اليمين لليسار', 'لهجة المساعد: سعودية أو خليجية أو فصحى', 'أرقام سعودية وخليجية بأي صيغة', 'رد تلقائي خارج الدوام'],
+      appTitle: 'نيون في جيبك.',
+      finalTitle: 'جاهز تشغّل نيون؟',
+    },
+    wall: {
+      title: 'كم رسالة ضاعت أمس؟',
+      sub: 'عملاؤك يكتبون في كل وقت، على رقم يحمله شخص واحد. ما لا يُرد عليه خلال دقائق، يذهب لمنافسك.',
+      messages: [
+        'السلام عليكم، كم السعر؟', 'متوفر مقاس 52؟', 'وش أوقات الدوام يوم الجمعة؟', 'أبغى أحجز موعد بكرة العصر',
+        'التوصيل لجدة كم ياخذ؟', 'عندكم خصم للكمية؟', 'وصلني الطلب ناقص', 'ممكن الكتالوج؟', 'تقبلون تابي؟',
+        'أرسل لي الموقع لو سمحت', 'هل المنتج أصلي؟', 'متى يرجع اللون الأسود؟', 'ممكن فاتورة ضريبية؟',
+        'فيه توصيل للدمام؟', 'الدفع عند الاستلام متاح؟', 'عندكم فرع في الرياض؟', 'طلبي رقم 2847 وين وصل؟',
+        'أبغى أكلم أحد من المبيعات', 'كم سعر الجملة؟', 'متى تفتحون بعد التراويح؟',
+      ],
+      lit: [
+        { msg: 'كم سعر التولة؟', tag: 'رد المساعد' },
+        { msg: 'أبغى أكلم المدير', tag: 'حُوّلت لموظف' },
+        { msg: 'نحتاج 40 علبة للشركة', tag: 'عميل ساخن · 91' },
+        { msg: 'أبغى أغيّر العنوان', tag: 'أُسندت إلى سارة' },
+      ],
+      demoTitle: 'مع نيون، كل رسالة تصل لمن يرد عليها.',
+      demoSub: 'الساعة 11:42 مساءً. عميلة تسأل عن السعر، والمساعد يرد بقواعد متجرك، ويقيّمها، ويسلّمها لفهد. كل ذلك قبل أن تفتح جوالك.',
+    },
+    switch: {
+      eyebrow: 'لماذا نيون',
+      title: 'واتساب صار واجهة متجرك، لكنه ما زال يُدار من جوال واحد.',
+      sub: 'هذا ما يحدث في أغلب الشركات اليوم، وهذا ما يتغير حين تشغّل نيون.',
+      before: 'اليوم',
+      after: 'مع نيون',
+      rows: [
+        {
+          before: 'الرسائل موزعة على جوالات الموظفين، ولا أحد يرى الصورة كاملة.',
+          after: 'رقم واحد وصندوق وارد مشترك. ترى كل محادثة ومن يرد عليها.',
+        },
+        {
+          before: 'عميل كتب الساعة 11 مساءً، وانتظر حتى الصباح.',
+          after: 'المساعد الذكي يرد في أي ساعة، ويسلّم المحادثة لموظف حين يلزم.',
+        },
+        {
+          before: 'لا أحد يتذكر ماذا وُعد العميل في آخر محادثة.',
+          after: 'ملاحظات داخلية وسجلّ كامل بجانب كل محادثة، والعميل لا يراها.',
+        },
+        {
+          before: 'العملاء الجادّون يضيعون بين مئات الرسائل.',
+          after: 'كل عميل يُقيَّم تلقائيًا من 0 إلى 100، والساخن يظهر أولًا.',
+        },
+        {
+          before: 'يغادر الموظف، وتغادر معه محادثاته.',
+          after: 'المحادثات ملك شركتك، تنقلها بين الفريق بضغطة.',
+        },
       ],
     },
-    tour: {
-      eyebrow: 'المنتج',
-      title: 'كل ما يفعله فريقك على واتساب،',
-      titleMuted: 'في مكان واحد.',
-      subtitle: 'اختر أداة لترى كيف تعمل.',
-      items: [
-        {
-          key: 'inbox',
-          label: 'الصندوق المشترك',
-          title: 'رقم واحد. فريقك بالكامل.',
-          desc: 'المبيعات والدعم والعمليات يعملون على نفس رقم الواتساب دون أن يرد شخصان على العميل نفسه.',
-          bullets: ['توزيع دوري ضمن ساعات العمل', 'ملاحظات داخلية ووسوم وعروض محفوظة', 'سجل العميل كاملًا بجانب كل محادثة'],
-        },
-        {
-          key: 'automation',
-          label: 'الأتمتة',
-          title: 'أتمت المتابعة.',
-          desc: 'مسارات تعمل بالمحفزات تؤهّل العميل وتوجّهه للفريق المناسب وتتابعه لاحقًا — دون أن يتذكر أحد ذلك.',
-          bullets: ['محفزات على أحداث حقيقية لا على جداول', 'تفرّع حسب التقييم واللغة وساعات العمل', 'تأخير يُلغى تلقائيًا عند رد العميل'],
-        },
-        {
-          key: 'deals',
-          label: 'خط الصفقات',
-          title: 'حوّل المحادثات إلى صفقات.',
-          desc: 'لوحة بالسحب والإفلات تتابع القيمة حسب المرحلة، لترى أين تتعطل الأموال ومن المسؤول عنها.',
-          bullets: ['مراحل تطابق طريقة بيعك فعليًا', 'القيمة ونسبة التحويل تُحتسب تلقائيًا', 'العملاء المؤهّلون بالذكاء الاصطناعي يصلون مُرتّبين'],
-        },
-        {
-          key: 'broadcasts',
-          label: 'الحملات',
-          title: 'أرسل على نطاق واسع.',
-          desc: 'آلاف الرسائل المُقسّمة مع تتبّع التسليم لكل مستلم — وحدود إحماء تحافظ على رقمك.',
-          bullets: ['تقسيم حسب الوسم أو المرحلة أو الحقول المخصصة', 'إيقاع إرسال آمن يمنع الحظر', 'التسليم والقراءة والرد لكل حملة'],
-        },
-        {
-          key: 'analytics',
-          label: 'التحليلات',
-          title: 'قِس كل شيء.',
-          desc: 'أزمنة الرد ونسب الحل وأحمال الموظفين ونتائج الحملات وأثر الذكاء الاصطناعي — في شاشة واحدة جاهزة للعرض.',
-          bullets: ['زمن أول رد لكل موظف', 'الإيرادات متتبَّعة حتى أول رسالة', 'نسبة المحادثات التي أغلقها الذكاء الاصطناعي وحده'],
-        },
+    inbox: {
+      eyebrow: 'صندوق الوارد المشترك',
+      title: 'فريقك كله على رقم واحد.',
+      titleMuted: 'ولا محادثة بلا مسؤول.',
+      sub: 'يشبه واتساب الذي يعرفه فريقك، ومعه ما يحتاجه العمل: من يرد، وماذا قيل، وما الخطوة التالية.',
+      points: [
+        { title: 'توزيع تلقائي', desc: 'كل محادثة جديدة تُسند للموظف الأقل انشغالًا.' },
+        { title: 'لا يرد اثنان على عميل واحد', desc: 'يرى زملاؤك أنك تكتب الآن، فلا يتكرر الرد.' },
+        { title: 'ملاحظات داخلية', desc: 'تكتب للفريق بجانب المحادثة، والعميل لا يراها.' },
+        { title: 'كل ما تعرفه من واتساب', desc: 'صور وملفات ورسائل صوتية، ورد واقتباس وتحويل، وعلامات القراءة.' },
+        { title: 'تثبيت وتأجيل', desc: 'ثبّت المهم، وأجّل المحادثة لتعود إليك في وقتها.' },
       ],
+      mock: {
+        search: 'ابحث أو ابدأ محادثة',
+        tabs: ['الكل', 'غير مقروءة', 'محادثاتي'],
+        chats: [
+          { name: 'نورة العتيبي', msg: 'أهلًا نورة، معك فهد…', time: '11:46 م', tag: 'ساخن', hot: true },
+          { name: 'مؤسسة الريان للتجارة', msg: 'نحتاج عرض سعر لـ 40 علبة بخور', time: '10:15 م', unread: 2, tag: 'مؤهل' },
+          { name: 'ريم القحطاني', msg: 'متى تفتحون يوم الجمعة؟', time: '9:31 م', bot: true },
+          { name: 'خالد الشمري', msg: 'وصلت الطلبية، الله يعطيكم العافية', time: '9:02 م', tag: 'عميل' },
+          { name: 'عبدالله الدوسري', msg: 'أبغى أغيّر عنوان التوصيل', time: 'أمس', unread: 1 },
+        ],
+        assignedTo: 'مسندة إلى فهد',
+        autoAssigned: 'أُسندت إلى فهد تلقائيًا',
+        botPaused: 'توقف المساعد مؤقتًا لأن فهد رد',
+        fahadMsg: 'أهلًا نورة، معك فهد. أكدت طلبك، ويوصلك بكرة قبل الساعة 4 العصر.',
+        fahadTime: '11:46 م',
+        contactCard: 'العميل',
+        phone: '+966 5• ••• 4821',
+        score: 'التقييم',
+        hot: 'عميل ساخن',
+        stage: 'مرحلة الصفقة',
+        stageValue: 'مهتمون',
+        tags: ['VIP', 'الرياض'],
+        note: 'ملاحظة داخلية',
+        noteBody: 'تفضّل التواصل بعد العصر. اشترت بخورًا في رمضان.',
+        noteBy: 'سارة',
+        you: 'أنت',
+      },
     },
     ai: {
       eyebrow: 'الذكاء الاصطناعي',
-      title: 'الذكاء الاصطناعي يتولّى الروتين.',
-      titleMuted: 'وفريقك يُغلق الصفقات.',
-      subtitle:
-        'يقرأ المساعد كل محادثة، ويفهم النية بالعربية والإنجليزية، ويتصرّف — ليتفرّغ فريقك لما يصنع الفرق.',
-      capabilities: [
-        { key: 'replies', title: 'ردود تلقائية ذكية', desc: 'إجابات فورية ومتوافقة مع هوية علامتك.' },
-        { key: 'qualify', title: 'تأهيل العملاء', desc: 'تقييم وتوجيه العملاء المهمين للموظف المناسب.' },
-        { key: 'summary', title: 'تلخيص المحادثات', desc: 'ملخص بسطر واحد للمحادثات الطويلة قبل ردّك.' },
-        { key: 'sentiment', title: 'تحليل المشاعر', desc: 'ينبّهك للعملاء غير الراضين قبل أن يغادروا.' },
-        { key: 'suggest', title: 'ردود مقترحة', desc: 'ردود جاهزة يرسلها فريقك بنقرة.' },
-        { key: 'translate', title: 'عربي ↔ إنجليزي', desc: 'يفهم ويردّ بطلاقة في كلتا اللغتين.' },
-      ],
-      firstReply: 'متوسط أول رد من المساعد',
-      resolved: 'محادثات لا تصل لموظف',
+      title: 'مساعد يرد بقواعدك أنت.',
+      titleMuted: 'ويعرف متى يسلّم المحادثة لفريقك.',
+      sub: 'اكتب له من أنت، وماذا تبيع، وما لا يجوز قوله. يرد بالعربية أو الإنجليزية، وباللهجة التي تختارها: سعودية أو خليجية أو مصرية أو شامية أو فصحى. ويتوقف تلقائيًا حين يرد أحد من فريقك.',
+      rules: {
+        title: 'إعدادات المساعد',
+        on: 'يعمل',
+        identity: [
+          { k: 'الاسم', v: 'مساعد دار العود' },
+          { k: 'اللهجة', v: 'سعودية' },
+          { k: 'الأسلوب', v: 'ودود ومختصر' },
+        ],
+        productsTitle: 'ما نبيعه',
+        products: ['دهن عود كمبودي · 350 ر.س للتولة', 'بخور معمول · 120 ر.س'],
+        rulesTitle: 'قواعد لا يتجاوزها',
+        rules: ['لا خصومات بدون موافقة المدير', 'لا وعود بتوصيل خارج الرياض'],
+        handoffTitle: 'يسلّم المحادثة لموظف عند',
+        handoff: ['شكوى', 'طلب استرجاع', 'طلب المدير', 'طلب موظف'],
+        pause: 'إذا رد أحد من الفريق، يتوقف المساعد 8 ساعات',
+      },
+      lead: {
+        title: 'ويقرأ كل محادثة ليعرف من الجادّ.',
+        sub: 'يقيّم نيون كل عميل من 0 إلى 100، ويرصد إشارات الشراء، ويكتب لك ملخصًا وتوصية بالعربية والإنجليزية. فتبدأ يومك بمن يستحق الاتصال أولًا.',
+        name: 'نورة العتيبي',
+        scoreLabel: 'تقييم العميل',
+        status: 'عميل ساخن',
+        priority: 'أولوية عالية',
+        signalsLabel: 'إشارات الشراء',
+        signals: [
+          { label: 'طلب السعر', on: true },
+          { label: 'جاهز للشراء', on: true },
+          { label: 'استعجال', on: true },
+          { label: 'طلب موعد', on: false },
+          { label: 'طلب اتصال', on: false },
+        ],
+        summaryLabel: 'الملخص',
+        summary: 'تطلب تولتين من دهن العود الكمبودي مع توصيل داخل الرياض، وتريد الاستلام غدًا.',
+        recLabel: 'التوصية',
+        rec: 'أكّد الطلب وموعد التوصيل اليوم، واقترح عليها البخور المعمول.',
+      },
     },
-    workflow: {
-      title: 'من أول رسالة إلى إتمام الصفقة',
-      subtitle: 'كل خطوة تُحدّث ما يليها — تلقائيًا.',
-      steps: [
-        { key: 'customer', title: 'العميل يراسلك', desc: 'ليلًا أو نهارًا، على التطبيق الذي يستخدمه أصلًا.' },
-        { key: 'ai', title: 'المساعد يرد', desc: 'يجيب ويؤهّل ويجمع السياق.' },
-        { key: 'team', title: 'الفريق يستلم', desc: 'المحادثات المهمة تصل للموظف المناسب بكامل السجل.' },
-        { key: 'crm', title: 'النظام متزامن', desc: 'جهات الاتصال والصفقات والملاحظات تُحدَّث تلقائيًا.' },
-        { key: 'reports', title: 'التقارير تكشف النمو', desc: 'اعرف ما ينجح وما يستحق التوسّع.' },
+    day: {
+      eyebrow: 'يوم عمل مع نيون',
+      title: 'من أول الدوام إلى آخر الليل.',
+      sub: 'هكذا يبدو يوم شركة تبيع على واتساب، حين يكون كل شيء في مكانه.',
+      figureMorning: 'رسم لسيدة أعمال سعودية تعمل على حاسوبها المحمول',
+      figureNight: 'رسم لرجل أعمال سعودي بالشماغ والعقال يتابع جواله',
+      moments: [
+        {
+          time: '9:00 ص',
+          title: 'الفريق يبدأ من صندوق واحد',
+          desc: 'محادثات الليل موزعة على الفريق، وبجانب كل عميل تقييمه وملخص ما قاله.',
+        },
+        {
+          time: '1:30 م',
+          title: 'حملة لعملائك المهمين فقط',
+          desc: 'عرض نهاية الأسبوع يصل لمن يحمل وسم VIP في الرياض، بقالب معتمد من واتساب.',
+        },
+        {
+          time: '5:00 م',
+          title: 'تتابع من جوالك',
+          desc: 'إشعار بمحادثة أُسندت إليك. ترد عليها أو تحوّلها لزميل، من أي مكان.',
+        },
+        {
+          time: '11:42 م',
+          title: 'المساعد يكمل عنك',
+          desc: 'عميلة تسأل عن السعر. المساعد يرد ويحجز ويقيّمها عميلًا ساخنًا، وفهد يجدها في أول القائمة صباحًا.',
+        },
+        {
+          time: 'الجمعة',
+          title: 'حملات مجدولة تعمل وحدها',
+          desc: 'جدولها مرة واحدة، أو اجعلها تتكرر كل أسبوع.',
+        },
+      ],
+    },
+    campaigns: {
+      eyebrow: 'الحملات',
+      title: 'رسائل جماعية تصل،',
+      titleMuted: 'دون أن تخاطر برقمك.',
+      sub: 'اختر جمهورك بدقة، وأرسل بقوالب معتمدة من واتساب، وتابع كل رسالة: وصلت، قُرئت، رُدّ عليها، أو لماذا لم تصل.',
+      points: [
+        { title: 'جمهور بدقة', desc: 'حسب الوسوم والحقول المخصصة، مع عدد المستلمين قبل الإرسال.' },
+        { title: 'إرسال يحمي رقمك', desc: 'فحص قبل الإرسال، ووتيرة محسوبة، وحد يومي حسب مستوى رقمك في واتساب.' },
+        { title: 'فورية أو مجدولة أو متكررة', desc: 'أرسل الآن، أو حدد الوقت، أو كررها أسبوعيًا.' },
+        { title: 'أزرار وقوائم', desc: 'رسائل تفاعلية يرد عليها العميل بلمسة.' },
+        { title: 'تقرير لكل حملة', desc: 'من وصلته ومن قرأ ومن رد، وأسباب الفشل ملخصة بلغة واضحة.' },
+      ],
+      mock: {
+        name: 'عرض نهاية الأسبوع',
+        status: 'جارٍ الإرسال',
+        audience: 'الجمهور',
+        chips: ['وسم: VIP', 'المدينة: الرياض'],
+        recipients: '1,240 مستلم',
+        template: 'القالب',
+        approved: 'معتمد من واتساب',
+        progress: 'التقدم',
+        stats: [
+          { label: 'وصلت', value: '1,152', pct: 93 },
+          { label: 'قُرئت', value: '864', pct: 70 },
+          { label: 'رُدّ عليها', value: '97', pct: 8 },
+        ],
+        failuresTitle: 'لم تصل · 28',
+        failures: [
+          { reason: 'الرقم غير مسجّل في واتساب', count: '21' },
+          { reason: 'تعذّر التسليم للجهاز', count: '7' },
+        ],
+        limit: 'حد الإرسال اليوم',
+        limitValue: '1,240 من 10,000',
+      },
+    },
+    index: {
+      title: 'وكل ما تحتاجه لإدارة عملائك.',
+      sub: 'في مكان واحد، بنفس الواجهة، وبالعربية من البداية.',
+      groups: [
+        {
+          title: 'العملاء',
+          items: ['جهات اتصال بحقول مخصصة', 'استيراد من Excel وCSV', 'تصدير كامل لبياناتك', 'وسوم وتصنيفات'],
+        },
+        {
+          title: 'المبيعات',
+          items: ['مسار صفقات: جدد، مهتمون، تفاوض، مغلقة', 'مهام وتذكيرات للفريق', 'لوحة تعرض من ينتظر الرد', 'تقييم العملاء بالذكاء الاصطناعي'],
+        },
+        {
+          title: 'الرسائل',
+          items: ['قوالب واتساب ومتابعة اعتمادها', 'ردود محفوظة', 'رسائل تفاعلية بأزرار وقوائم', 'ردود تلقائية بالكلمات وخارج الدوام'],
+        },
+        {
+          title: 'الفريق',
+          items: ['صلاحيات: مدير، قائد فريق، موظف، محلل، مشاهد', 'فرق منفصلة', 'إشعارات فورية', 'وضع ليلي'],
+        },
       ],
     },
     mobile: {
-      eyebrow: 'الجوال',
-      title: 'صندوق واردك،',
-      titleMuted: 'في جيبك.',
-      subtitle: 'ثبّته كتطبيق أصلي. نفس الصندوق ونفس نظام العملاء ونفس الإشعارات — على الجوال الذي يحمله فريقك أصلًا.',
-      bullets: [
-        'تطبيق قابل للتثبيت — بلا مراجعة متجر',
-        'تنبيهات فورية للعملاء المهمين والردود المتأخرة',
-        'يعمل دون اتصال ويزامن عند العودة',
+      eyebrow: 'التطبيق',
+      title: 'نيون في جيبك.',
+      sub: 'ثبّته على جوالك أو الكمبيوتر مثل أي تطبيق، بدون متجر تطبيقات. نفس صندوق الوارد ونفس العملاء، مع إشعارات فورية.',
+      points: [
+        'إشعار بكل رسالة جديدة وكل محادثة تُسند إليك',
+        'رسائل صوتية وصور وملفات من الجوال',
+        'آيفون وأندرويد والكمبيوتر',
       ],
-      install: 'ثبّت التطبيق',
-    },
-    testimonials: {
-      eyebrow: 'عملاؤنا',
-      title: 'فرق في أنحاء الخليج تعتمد علينا',
-      items: [
-        { quote: 'انتقلنا من إدارة واتساب على هواتف شخصية إلى توجيه 3000 محادثة يوميًا عبر صندوق وارد واحد. انخفض زمن الرد بنسبة 80%.', author: 'سارة الراشد', role: 'مديرة الدعم، نوفامارت' },
-        { quote: 'قوالب الحملات تظهر تمامًا كرسائل واتساب الحقيقية — أخيرًا أداة لا تُحرجنا أمام العملاء.', author: 'خالد الحربي', role: 'مدير النمو، تمكين' },
-        { quote: 'يتولّى الذكاء الاصطناعي 70% من الأسئلة الواردة قبل أن يراها موظف. فريقنا الصغير صار يؤدّي كمركز اتصال مؤسسي.', author: 'نورة القحطاني', role: 'الرئيسة التنفيذية، فاست شيب' },
-      ],
+      install: 'حمّل التطبيق',
+      hint: 'آيفون · أندرويد · كمبيوتر',
+      installed: 'التطبيق مثبّت',
+      phone: {
+        title: 'المحادثات',
+        chats: [
+          { name: 'نورة العتيبي', msg: 'إيه، احجز لي تولتين', time: '11:43', unread: 1 },
+          { name: 'مؤسسة الريان', msg: 'نحتاج عرض سعر لـ 40 علبة', time: '10:15', unread: 2 },
+          { name: 'ريم القحطاني', msg: 'متى تفتحون يوم الجمعة؟', time: '9:31' },
+          { name: 'خالد الشمري', msg: 'وصلت الطلبية', time: '9:02' },
+          { name: 'عبدالله الدوسري', msg: 'أبغى أغيّر العنوان', time: 'أمس' },
+          { name: 'هيا المطيري', msg: 'تمام، بانتظاركم', time: 'أمس' },
+        ],
+        push: 'NEON',
+        pushBody: 'أُسندت إليك محادثة: نورة العتيبي',
+      },
     },
     faq: {
       eyebrow: 'الأسئلة الشائعة',
-      title: 'إجابات لأسئلتك',
-      subtitle: 'كل ما تحتاج معرفته قبل أن تبدأ.',
-      askUs: 'لديك سؤال آخر؟ اسألنا على واتساب',
+      title: 'قبل أن تبدأ.',
+      sub: 'وإن بقي سؤال، اسألنا على واتساب.',
+      ask: 'اسألنا على واتساب',
       items: [
-        { q: 'هل أحتاج واجهة واتساب للأعمال الرسمية؟', a: 'يمكنك البدء خلال دقائق بمسح رمز QR عبر مزوّد Baileys، أو ربط واجهة Meta الرسمية للحجم الأكبر والقوالب الموثّقة. المنصة تدعم الاثنين — وتبدّل بينهما تلقائيًا.' },
-        { q: 'هل يدعم اللغة العربية بالكامل؟', a: 'نعم. المنصة بالكامل والمساعد الذكي وقوالب الرسائل ثنائية اللغة مع دعم أصيل للكتابة من اليمين لليسار، ومبنية للسوق الخليجي والعربي.' },
-        { q: 'كم يستغرق الإعداد؟', a: 'معظم الشركات تعمل خلال أقل من 10 دقائق — اربط رقمك واستورد جهات الاتصال وابدأ المراسلة. بدون مطوّرين.' },
-        { q: 'هل بياناتي آمنة وخاصة؟', a: 'بياناتك مشفّرة أثناء النقل والتخزين، ومستضافة في بنية تحتية متوافقة. خطط المؤسسات يمكن استضافتها ذاتيًا بالكامل على خوادمك.' },
-        { q: 'هل يمكنني نقل جهات اتصالي الحالية؟', a: 'بالتأكيد. استورد عبر ملف CSV، أو زامن من نظامك الحالي، أو دع المحادثات تنشئ جهات الاتصال تلقائيًا عند مراسلة العملاء.' },
+        {
+          q: 'هل يحتاج كل موظف رقمًا خاصًا؟',
+          a: 'لا. فريقك كله يعمل على رقم واتساب واحد لشركتك، وكل موظف يدخل بحسابه وصلاحياته.',
+        },
+        {
+          q: 'كيف يُربط رقم شركتي؟',
+          a: 'يعمل نيون عبر منصة واتساب للأعمال الرسمية من Meta. نجهّز حسابك ونساعدك في ربط رقمك خطوة بخطوة.',
+        },
+        {
+          q: 'هل يمكن أن يقول المساعد الذكي شيئًا لا أريده؟',
+          a: 'المساعد يعتمد على ما تكتبه له: معلومات شركتك ومنتجاتك وقواعدك. وتحدد المواضيع الممنوعة، ومتى يسلّم المحادثة لموظف، ويتوقف تلقائيًا حين يرد أحد من فريقك.',
+        },
+        {
+          q: 'هل يفهم اللهجات؟',
+          a: 'نعم. تختار لغة المساعد ولهجته: سعودية أو خليجية أو مصرية أو شامية أو فصحى. والواجهة كاملة بالعربية والإنجليزية.',
+        },
+        {
+          q: 'هل أستطيع نقل جهات اتصالي الحالية؟',
+          a: 'نعم، استوردها من ملف Excel أو CSV. وكل عميل جديد يراسلك تُنشأ له جهة اتصال تلقائيًا.',
+        },
+        {
+          q: 'هل يعمل على الجوال؟',
+          a: 'نعم. ثبّته كتطبيق على آيفون أو أندرويد أو الكمبيوتر، وتصلك الإشعارات حتى وهو مغلق.',
+        },
+        {
+          q: 'كم التكلفة؟',
+          a: 'تواصل معنا على واتساب، ونوضح لك التفاصيل والأسعار.',
+        },
       ],
     },
-    finalCta: {
-      title: 'جاهز لتجعل واتساب قناة مبيعاتك الأولى؟',
-      subtitle: 'انضم لشركات في أنحاء الخليج تقدّم دعمًا أسرع وحملات أذكى وصفقات أكثر — كل يوم.',
-      primary: 'تحدّث معنا على واتساب',
-      reassurance: 'الإعداد خلال 10 دقائق · عربي وإنجليزي · إلغاء في أي وقت',
+    final: {
+      title: 'شغّل نيون.',
+      sub: 'عملاؤك يكتبون لك الآن. اجعل كل رسالة تصل لمن يرد عليها.',
+      stepsTitle: 'كيف تبدأ',
+      steps: ['تواصل معنا على واتساب', 'نجهّز حسابك ونربط رقمك', 'تدعو فريقك وتبدأ'],
+      cta: 'تحدّث معنا على واتساب',
+      signIn: 'لديك حساب؟ سجّل الدخول',
     },
     footer: {
-      tagline: 'نظام واتساب لإدارة العملاء للأعمال في أنحاء الخليج.',
-      columns: [
-        { title: 'المنتج', links: ['المميزات', 'المساعد الذكي', 'خارطة الطريق'] },
-        { title: 'الحلول', links: ['المطاعم', 'الرعاية الصحية', 'العقارات', 'التجارة الإلكترونية'] },
-        { title: 'الشركة', links: ['من نحن', 'الخصوصية', 'الشروط', 'تواصل معنا'] },
-      ],
+      tagline: 'نظام إدارة العملاء المبني على واتساب، لشركات السعودية والخليج.',
+      product: 'المنتج',
+      account: 'الحساب',
+      legal: 'NEON غير تابع لشركة Meta. واتساب علامة تجارية لشركة Meta Platforms, Inc.',
       rights: 'جميع الحقوق محفوظة.',
-      disclaimer: 'غير تابع لشركة Meta Platforms Inc.',
-      badges: ['متوافق مع GDPR', 'جاهزية 99.9%', 'استضافة داخل المنطقة'],
     },
-    appInstalled: 'التطبيق مثبّت',
+    install: {
+      homeTitle: 'أضف NEON إلى الشاشة الرئيسية',
+      desktopTitle: 'ثبّت NEON على هذا الكمبيوتر',
+      updating: 'جارٍ التحديث…',
+      update: 'يتوفر تحديث، اضغط للتحديث',
+    },
+  },
+
+  // ═══════════════════════════════════════════ ENGLISH ═══════════════════════
+  en: {
+    meta: {
+      title: 'NEON — The CRM built around WhatsApp',
+      description:
+        'One WhatsApp number for your whole team, an AI assistant that answers by your rules, automatic scoring of serious buyers, and campaigns that protect your number. The Arabic-first CRM for businesses in Saudi Arabia and the Gulf.',
+      ogAlt: 'NEON — Every message is an opportunity',
+    },
+    nav: {
+      links: [
+        { id: 'product', label: 'Product' },
+        { id: 'ai', label: 'AI' },
+        { id: 'campaigns', label: 'Campaigns' },
+        { id: 'faq', label: 'FAQ' },
+      ],
+      signIn: 'Sign in',
+      cta: 'Get started',
+      menu: 'Open menu',
+      close: 'Close menu',
+      switchLabel: 'العربية',
+      switchHref: '/',
+      skip: 'Skip to content',
+    },
+    cta: {
+      start: "Hi, I'd like to get started with NEON",
+      question: 'Hi, I have a question about NEON',
+    },
+    hero: {
+      eyebrow: 'The CRM built around WhatsApp',
+      title: ['Every message is an opportunity.', 'NEON keeps none of them in the dark.'],
+      brandWord: 'NEON',
+      sub: 'One WhatsApp number for your whole team, an AI assistant that answers customers by your rules at any hour, and a record of every customer that keeps what was said and promised. So conversations turn into sales, instead of getting lost between phones.',
+      cta: 'Talk to us on WhatsApp',
+      secondary: 'See how it works',
+      note: 'We set up your account and help you connect your number · Arabic & English',
+    },
+    demo: {
+      contact: 'Noura Al-Otaibi',
+      initial: 'N',
+      online: 'online',
+      today: 'Today',
+      m1: 'Hi, do you have Cambodian oud oil? How much per tola?',
+      m2: 'Hi Noura, yes, it’s in stock. It’s SAR 350 per tola, delivered within one working day in Riyadh. Shall I reserve it for you?',
+      m3: 'Yes please, two tolas',
+      t1: '11:42 PM',
+      t2: '11:42 PM',
+      t3: '11:43 PM',
+      aiLabel: 'AI assistant',
+      typing: 'typing…',
+      composer: 'Type a message',
+      card: 'Customer card',
+      score: 'Score',
+      status: 'Hot lead',
+      signals: 'Signals',
+      s1: 'Asked for price',
+      s2: 'Ready to buy',
+      owner: 'Owner',
+      ownerName: 'Fahad · Sales',
+      summary: 'Wants two tolas of Cambodian oud oil, delivered in Riyadh.',
+      toastTitle: 'Chat assigned to you',
+      toastBody: 'Noura Al-Otaibi · Hot lead',
+      now: 'now',
+    },
+    trust: {
+      lead: 'Runs on the official WhatsApp Business Platform from Meta',
+      items: ['Fully Arabic interface', 'On phone and desktop', 'One number, whole team', 'Your business owns every chat'],
+    },
+    chars: {
+      hero: 'A Saudi businessman showing a WhatsApp chat on his phone, next to a Saudi businesswoman',
+      ai: 'A Saudi businessman reading the AI assistant’s reply on his phone',
+      lead: 'A Saudi businesswoman pointing at a lead score of 86 on her tablet',
+      campaigns: 'A Saudi businesswoman sending one message to many customers from her phone',
+      inbox: 'A Saudi businessman and businesswoman working on the shared inbox from a laptop',
+      pair: 'A Saudi businessman and a Saudi businesswoman standing side by side',
+    },
+    sell: {
+      kicker: 'An AI assistant that answers in your customers’ dialect',
+      kickerTag: 'New',
+      titleHi: 'Never miss',
+      titleRest: 'another customer message.',
+      sub: 'NEON puts your whole team on one WhatsApp number, answers customers at any hour, and tells you who’s ready to buy. So every conversation can turn into a sale.',
+      cta: 'Start with NEON',
+      checks: ['Replies 24/7', 'Whole team, one number', 'Arabic from day one'],
+      bentoTitle: 'Everything you need to sell on WhatsApp.',
+      bentoSub: 'Tools your team uses every day, not just a chat app.',
+      bento: {
+        inbox: { title: 'One inbox for your whole team', desc: 'Every chat has an owner and everyone sees what happened. Internal notes, transfers, pin and snooze.' },
+        ai: { title: 'An assistant that follows your rules', desc: 'It knows your products and prices, hands over to a person when needed, and steps back when your team replies.' },
+        lead: { title: 'It tells you who’s serious', desc: 'Every customer gets a score out of 100, buying signals and a summary. Hot leads come first.' },
+        camp: { title: 'Campaigns that protect your number', desc: 'Precise audiences, WhatsApp-approved templates, and a report for every message.' },
+      },
+      stepsTitle: 'Start in 3 steps.',
+      steps: [
+        { title: 'Message us on WhatsApp', desc: 'Tell us about your business and your team.' },
+        { title: 'We set up your account and number', desc: 'Through Meta’s official WhatsApp platform, step by step with you.' },
+        { title: 'Add your team and go', desc: 'Everyone gets their own login and permissions, on phone or desktop.' },
+      ],
+      localTitle: 'Built for how business works here.',
+      localSub: 'From the morning shift to late-night orders, NEON is built for Saudi and Gulf businesses.',
+      morning: { time: '9:00', suffix: 'AM', title: 'The team starts from one inbox', desc: 'Last night’s chats are already shared out, each with the customer’s score and a summary.' },
+      night: { time: '11:42', suffix: 'PM', title: 'The assistant carries on for you', desc: 'A customer asks for a price. The assistant answers, reserves the order and marks her a hot lead, and Fahad finds her first thing in the morning.' },
+      localPoints: ['A fully right-to-left Arabic interface', 'Assistant dialect: Saudi, Gulf or formal Arabic', 'Saudi and Gulf numbers in any format', 'Automatic replies outside working hours'],
+      appTitle: 'NEON in your pocket.',
+      finalTitle: 'Ready to switch on NEON?',
+    },
+    wall: {
+      title: 'How many messages did you miss yesterday?',
+      sub: 'Your customers write at every hour, to a number one person carries. Whatever isn’t answered in minutes goes to your competitor.',
+      messages: [
+        'Hi, how much is it?', 'Do you have size 52?', 'What are your Friday hours?', 'Can I book for tomorrow afternoon?',
+        'How long is delivery to Jeddah?', 'Any discount for bulk?', 'My order arrived incomplete', 'Can you send the catalogue?',
+        'Do you accept Tabby?', 'Send me the location please', 'Is it original?', 'When is black back in stock?',
+        'Can I get a VAT invoice?', 'Do you deliver to Dammam?', 'Is cash on delivery available?', 'Do you have a branch in Riyadh?',
+        'Where is order #2847?', 'I’d like to talk to sales', 'What’s the wholesale price?', 'Are you open after Taraweeh?',
+      ],
+      lit: [
+        { msg: 'How much per tola?', tag: 'Assistant replied' },
+        { msg: 'I want to speak to the manager', tag: 'Handed to a person' },
+        { msg: 'We need 40 boxes for the office', tag: 'Hot lead · 91' },
+        { msg: 'I need to change the address', tag: 'Assigned to Sara' },
+      ],
+      demoTitle: 'With NEON, every message reaches someone who answers.',
+      demoSub: '11:42 PM. A customer asks for a price, and the assistant answers by your shop’s rules, scores her, and hands her to Fahad. All before you open your phone.',
+    },
+    switch: {
+      eyebrow: 'Why NEON',
+      title: 'WhatsApp became your storefront. It’s still run from one phone.',
+      sub: 'This is how most businesses work today, and what changes when you switch on NEON.',
+      before: 'Today',
+      after: 'With NEON',
+      rows: [
+        {
+          before: 'Messages are scattered across staff phones, and no one sees the whole picture.',
+          after: 'One number, one shared inbox. You see every conversation and who is handling it.',
+        },
+        {
+          before: 'A customer wrote at 11 PM and waited until morning.',
+          after: 'The AI assistant answers at any hour, and hands over to a person when it should.',
+        },
+        {
+          before: 'No one remembers what the customer was promised last time.',
+          after: 'Internal notes and full history beside every chat, never shown to the customer.',
+        },
+        {
+          before: 'Serious buyers get buried under hundreds of messages.',
+          after: 'Every customer is scored from 0 to 100 automatically, and hot leads surface first.',
+        },
+        {
+          before: 'An employee leaves, and their conversations leave with them.',
+          after: 'Conversations belong to your business. Move them across the team in one tap.',
+        },
+      ],
+    },
+    inbox: {
+      eyebrow: 'Shared inbox',
+      title: 'Your whole team on one number.',
+      titleMuted: 'No chat without an owner.',
+      sub: 'It feels like the WhatsApp your team already knows, with what a business needs on top: who is replying, what was said, and what happens next.',
+      points: [
+        { title: 'Automatic assignment', desc: 'Every new conversation goes to the least busy teammate.' },
+        { title: 'Never two replies to one customer', desc: 'Teammates see that you are typing, so no one answers twice.' },
+        { title: 'Internal notes', desc: 'Write to your team beside the chat. The customer never sees it.' },
+        { title: 'Everything you expect from WhatsApp', desc: 'Photos, files and voice notes; reply, quote and forward; read receipts.' },
+        { title: 'Pin and snooze', desc: 'Pin what matters, and snooze a chat until it’s time to come back to it.' },
+      ],
+      mock: {
+        search: 'Search or start a chat',
+        tabs: ['All', 'Unread', 'Mine'],
+        chats: [
+          { name: 'Noura Al-Otaibi', msg: 'Hi Noura, this is Fahad…', time: '11:46 PM', tag: 'Hot', hot: true },
+          { name: 'Al Rayan Trading', msg: 'We need a quote for 40 boxes of bakhoor', time: '10:15 PM', unread: 2, tag: 'Qualified' },
+          { name: 'Reem Al-Qahtani', msg: 'What time do you open on Friday?', time: '9:31 PM', bot: true },
+          { name: 'Khalid Al-Shammari', msg: 'The order arrived, thank you!', time: '9:02 PM', tag: 'Customer' },
+          { name: 'Abdullah Al-Dosari', msg: 'I need to change the delivery address', time: 'Yesterday', unread: 1 },
+        ],
+        assignedTo: 'Assigned to Fahad',
+        autoAssigned: 'Assigned to Fahad automatically',
+        botPaused: 'Assistant paused because Fahad replied',
+        fahadMsg: 'Hi Noura, this is Fahad. Your order is confirmed and will reach you tomorrow before 4 PM.',
+        fahadTime: '11:46 PM',
+        contactCard: 'Customer',
+        phone: '+966 5• ••• 4821',
+        score: 'Score',
+        hot: 'Hot lead',
+        stage: 'Deal stage',
+        stageValue: 'Interested',
+        tags: ['VIP', 'Riyadh'],
+        note: 'Internal note',
+        noteBody: 'Prefers to be contacted after Asr. Bought bakhoor in Ramadan.',
+        noteBy: 'Sara',
+        you: 'You',
+      },
+    },
+    ai: {
+      eyebrow: 'AI',
+      title: 'An assistant that answers by your rules.',
+      titleMuted: 'And knows when to hand over to your team.',
+      sub: 'Tell it who you are, what you sell, and what it must never say. It answers in Arabic or English, in the dialect you choose: Saudi, Gulf, Egyptian, Levantine or formal Arabic. And it steps back on its own the moment someone from your team replies.',
+      rules: {
+        title: 'Assistant settings',
+        on: 'On',
+        identity: [
+          { k: 'Name', v: 'Dar Al Oud assistant' },
+          { k: 'Dialect', v: 'Saudi' },
+          { k: 'Tone', v: 'Friendly, brief' },
+        ],
+        productsTitle: 'What we sell',
+        products: ['Cambodian oud oil · SAR 350 per tola', 'Bakhoor Maamoul · SAR 120'],
+        rulesTitle: 'Rules it never breaks',
+        rules: ['No discounts without manager approval', 'No delivery promises outside Riyadh'],
+        handoffTitle: 'Hands over to a person on',
+        handoff: ['Complaint', 'Refund request', 'Asks for manager', 'Asks for a person'],
+        pause: 'When a teammate replies, the assistant pauses for 8 hours',
+      },
+      lead: {
+        title: 'And reads every conversation to find who is serious.',
+        sub: 'NEON scores every customer from 0 to 100, picks up buying signals, and writes you a summary and a next step in Arabic and English. You start the day with the people worth calling first.',
+        name: 'Noura Al-Otaibi',
+        scoreLabel: 'Lead score',
+        status: 'Hot lead',
+        priority: 'High priority',
+        signalsLabel: 'Buying signals',
+        signals: [
+          { label: 'Asked for price', on: true },
+          { label: 'Ready to buy', on: true },
+          { label: 'Urgent', on: true },
+          { label: 'Asked for a meeting', on: false },
+          { label: 'Asked for a call', on: false },
+        ],
+        summaryLabel: 'Summary',
+        summary: 'Wants two tolas of Cambodian oud oil delivered in Riyadh, and would like it tomorrow.',
+        recLabel: 'Next step',
+        rec: 'Confirm the order and delivery time today, and suggest the Bakhoor Maamoul with it.',
+      },
+    },
+    day: {
+      eyebrow: 'A day with NEON',
+      title: 'From opening time to late at night.',
+      sub: 'This is what a day looks like for a business that sells on WhatsApp, once everything is in its place.',
+      figureMorning: 'Illustration of a Saudi businesswoman working on her laptop',
+      figureNight: 'Illustration of a Saudi businessman in shemagh and agal checking his phone',
+      moments: [
+        {
+          time: '9:00 AM',
+          title: 'The team starts from one inbox',
+          desc: 'Last night’s conversations are already shared out, each with the customer’s score and a summary of what they said.',
+        },
+        {
+          time: '1:30 PM',
+          title: 'A campaign for your best customers only',
+          desc: 'The weekend offer goes to everyone tagged VIP in Riyadh, with a template approved by WhatsApp.',
+        },
+        {
+          time: '5:00 PM',
+          title: 'You follow along from your phone',
+          desc: 'A notification for a chat assigned to you. Reply, or pass it to a teammate, from anywhere.',
+        },
+        {
+          time: '11:42 PM',
+          title: 'The assistant carries on for you',
+          desc: 'A customer asks for a price. The assistant answers, reserves the order and marks her a hot lead, and Fahad finds her at the top of his list in the morning.',
+        },
+        {
+          time: 'Friday',
+          title: 'Scheduled campaigns run on their own',
+          desc: 'Schedule it once, or have it repeat every week.',
+        },
+      ],
+    },
+    campaigns: {
+      eyebrow: 'Campaigns',
+      title: 'Broadcasts that land,',
+      titleMuted: 'without putting your number at risk.',
+      sub: 'Pick exactly who should hear from you, send with templates approved by WhatsApp, and follow every message: delivered, read, replied to, or why it didn’t arrive.',
+      points: [
+        { title: 'Precise audiences', desc: 'By tags and custom fields, with the recipient count before you send.' },
+        { title: 'Sending that protects your number', desc: 'A check before sending, measured pacing, and a daily limit that follows your WhatsApp tier.' },
+        { title: 'Now, scheduled or recurring', desc: 'Send now, pick a time, or repeat it every week.' },
+        { title: 'Buttons and lists', desc: 'Interactive messages customers answer with one tap.' },
+        { title: 'A report for every campaign', desc: 'Who received it, read it and replied, with failure reasons summarised in plain language.' },
+      ],
+      mock: {
+        name: 'Weekend offer',
+        status: 'Sending',
+        audience: 'Audience',
+        chips: ['Tag: VIP', 'City: Riyadh'],
+        recipients: '1,240 recipients',
+        template: 'Template',
+        approved: 'Approved by WhatsApp',
+        progress: 'Progress',
+        stats: [
+          { label: 'Delivered', value: '1,152', pct: 93 },
+          { label: 'Read', value: '864', pct: 70 },
+          { label: 'Replied', value: '97', pct: 8 },
+        ],
+        failuresTitle: 'Not delivered · 28',
+        failures: [
+          { reason: 'Number isn’t on WhatsApp', count: '21' },
+          { reason: 'Couldn’t reach the device', count: '7' },
+        ],
+        limit: 'Today’s sending limit',
+        limitValue: '1,240 of 10,000',
+      },
+    },
+    index: {
+      title: 'And everything else you need to run your customers.',
+      sub: 'In one place, in one interface, and in Arabic from day one.',
+      groups: [
+        {
+          title: 'Customers',
+          items: ['Contacts with custom fields', 'Import from Excel and CSV', 'Full export of your data', 'Tags and segments'],
+        },
+        {
+          title: 'Sales',
+          items: ['Deal pipeline: new, interested, negotiation, closed', 'Tasks and reminders for the team', 'A home screen that shows who is waiting', 'AI lead scoring'],
+        },
+        {
+          title: 'Messaging',
+          items: ['WhatsApp templates with approval tracking', 'Saved replies', 'Interactive messages with buttons and lists', 'Auto-replies by keyword and outside hours'],
+        },
+        {
+          title: 'Team',
+          items: ['Roles: admin, team lead, agent, analyst, viewer', 'Separate teams', 'Instant notifications', 'Dark mode'],
+        },
+      ],
+    },
+    mobile: {
+      eyebrow: 'The app',
+      title: 'NEON in your pocket.',
+      sub: 'Install it on your phone or computer like any app, no app store needed. The same inbox and the same customers, with instant notifications.',
+      points: [
+        'A notification for every new message and every chat assigned to you',
+        'Voice notes, photos and files from your phone',
+        'iPhone, Android and desktop',
+      ],
+      install: 'Download the app',
+      hint: 'iPhone · Android · Desktop',
+      installed: 'App installed',
+      phone: {
+        title: 'Chats',
+        chats: [
+          { name: 'Noura Al-Otaibi', msg: 'Yes please, two tolas', time: '11:43', unread: 1 },
+          { name: 'Al Rayan Trading', msg: 'We need a quote for 40 boxes', time: '10:15', unread: 2 },
+          { name: 'Reem Al-Qahtani', msg: 'What time do you open Friday?', time: '9:31' },
+          { name: 'Khalid Al-Shammari', msg: 'The order arrived', time: '9:02' },
+          { name: 'Abdullah Al-Dosari', msg: 'I need to change the address', time: 'Yest.' },
+          { name: 'Haya Al-Mutairi', msg: 'Great, see you then', time: 'Yest.' },
+        ],
+        push: 'NEON',
+        pushBody: 'Chat assigned to you: Noura Al-Otaibi',
+      },
+    },
+    faq: {
+      eyebrow: 'FAQ',
+      title: 'Before you start.',
+      sub: 'Still have a question? Ask us on WhatsApp.',
+      ask: 'Ask us on WhatsApp',
+      items: [
+        {
+          q: 'Does every employee need their own number?',
+          a: 'No. Your whole team works on your business’s one WhatsApp number, and everyone signs in with their own account and permissions.',
+        },
+        {
+          q: 'How is my business number connected?',
+          a: 'NEON runs on the official WhatsApp Business Platform from Meta. We set up your account and help you connect your number step by step.',
+        },
+        {
+          q: 'Could the AI assistant say something I don’t want?',
+          a: 'The assistant works from what you give it: your company details, products and rules. You set forbidden topics and when it hands a chat to a person, and it pauses on its own whenever someone from your team replies.',
+        },
+        {
+          q: 'Does it understand dialects?',
+          a: 'Yes. You choose the assistant’s language and dialect: Saudi, Gulf, Egyptian, Levantine or formal Arabic. The whole interface works in Arabic and English.',
+        },
+        {
+          q: 'Can I bring my existing contacts?',
+          a: 'Yes, import them from Excel or CSV. And every new customer who messages you gets a contact created automatically.',
+        },
+        {
+          q: 'Does it work on mobile?',
+          a: 'Yes. Install it as an app on iPhone, Android or desktop, and get notifications even when it’s closed.',
+        },
+        {
+          q: 'How much does it cost?',
+          a: 'Message us on WhatsApp and we’ll walk you through the details and pricing.',
+        },
+      ],
+    },
+    final: {
+      title: 'Switch on NEON.',
+      sub: 'Your customers are writing to you right now. Make sure every message reaches someone who answers.',
+      stepsTitle: 'How to start',
+      steps: ['Message us on WhatsApp', 'We set up your account and connect your number', 'Invite your team and go'],
+      cta: 'Talk to us on WhatsApp',
+      signIn: 'Already have an account? Sign in',
+    },
+    footer: {
+      tagline: 'The CRM built around WhatsApp, for businesses in Saudi Arabia and the Gulf.',
+      product: 'Product',
+      account: 'Account',
+      legal: 'NEON is not affiliated with Meta. WhatsApp is a trademark of Meta Platforms, Inc.',
+      rights: 'All rights reserved.',
+    },
+    install: {
+      homeTitle: 'Add NEON to your Home Screen',
+      desktopTitle: 'Install NEON on this computer',
+      updating: 'Updating…',
+      update: 'Update available — tap to update',
+    },
   },
 }

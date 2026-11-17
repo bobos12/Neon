@@ -120,7 +120,7 @@ export function Modal({
   return createPortal(
     <div
       className={cn(
-        'fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] backdrop-blur-sm',
+        'animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-[rgb(var(--scrim)/0.45)] p-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] backdrop-blur-[6px]',
         overlayClassName,
       )}
       onClick={closeOnBackdrop ? onClose : undefined}
@@ -132,7 +132,7 @@ export function Modal({
         aria-label={aria['aria-label']}
         aria-labelledby={aria['aria-labelledby']}
         tabIndex={-1}
-        className={cn('outline-none', className)}
+        className={cn('dialog-enter outline-none', className)}
         onClick={(e) => e.stopPropagation()}
       >
         {children}

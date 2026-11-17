@@ -3,8 +3,8 @@ import type { MetadataRoute } from 'next';
 export default function manifest(): MetadataRoute.Manifest {
   return {
     id: '/dashboard',
-    name: 'Nexus CRM — WhatsApp Business Platform',
-    short_name: 'Nexus CRM',
+    name: 'NEON — WhatsApp Business Platform',
+    short_name: 'NEON',
     description:
       'Manage WhatsApp conversations, automate campaigns, and grow your business — all from one powerful platform.',
     start_url: '/dashboard',
@@ -15,7 +15,7 @@ export default function manifest(): MetadataRoute.Manifest {
     // Matches the splash canvas (#0d1f16 → #05080c family) so the OS launch
     // frame blends seamlessly into the in-app splash — no color flash.
     background_color: '#081511',
-    theme_color: '#25D366',
+    theme_color: '#0A150E',
     categories: ['business', 'productivity', 'communication'],
     icons: [
       {

@@ -2,7 +2,7 @@
 # NEXT_PUBLIC_* are baked at BUILD time, so they're passed as build args.
 #   docker build -f apps/frontend/Dockerfile \
 #     --build-arg NEXT_PUBLIC_API_URL=https://acme.yourapp.com -t crm-frontend .
-FROM node:22-slim AS build
+FROM node:22.23.4-slim AS build
 WORKDIR /app
 COPY . .
 # --ignore-scripts: skip postinstalls (e.g. ffmpeg-static's GitHub binary
@@ -14,11 +14,13 @@ RUN npm run build --workspace=packages/messaging-schema
 # Public URLs the browser will call — must be the tenant's public origin.
 ARG NEXT_PUBLIC_API_URL
 ARG NEXT_PUBLIC_SOCKET_URL
+ARG NEXT_PUBLIC_VAPID_PUBLIC_KEY
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_SOCKET_URL=$NEXT_PUBLIC_SOCKET_URL
+ENV NEXT_PUBLIC_VAPID_PUBLIC_KEY=$NEXT_PUBLIC_VAPID_PUBLIC_KEY
 RUN npm run build --workspace=apps/frontend
 
-FROM node:22-slim AS runtime
+FROM node:22.23.4-slim AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 COPY --from=build /app/node_modules ./node_modules

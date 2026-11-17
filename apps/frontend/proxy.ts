@@ -16,7 +16,8 @@ export default withAuth(
         // Public marketing routes render without a session; everything else
         // (the dashboard) requires a valid NextAuth token.
         const { pathname } = req.nextUrl;
-        if (pathname === '/' || pathname.startsWith('/login')) return true;
+        if (pathname === '/' || pathname === '/en' || pathname.startsWith('/login')) return true;
+        if (pathname === '/privacy' || pathname === '/terms' || pathname === '/data-deletion') return true;
         return !!token;
       },
     },

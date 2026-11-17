@@ -881,7 +881,7 @@ export default function CustomerAiPage() {
       <AnimatePresence>
         {testOpen && (
           <>
-            <motion.div className="fixed inset-0 z-40 bg-[rgb(8_12_10/0.35)] xl:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setTestOpen(false)} />
+            <motion.div className="fixed inset-0 z-40 bg-[rgb(var(--scrim)/0.35)] xl:hidden" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setTestOpen(false)} />
             <motion.div
               className="fixed inset-y-0 end-0 z-50 flex w-full flex-col bg-surface p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-[max(0.75rem,env(safe-area-inset-top))] shadow-pop sm:w-[400px] xl:hidden"
               initial={{ x: isRTL ? '-100%' : '100%' }} animate={{ x: 0 }} exit={{ x: isRTL ? '-100%' : '100%' }}
@@ -1037,7 +1037,7 @@ function ReplyOrder({ status, hasGeminiKey, hasGroqKey, t }: { status: ChatStatu
           >
             <span className={cn(
               'flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-2xs font-semibold tabular-nums transition-colors duration-200',
-              step.state === 'active' ? 'bg-brand text-white' : 'bg-raised text-ink-3 ring-1 ring-inset ring-line',
+              step.state === 'active' ? 'bg-brand text-brand-fg' : 'bg-raised text-ink-3 ring-1 ring-inset ring-line',
             )}>{i + 1}</span>
             <div className="min-w-0 flex-1">
               <p className="truncate text-[13px] font-medium text-ink"><bdi>{modelLabel(step.model)}</bdi></p>

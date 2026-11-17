@@ -657,8 +657,8 @@ function ListButtonView({ block, isFromMe }: { block: { buttonText: string; sect
       </div>
       {open && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50" onClick={() => setOpen(false)}>
-          <div className="w-full max-w-md rounded-t-2xl bg-white dark:bg-raised max-h-[70vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-            <div className="sticky top-0 flex items-center justify-between border-b border-line bg-white dark:bg-raised px-4 py-3">
+          <div className="w-full max-w-md rounded-t-2xl bg-surface max-h-[70vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="sticky top-0 flex items-center justify-between border-b border-line bg-surface px-4 py-3">
               <span className="font-semibold text-ink">{t('message.selectOption')}</span>
               <button type="button" onClick={() => setOpen(false)} className="text-gray-500 dark:text-gray-400 hover:text-gray-700">✕</button>
             </div>
@@ -1043,7 +1043,7 @@ export function MessageRenderer({ message, reactions: reactionsProp = [], conver
   const mediaOnly = segments.length === 1 && lastSeg?.kind === 'single' && lastSeg.block.type === 'media'
     && (lastSeg.block.media.mediaType === 'image' || lastSeg.block.media.mediaType === 'video') && !lastSeg.block.caption;
   const footer = <BubbleFooter timestamp={timestamp} status={status} compatibility={renderable.compatibility} isFromMe={isFromMe} overlay={mediaOnly} />;
-  const spacer = <span aria-hidden="true" className={`inline-block h-3 align-baseline ${isFromMe ? 'w-[74px]' : 'w-[50px]'}`} />;
+  const spacer = <span aria-hidden="true" className={`inline-block h-3 align-baseline ${isFromMe ? 'w-[86px]' : 'w-[62px]'}`} />;
 
   // The bubble takes its text's direction: the inline timestamp then sits at the
   // end of the last line in Arabic and English alike. The tail corner is
@@ -1052,8 +1052,8 @@ export function MessageRenderer({ message, reactions: reactionsProp = [], conver
   const bubbleDir = textDirection(messageText);
   const pageRtl = typeof document !== 'undefined' && document.documentElement.dir === 'rtl';
   const tailRight = isFromMe !== pageRtl;
-  const tail = first ? (tailRight ? 'rounded-tr-[4px]' : 'rounded-tl-[4px]') : '';
-  const actionBtn = 'flex h-7 w-7 items-center justify-center rounded-full bg-surface text-ink-3 shadow-soft ring-1 ring-line transition-colors hover:text-ink';
+  const tail = first ? (tailRight ? 'rounded-tr-[6px]' : 'rounded-tl-[6px]') : '';
+  const actionBtn = 'press-icon flex h-7 w-7 items-center justify-center rounded-full bg-surface text-ink-3 shadow-glass transition-colors hover:text-ink';
 
   return (
     <div className={`group/msg w-full min-w-0 flex ${isFromMe ? 'justify-end' : 'justify-start'}`}>
@@ -1075,7 +1075,7 @@ export function MessageRenderer({ message, reactions: reactionsProp = [], conver
           )}
 
           {variant === 'chat' && showMenu && !isTouch && (
-            <div className={`pop-enter absolute top-7 z-30 min-w-[180px] rounded-lg bg-surface p-1 shadow-pop ${isFromMe ? 'end-0' : 'start-0'}`}>
+            <div className={`pop-enter absolute top-7 z-30 min-w-[190px] rounded-xl bg-surface p-1 shadow-pop ${isFromMe ? 'end-0' : 'start-0'}`}>
               {conversationId && (
                 <button type="button" onClick={() => { setShowMenu(false); setPickerOpen(true); }} className={menuItemCls}>
                   <Smile className="h-4 w-4 shrink-0 text-ink-3" />
@@ -1114,7 +1114,7 @@ export function MessageRenderer({ message, reactions: reactionsProp = [], conver
           )}
 
           {/* Bubble */}
-          <div dir={bubbleDir} className={`relative w-fit max-w-full overflow-hidden rounded-lg shadow-[0_1px_0.5px_rgb(11_20_16/0.10)] ${mediaOnly ? 'p-1' : 'px-2.5 pb-1.5 pt-1.5'} ${bubbleTone} ${tail} ${segments.some(s => s.kind === 'buttons') ? 'min-w-[220px]' : ''}`}>
+          <div dir={bubbleDir} className={`relative w-fit max-w-full overflow-hidden rounded-[18px] shadow-[0_1px_1px_rgb(var(--shadow)/0.07),0_2px_6px_-3px_rgb(var(--shadow)/0.08)] dark:shadow-[inset_0_1px_0_rgb(255_255_255/0.05),0_1px_1px_rgb(0_0_0/0.3)] ${mediaOnly ? 'p-1' : 'px-3 pb-1.5 pt-1.5'} ${bubbleTone} ${tail} ${segments.some(s => s.kind === 'buttons') ? 'min-w-[220px]' : ''}`}>
             {/* Menu chevron for mouse users, on hover. Touch screens use press-and-hold
                 instead — a chevron on every bubble covered text and timestamps. */}
             {variant === 'chat' && (
@@ -1168,14 +1168,14 @@ export function MessageRenderer({ message, reactions: reactionsProp = [], conver
         {variant === 'chat' && showMenu && isTouch && typeof document !== 'undefined' && createPortal(
           <div ref={sheetRootRef} className="fixed inset-0 z-[70]" role="presentation">
             <div
-              className="absolute inset-0 bg-[rgb(8_12_10/0.35)] animate-fade-in"
+              className="absolute inset-0 bg-[rgb(var(--scrim)/0.35)] animate-fade-in"
               onClick={(e) => { e.stopPropagation(); sheetTap(() => setShowMenu(false))(); }}
               aria-hidden="true"
             />
             <div
               role="dialog"
               aria-label={t('message.moreOptions')}
-              className="absolute inset-x-0 bottom-0 rounded-t-2xl bg-surface pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-pop animate-slide-up"
+              className="absolute inset-x-0 bottom-0 rounded-t-[28px] bg-surface pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-pop animate-slide-up"
             >
               <div className="mx-auto mt-2 h-1 w-9 rounded-full bg-line-strong" aria-hidden="true" />
               {messageText && (

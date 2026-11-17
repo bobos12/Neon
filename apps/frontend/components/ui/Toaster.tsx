@@ -93,11 +93,9 @@ function ToastItem({
       onClick={clickable ? handleClick : undefined}
       style={{ '--tf-dur': `${duration}ms` } as React.CSSProperties}
       className={cn(
-        'relative w-full overflow-hidden rounded-xl backdrop-blur-2xl',
-        'bg-white/[0.97] dark:bg-[#161D22]/[0.94]',
-        'border border-black/[0.06] dark:border-white/[0.07]',
-        'shadow-[0_8px_40px_rgba(0,0,0,0.13),_0_1px_0_rgba(0,0,0,0.04)]',
-        'dark:shadow-[0_12px_48px_rgba(0,0,0,0.55),_0_1px_0_rgba(255,255,255,0.05)_inset]',
+        // Same frosted glass as every popover — toasts are part of the system,
+        // not a separate notification library dropped on top of it.
+        'relative w-full overflow-hidden rounded-2xl bg-surface shadow-pop',
         clickable && 'cursor-pointer',
       )}
     >
@@ -128,12 +126,12 @@ function ToastItem({
               </p>
             )}
             {isMessage && (
-              <span className="shrink-0 text-[10px] font-medium uppercase tracking-wide text-gray-300 dark:text-white/20">
+              <span className="shrink-0 text-[10px] font-medium uppercase tracking-wide text-ink-4">
                 WhatsApp
               </span>
             )}
           </div>
-          <p className="mt-[3px] line-clamp-2 text-[12.5px] leading-[1.4] text-gray-500 dark:text-white/55">
+          <p className="mt-[3px] line-clamp-2 text-[12.5px] leading-[1.4] text-ink-3">
             {toast.message}
           </p>
         </div>
@@ -145,8 +143,7 @@ function ToastItem({
           aria-label="Dismiss"
           className={cn(
             'ms-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full',
-            'bg-black/[0.04] text-gray-400 hover:bg-black/[0.08] hover:text-gray-700',
-            'dark:bg-white/[0.05] dark:text-white/25 dark:hover:bg-white/[0.1] dark:hover:text-white/60',
+            'bg-raised text-ink-4 hover:bg-overlay hover:text-ink',
             'transition-colors',
           )}
         >
@@ -155,7 +152,7 @@ function ToastItem({
       </div>
 
       {/* Countdown progress bar */}
-      <div className="absolute bottom-0 start-[3.5px] end-0 h-[2.5px] overflow-hidden rounded-full bg-black/[0.04] dark:bg-white/[0.05]">
+      <div className="absolute bottom-0 start-[3.5px] end-0 h-[2.5px] overflow-hidden rounded-full bg-raised">
         <div className="tf-prog-fill" />
       </div>
     </ToastShell>

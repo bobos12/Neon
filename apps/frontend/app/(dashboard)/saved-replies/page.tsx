@@ -99,7 +99,7 @@ export default function SavedRepliesPage() {
                   value={shortcut}
                   onChange={(e) => setShortcut(e.target.value)}
                   placeholder={t('settings:savedReplies.shortcutPlaceholder')}
-                  className="w-full rounded-xl border border-line bg-white dark:bg-raised py-3 pl-10 pr-4 text-sm text-ink placeholder:text-ink-4"
+                  className="w-full rounded-xl border border-line bg-surface py-3 pl-10 pr-4 text-sm text-ink placeholder:text-ink-4"
                 />
               </div>
             </label>
@@ -111,7 +111,7 @@ export default function SavedRepliesPage() {
                 onChange={(e) => setMessage(e.target.value)}
                 placeholder={t('settings:savedReplies.messagePlaceholder')}
                 rows={6}
-                className="w-full rounded-xl border border-line bg-white dark:bg-raised px-4 py-3 text-sm text-ink placeholder:text-ink-4"
+                className="w-full rounded-xl border border-line bg-surface px-4 py-3 text-sm text-ink placeholder:text-ink-4"
               />
               <div className="mt-2 flex flex-wrap gap-2">
                 {['{{name}}', '{{phone}}'].map((v) => (
@@ -145,14 +145,14 @@ export default function SavedRepliesPage() {
               <h2 className="text-lg font-semibold text-ink">{t('settings:savedReplies.title')}</h2>
               <p className="text-sm text-ink-3">{t('chat:composer.savedReplies')}</p>
             </div>
-            <div className="rounded-full border border-line bg-white dark:bg-raised px-3 py-1.5 text-xs text-ink-3">
+            <div className="rounded-full border border-line bg-surface px-3 py-1.5 text-xs text-ink-3">
               {savedReplies.length}
             </div>
           </div>
 
           <div className="mt-4 space-y-3">
             {savedReplies.map((reply) => (
-              <div key={reply.id} className="rounded-xl border border-line bg-white dark:bg-raised p-4">
+              <div key={reply.id} className="rounded-xl border border-line bg-surface p-4">
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
                     <p className="font-medium text-ink">{reply.shortcut}</p>
@@ -173,7 +173,7 @@ export default function SavedRepliesPage() {
             ))}
 
             {!loading && savedReplies.length === 0 && (
-              <div className="rounded-xl border border-dashed border-line bg-white dark:bg-raised p-6 text-sm text-ink-3">
+              <div className="rounded-xl border border-dashed border-line bg-surface p-6 text-sm text-ink-3">
                 {t('settings:savedReplies.noReplies')}
               </div>
             )}

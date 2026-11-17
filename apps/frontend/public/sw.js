@@ -56,7 +56,7 @@ self.addEventListener('push', (event) => {
     const inFront = windows.some((c) => c.visibilityState === 'visible' && c.focused);
     if (inFront && !isAppleDevice()) return;
 
-    const title = data.title || 'Nexus CRM';
+    const title = data.title || 'NEON';
     await self.registration.showNotification(title, {
       body: data.body || '',
       icon: '/icons/icon-192.png',

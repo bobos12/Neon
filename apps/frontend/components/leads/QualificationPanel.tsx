@@ -70,7 +70,7 @@ export default function QualificationPanel({ contactId }: { contactId?: string }
         {t('panel.title')}
       </label>
 
-      <div className="overflow-hidden rounded-xl border border-line bg-white dark:bg-raised">
+      <div className="overflow-hidden rounded-xl border border-line bg-surface">
         {/* No data / loading */}
         {!lead ? (
           <div className="px-4 py-5 text-center">

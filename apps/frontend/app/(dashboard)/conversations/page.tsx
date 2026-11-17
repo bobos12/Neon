@@ -136,13 +136,15 @@ function ConversationsPageContent() {
     }
   }, [targetConversationId, buildUrl]);
 
-  // Full-bleed, follows the document direction: in Arabic the list sits on the
-  // right and the chat on the left, exactly as WhatsApp does it.
+  // Follows the document direction: in Arabic the list sits on the right and
+  // the chat on the left, exactly as WhatsApp does it. From tablet up the two
+  // are separate panes of glass with the same 8px gutter as the sidebar; on a
+  // phone each owns the screen edge to edge.
   return (
-    <div className="flex h-full min-h-0 overflow-hidden bg-surface">
+    <div className="flex h-full min-h-0 overflow-hidden md:gap-2 md:p-2">
       {/* Conversation list — full-width on mobile, hidden once a chat is open */}
       <div
-        className={`${selectedConversationId ? 'hidden md:flex' : 'flex'} w-full shrink-0 flex-col border-e border-line md:w-[320px] lg:w-[360px]`}
+        className={`${selectedConversationId ? 'hidden md:flex' : 'flex'} w-full shrink-0 flex-col max-md:bg-surface max-md:[--surface-a:0.9] md:w-[320px] md:overflow-hidden md:rounded-[20px] md:bg-surface md:shadow-glass lg:w-[360px]`}
       >
         <ConversationList
           ref={conversationListRef}

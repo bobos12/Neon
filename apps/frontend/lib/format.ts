@@ -50,11 +50,11 @@ export function formatAgo(input: string | number | Date, now = Date.now()): stri
 export const DEAL_STAGES = ['NEW', 'INTERESTED', 'NEGOTIATION', 'CLOSED'] as const;
 export type DealStage = (typeof DEAL_STAGES)[number];
 
-// A single-hue ramp: the further along, the stronger the green. A funnel is one
+// A single-hue ramp: the further along, the more lit. A funnel is one
 // quantity moving through steps, so it gets one hue, not four unrelated ones.
 export const STAGE_TONE: Record<string, { bar: string; dot: string; text: string }> = {
-  NEW:         { bar: 'bg-brand-200 dark:bg-brand-900', dot: 'bg-brand-200 dark:bg-brand-800', text: 'text-ink-2' },
-  INTERESTED:  { bar: 'bg-brand-300 dark:bg-brand-700', dot: 'bg-brand-300 dark:bg-brand-700', text: 'text-ink-2' },
-  NEGOTIATION: { bar: 'bg-brand-400 dark:bg-brand-500', dot: 'bg-brand-400 dark:bg-brand-500', text: 'text-ink-2' },
-  CLOSED:      { bar: 'bg-brand-600 dark:bg-brand-300', dot: 'bg-brand-600 dark:bg-brand-300', text: 'text-brand' },
+  NEW:         { bar: 'bg-line-strong dark:bg-white/15', dot: 'bg-ink-4', text: 'text-ink-2' },
+  INTERESTED:  { bar: 'bg-brand-700/45 dark:bg-brand-800', dot: 'bg-brand-700/70 dark:bg-brand-700', text: 'text-ink-2' },
+  NEGOTIATION: { bar: 'bg-brand-600 dark:bg-brand-600', dot: 'bg-brand-600', text: 'text-ink-2' },
+  CLOSED:      { bar: 'bg-brand-ink dark:bg-brand', dot: 'bg-brand-ink dark:bg-brand dark:shadow-[0_0_8px_rgb(216_252_52/0.8)]', text: 'text-brand' },
 };

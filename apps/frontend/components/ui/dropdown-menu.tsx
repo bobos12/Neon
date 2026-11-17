@@ -17,8 +17,7 @@ const DropdownMenuSub = DropdownMenuPrimitive.Sub
 const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup
 
 const MENU_CONTENT_BASE =
-  "min-w-[8rem] overflow-hidden rounded-md border border-gray-200 bg-white p-1 text-gray-900 shadow-md " +
-  "dark:border-white/10 dark:bg-raised dark:text-white " +
+  "min-w-[8rem] overflow-hidden rounded-xl bg-surface p-1 text-ink shadow-pop " +
   "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 " +
   "data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2"
 
@@ -31,9 +30,9 @@ const DropdownMenuSubTrigger = React.forwardRef<
   <DropdownMenuPrimitive.SubTrigger
     ref={ref}
     className={cn(
-      "flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none",
+      "flex cursor-pointer select-none items-center rounded-lg px-2.5 py-1.5 text-[13px] outline-none focus:bg-raised",
       "focus:bg-brand focus:text-brand-fg dark:focus:bg-brand dark:focus:text-brand-fg",
-      "data-[state=open]:bg-brand data-[state=open]:text-white dark:data-[state=open]:bg-brand dark:data-[state=open]:text-canvas",
+      "data-[state=open]:bg-raised",
       inset && "pl-8",
       className
     )}
@@ -73,8 +72,8 @@ const DropdownMenuContent = React.forwardRef<
 DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName
 
 const MENU_ITEM_BASE =
-  "relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors " +
-  "focus:bg-brand focus:text-brand-fg dark:focus:bg-brand dark:focus:text-brand-fg " +
+  "relative flex cursor-pointer select-none items-center rounded-lg px-2.5 py-1.5 text-[13px] outline-none transition-colors " +
+  "focus:bg-raised focus:text-ink " +
   "data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
 
 const DropdownMenuItem = React.forwardRef<

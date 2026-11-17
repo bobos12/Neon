@@ -1,3 +1,5 @@
+// Marketing pages carry their language in the URL and are always dark.
+var marketingLang = location.pathname === '/' ? 'ar' : location.pathname === '/en' ? 'en' : null;
 try {
   var t = localStorage.getItem('crm-theme');
   var sys = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -5,10 +7,10 @@ try {
   if (dark) document.documentElement.classList.add('dark');
   // Status bar matches the header surface (see --surface in globals.css).
   var tc = document.querySelector('meta[name="theme-color"]');
-  if (tc) tc.setAttribute('content', dark ? '#1D1F1F' : '#FFFFFF');
+  if (tc && !marketingLang) tc.setAttribute('content', dark ? '#070C09' : '#F3F4EE');
 } catch (e) {}
 try {
-  var lang = localStorage.getItem('crm-lang') || 'en';
+  var lang = marketingLang || localStorage.getItem('crm-lang') || 'en';
   document.documentElement.lang = lang;
   document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
   if (lang === 'ar') document.documentElement.classList.add('lang-ar');

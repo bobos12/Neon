@@ -94,18 +94,18 @@ export default function DashboardPage() {
   const strong = <b className="font-semibold text-ink" />;
   const brief = queue ? (
     queue.waiting > 0 ? (
-      <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-        <span className="relative flex h-2 w-2 shrink-0" aria-hidden="true">
+      // One flowing sentence: the pulse dot and the link travel with the words,
+      // so a narrow screen wraps the sentence rather than orphaning the dot.
+      <span className="block">
+        <span className="relative me-2 inline-flex h-2 w-2 align-middle" aria-hidden="true">
           <span className="absolute inset-0 animate-ping rounded-full bg-amber-500 opacity-50 [animation-duration:2s]" />
           <span className="relative h-2 w-2 rounded-full bg-amber-500" />
         </span>
-        <span>
-          <Trans t={t} i18nKey="today.brief.waiting" count={queue.waiting} values={{ count: queue.waiting }} components={{ b: strong }} />
-          {queue.oldest && <Trans t={t} i18nKey="today.brief.longest" values={{ time: formatAgo(queue.oldest) }} components={{ w: <b className="font-semibold text-amber-700 dark:text-amber-400" /> }} />}
-        </span>
-        <Link href="/conversations" className="inline-flex items-center gap-0.5 font-semibold text-brand hover:underline">
-          {t('today.brief.replyNow')}
-          <ChevronRight className="h-4 w-4 icon-mirror" aria-hidden="true" />
+        <Trans t={t} i18nKey="today.brief.waiting" count={queue.waiting} values={{ count: queue.waiting }} components={{ b: strong }} />
+        {queue.oldest && <Trans t={t} i18nKey="today.brief.longest" values={{ time: formatAgo(queue.oldest) }} components={{ w: <b className="font-semibold text-amber-700 dark:text-amber-400" /> }} />}
+        <Link href="/conversations" className="group ms-2 inline-flex items-center gap-0.5 whitespace-nowrap font-semibold text-brand">
+          <span className="underline-offset-4 group-hover:underline">{t('today.brief.replyNow')}</span>
+          <ChevronRight className="h-4 w-4 transition-transform duration-base ease-out group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5 icon-mirror" aria-hidden="true" />
         </Link>
       </span>
     ) : (
@@ -123,7 +123,7 @@ export default function DashboardPage() {
         <div className="w-full min-w-0 max-w-2xl sm:w-auto">
           {/* Phones: greeting and date share one line; larger screens stack the date above. */}
           <div className="flex items-baseline justify-between gap-3 sm:flex-col-reverse sm:items-start sm:gap-2">
-            <h1 className="min-w-0 truncate text-xl font-semibold leading-tight tracking-[-0.02em] text-ink sm:text-[32px] sm:tracking-[-0.025em]">
+            <h1 className="display min-w-0 truncate text-[22px] leading-tight sm:text-[36px] sm:tracking-[-0.03em]">
               {now && firstName ? t(greetingKey(now.getHours()), { name: firstName }) : t('title')}
             </h1>
             <p className="shrink-0 text-xs font-medium text-ink-3">

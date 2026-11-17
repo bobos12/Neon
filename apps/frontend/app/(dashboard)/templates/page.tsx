@@ -168,7 +168,7 @@ function TemplateCard({
         <button
           type="button"
           onClick={onSend}
-          className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-brand py-1.5 text-xs font-semibold text-brand-fg hover:bg-brand-strong transition-colors"
+          className="btn btn-secondary btn-sm flex-1"
         >
           <Send className="h-3 w-3" /> {t('send.action', { defaultValue: 'Send' })}
         </button>
@@ -176,7 +176,7 @@ function TemplateCard({
         <button
           type="button"
           onClick={onEdit}
-          className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-line bg-white dark:bg-raised px-3 py-1.5 text-xs font-medium text-ink-2 hover:border-brand/50 hover:bg-brand/5 transition-colors"
+          className="btn btn-ghost btn-sm"
         >
           <Pencil className="h-3 w-3" /> {t('common:actions.edit')}
         </button>
@@ -448,13 +448,14 @@ export default function TemplatesPage() {
       )}
 
       {/* Tabs */}
-      <div className="flex gap-1 rounded-xl border border-line bg-surface p-1 w-fit">
+      <div className="seg w-fit">
         {([['library', 'My Templates'], ['presets', 'Preset Library']] as [Tab, string][]).map(([tabKey, label]) => (
           <button
             type="button"
             key={tabKey}
             onClick={() => setTab(tabKey)}
-            className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === tabKey ? 'bg-brand text-white' : 'text-ink-3 hover:text-ink'}`}
+            data-active={tab === tabKey}
+            className="seg-item h-8 px-4 text-[13px]"
           >
             {label}
           </button>
@@ -486,7 +487,7 @@ export default function TemplatesPage() {
                     type="button"
                     key={cat}
                     onClick={() => setCategoryFilter(cat)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${categoryFilter === cat ? 'bg-brand text-white border-brand' : 'border-line text-ink-3 hover:border-brand/50'}`}
+                    className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${categoryFilter === cat ? 'border-transparent bg-ink text-canvas' : 'border-line text-ink-3 hover:border-line-strong hover:text-ink'}`}
                   >
                     {label}
                   </button>

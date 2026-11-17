@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { I18nextProvider } from 'react-i18next';
 import i18n, { type Language, LANGUAGE_STORAGE_KEY, getStoredLanguage, isRTL } from '@/lib/i18n';
 
@@ -30,7 +31,21 @@ export function useLanguage() {
   return useContext(I18nContext);
 }
 
+/**
+ * The marketing pages carry their language in the URL (/ is Arabic, /en is
+ * English) and don't use i18next, so they render on the server in full —
+ * crawlers and slow phones arriving from an ad get real HTML, not the empty
+ * shell the app shows while it reads the stored language.
+ */
+function marketingLanguage(pathname: string | null): Language | null {
+  if (pathname === '/') return 'ar';
+  if (pathname === '/en') return 'en';
+  return null;
+}
+
 export function I18nProvider({ children }: { children: React.ReactNode }) {
+  const pageLanguage = marketingLanguage(usePathname());
+
   // `language` is always 'en' for the server render AND the first client render.
   // The stored language (which may be Arabic) is only applied after mount, in an
   // effect. This guarantees the server-rendered HTML and the first client render
@@ -55,9 +70,17 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
+    if (pageLanguage) {
+      // Reflect the page's language on <html> without changing the app's
+      // stored preference; links on the page store it when they're followed.
+      document.documentElement.lang = pageLanguage;
+      document.documentElement.dir = isRTL(pageLanguage) ? 'rtl' : 'ltr';
+      document.documentElement.classList.toggle('lang-ar', pageLanguage === 'ar');
+      return;
+    }
     applyLanguage(getStoredLanguage());
     setMounted(true);
-  }, [applyLanguage]);
+  }, [applyLanguage, pageLanguage]);
 
   const setLanguage = useCallback((lang: Language) => {
     applyLanguage(lang);
@@ -68,7 +91,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   return (
     <I18nContext.Provider value={{ language, setLanguage, dir, isRTL: isRTL(language) }}>
       <I18nextProvider i18n={i18n}>
-        {mounted
+        {mounted || pageLanguage
           ? children
           : (
             // Language-neutral placeholder rendered on the server and on the

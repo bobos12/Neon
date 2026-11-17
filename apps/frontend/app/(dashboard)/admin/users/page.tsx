@@ -584,7 +584,7 @@ export default function AdminUsersPage() {
                     </td>
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-bold text-brand-fg">
                           {u.name.charAt(0).toUpperCase()}
                         </div>
                         <span className="text-sm font-medium text-ink">{u.name}</span>

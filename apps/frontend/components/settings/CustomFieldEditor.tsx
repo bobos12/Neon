@@ -16,7 +16,7 @@ import {
 } from '../../lib/custom-fields';
 
 const inputCls =
-  'block w-full rounded-xl border border-line bg-white dark:bg-raised px-3 py-2 text-sm ' +
+  'block w-full rounded-xl border border-line bg-surface px-3 py-2 text-sm ' +
   'text-ink placeholder:text-ink-4 outline-none transition ' +
   'focus:border-brand focus:ring-1 focus:ring-brand/30';
 

@@ -344,7 +344,7 @@ export default function SendTemplateDialog({
                           </svg>
                         )}
                       </span>
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-[10px] font-semibold text-white">
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-[10px] font-semibold text-brand-fg">
                         {name.slice(0, 2).toUpperCase()}
                       </span>
                       <span className="min-w-0 flex-1">

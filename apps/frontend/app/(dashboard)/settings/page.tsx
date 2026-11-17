@@ -136,7 +136,7 @@ export default function SettingsPage() {
       <div className="space-y-5">
         {/* Profile card */}
         <div className="rounded-xl border border-gray-200 bg-gray-50 p-5 flex items-center gap-4 dark:border-white/10 dark:bg-raised">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand text-lg font-bold text-white shadow-[0_4px_12px_rgba(37,211,102,0.3)]">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand text-lg font-bold text-brand-fg shadow-[0_0_0_4px_rgb(var(--brand)/0.18),0_8px_20px_-8px_rgb(var(--brand)/0.7)]">
             {initials(name, email)}
           </div>
           <div className="min-w-0 flex-1">

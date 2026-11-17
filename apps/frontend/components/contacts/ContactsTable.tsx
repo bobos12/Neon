@@ -159,7 +159,7 @@ function RowMenu({ contact, onOpenDetails, onEdit, onConfirmDelete }: {
       {open && typeof document !== 'undefined' && createPortal(
         sheet ? (
           <div className="fixed inset-0 z-[70]" role="presentation">
-            <div className="absolute inset-0 bg-[rgb(8_12_10/0.35)] animate-fade-in" onClick={() => setOpen(false)} aria-hidden="true" />
+            <div className="absolute inset-0 bg-[rgb(var(--scrim)/0.35)] animate-fade-in" onClick={() => setOpen(false)} aria-hidden="true" />
             <div
               ref={menuRef}
               role="menu"

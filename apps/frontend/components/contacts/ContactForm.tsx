@@ -107,7 +107,7 @@ export default function ContactForm({ contact, onSave, onCancel }: ContactFormPr
   };
 
   const inputCls =
-    'mt-1 block w-full rounded-xl border border-line bg-white dark:bg-raised py-2 px-3 text-sm text-ink shadow-sm outline-none transition focus:border-brand focus:ring-1 focus:ring-brand/30';
+    'mt-1 block w-full rounded-xl border border-line bg-surface py-2 px-3 text-sm text-ink shadow-sm outline-none transition focus:border-brand focus:ring-1 focus:ring-brand/30';
   const labelCls = 'block text-sm font-medium text-ink-2';
 
   return (

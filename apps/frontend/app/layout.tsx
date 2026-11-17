@@ -4,12 +4,13 @@ import { AuthProvider } from '@/components/providers/SessionProvider'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import { I18nProvider } from '@/components/providers/I18nProvider'
 import SplashController from '@/components/pwa/SplashController'
+import { fontLatin, fontArabic } from './fonts'
 import './globals.css'
 
 export const metadata: Metadata = {
   title: {
-    default: 'Nexus CRM — WhatsApp Business Platform',
-    template: '%s | Nexus CRM',
+    default: 'NEON — WhatsApp Business Platform',
+    template: '%s | NEON',
   },
   description:
     'Turn WhatsApp conversations into revenue. The AI-powered WhatsApp CRM for businesses across the Gulf — shared inbox, automation, broadcast campaigns, and analytics. Full Arabic & English support. حوّل محادثات واتساب إلى مبيعات حقيقية.',
@@ -17,10 +18,10 @@ export const metadata: Metadata = {
     'WhatsApp CRM', 'WhatsApp CRM Saudi Arabia', 'WhatsApp CRM UAE', 'WhatsApp CRM Gulf', 'نظام واتساب', 'CRM واتساب',
     'WhatsApp automation', 'business messaging', 'WhatsApp campaigns', 'AI WhatsApp assistant',
   ],
-  authors: [{ name: 'Nexus CRM' }],
+  authors: [{ name: 'NEON' }],
   metadataBase: new URL(process.env.NEXTAUTH_URL || 'http://localhost:3000'),
   openGraph: {
-    title: 'Nexus CRM — WhatsApp CRM for the Gulf',
+    title: 'NEON — WhatsApp CRM for the Gulf',
     description: 'Turn WhatsApp conversations into revenue. AI-powered, bilingual (Arabic & English) WhatsApp CRM for businesses across the Gulf.',
     type: 'website',
     locale: 'en_US',
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Nexus CRM — WhatsApp Business Platform',
+    title: 'NEON — WhatsApp Business Platform',
     description: 'Professional WhatsApp CRM for modern businesses',
   },
   appleWebApp: {
@@ -36,7 +37,7 @@ export const metadata: Metadata = {
     // Solid bar: iOS reserves its own space and gives the app the full height.
     // black-translucent drew content under the clock and cut off the bottom.
     statusBarStyle: 'default',
-    title: 'Nexus CRM',
+    title: 'NEON',
   },
   formatDetection: { telephone: false },
   icons: {
@@ -51,16 +52,16 @@ export const metadata: Metadata = {
     'mobile-web-app-capable': 'yes',
     'apple-mobile-web-app-capable': 'yes',
     'apple-mobile-web-app-status-bar-style': 'default',
-    'apple-mobile-web-app-title': 'Nexus CRM',
-    'application-name': 'Nexus CRM',
-    'msapplication-TileColor': '#25D366',
+    'apple-mobile-web-app-title': 'NEON',
+    'application-name': 'NEON',
+    'msapplication-TileColor': '#0B1A10',
   },
 }
 
 export const viewport: Viewport = {
   // Status bar blends into the header (bg-surface). Single value so JS can
   // retint it when the in-app theme toggle changes (bootstrap.js, ThemeProvider).
-  themeColor: '#FFFFFF',
+  themeColor: '#F3F4EE',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
@@ -73,7 +74,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" dir="ltr" data-scroll-behavior="smooth" suppressHydrationWarning>
+    <html lang="en" dir="ltr" data-scroll-behavior="smooth" className={`${fontLatin.variable} ${fontArabic.variable}`} suppressHydrationWarning>
       <head />
       <body className="antialiased" suppressHydrationWarning>
         {/* Runs before React hydrates — prevents theme/RTL/PWA flash */}
@@ -86,8 +87,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <div id="app-splash" aria-hidden="true">
           <div className="app-splash__center">
             <span className="app-splash__halo" />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/icons/logo-tight.png" alt="" className="app-splash__logo" />
+            {/* The mark drawn inline in lime: crisp at any density, no request. */}
+            <svg viewBox="15 0 70 100" className="app-splash__logo" aria-hidden="true" fill="#D8FC34">
+              <path d="M55.2 2.2V26.8L24.6 57.4H44.8V73.6H40.8A23.6 23.6 0 0 1 24.11 33.31Z" />
+              <path d="M55.2 2.2V26.8L24.6 57.4H44.8V73.6H40.8A23.6 23.6 0 0 1 24.11 33.31Z" transform="rotate(180 50 50)" />
+            </svg>
           </div>
         </div>
         <SplashController />

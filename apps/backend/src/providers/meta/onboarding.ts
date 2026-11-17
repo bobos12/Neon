@@ -25,6 +25,10 @@ const WEBHOOK_FIELDS = [
   'phone_number_quality_update',
   'phone_number_name_update',
   'account_update',
+  // WhatsApp Business app coexistence: phone-app replies, past chats, contacts.
+  'smb_message_echoes',
+  'history',
+  'smb_app_state_sync',
 ];
 
 export function webhookCallbackUrl(): string | null {
@@ -50,6 +54,42 @@ async function appGraph<T = any>(
     throw err;
   }
   return body as T;
+}
+
+// ── Embedded Signup ──────────────────────────────────────────────────────────
+//
+// The SaaS path: the platform owns one Meta app, the customer clicks "Connect
+// WhatsApp", logs into Facebook in Meta's own popup and picks (or creates) their
+// business, account and number there. We get back a one-time code, never a
+// token the customer had to find, and the platform app's secret signs every
+// webhook — so the customer pastes nothing.
+
+export interface EmbeddedSignupConfig {
+  appId: string;
+  appSecret: string;
+  configId: string;
+}
+
+/** Null until the platform's Meta app is set up; the UI then offers only the manual flow. */
+export function embeddedSignupConfig(): EmbeddedSignupConfig | null {
+  const appId = process.env.META_APP_ID?.trim();
+  const appSecret = process.env.META_APP_SECRET?.trim();
+  const configId = process.env.META_EMBEDDED_SIGNUP_CONFIG_ID?.trim();
+  return appId && appSecret && configId ? { appId, appSecret, configId } : null;
+}
+
+/** Trade the popup's one-time code for the business's long-lived token. */
+export async function exchangeSignupCode(cfg: EmbeddedSignupConfig, code: string): Promise<string> {
+  const url = new URL(`${GRAPH_BASE}/oauth/access_token`);
+  url.searchParams.set('client_id', cfg.appId);
+  url.searchParams.set('client_secret', cfg.appSecret);
+  url.searchParams.set('code', code);
+  const res = await fetch(url);
+  const body: any = await res.json().catch(() => ({}));
+  if (!res.ok || !body?.access_token) {
+    throw new Error(body?.error?.error_user_msg || body?.error?.message || `Code exchange failed (${res.status})`);
+  }
+  return String(body.access_token);
 }
 
 // ── Token ────────────────────────────────────────────────────────────────────
@@ -263,6 +303,8 @@ export interface WebhookState {
   fields: string[];
   /** Points at this server and delivers messages. */
   matches: boolean;
+  /** Subscribed fields this server wants but the app does not deliver yet. */
+  missingFields: string[];
 }
 
 export async function getWebhookState(appId: string, appSecret: string): Promise<WebhookState> {
@@ -275,6 +317,7 @@ export async function getWebhookState(appId: string, appSecret: string): Promise
     active: Boolean(sub?.active),
     fields,
     matches: Boolean(sub && expected && sub.callback_url === expected && sub.active && fields.includes('messages')),
+    missingFields: WEBHOOK_FIELDS.filter((f) => !fields.includes(f)),
   };
 }
 

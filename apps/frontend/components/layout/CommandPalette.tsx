@@ -174,7 +174,7 @@ export default function CommandPalette() {
       {open && (
         <div className="fixed inset-0 z-[10000] flex items-start justify-center px-3 pt-[12vh] sm:pt-[14vh]" onKeyDown={onKeyDown}>
           <motion.div
-            className="absolute inset-0 bg-[rgb(8_12_10/0.45)]"
+            className="absolute inset-0 bg-[rgb(var(--scrim)/0.4)] backdrop-blur-[6px]"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             transition={{ duration: 0.16 }}
             onClick={() => setOpen(false)}
@@ -183,7 +183,7 @@ export default function CommandPalette() {
             role="dialog"
             aria-modal="true"
             aria-label={t('palette.placeholder')}
-            className="relative flex max-h-[min(560px,72vh)] w-full max-w-[600px] flex-col overflow-hidden rounded-2xl bg-surface shadow-pop"
+            className="relative flex max-h-[min(560px,72vh)] w-full max-w-[600px] flex-col overflow-hidden rounded-3xl bg-surface shadow-pop"
             initial={{ opacity: 0, y: -8, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.98, transition: { duration: 0.12 } }}

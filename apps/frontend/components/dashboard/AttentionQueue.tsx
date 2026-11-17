@@ -95,13 +95,13 @@ export default function AttentionQueue({ onSummary }: { onSummary?: (s: { waitin
         <EmptyState icon={CheckCheck} title={t('today.queue.emptyTitle')} description={t('today.queue.emptySub')} />
       ) : (
         <ul className="stagger divide-y divide-line">
-          {list.map((r) => {
+          {list.map((r, i) => {
             const name = r.contact?.name || formatPhone(r.contact?.phone || '');
             const unread = (r.unreadCount ?? 0) > 0;
             const href = `/conversations?conversationId=${encodeURIComponent(r.id)}`;
             return (
               <li key={r.id}>
-                <Link href={href} className="group flex items-center gap-3.5 px-5 py-3.5 transition-colors duration-fast hover:bg-raised/70">
+                <Link href={href} className="group flex items-center gap-3.5 px-5 py-3.5 transition-colors duration-fast hover:bg-surface/70">
                   <div className="relative">
                     <Avatar src={r.contact?.customFields?.avatarUrl} name={name} contactId={r.contact?.id} size={40} />
                     {unread && <span className="absolute -end-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-amber-500 ring-2 ring-surface" aria-hidden="true" />}
@@ -126,7 +126,9 @@ export default function AttentionQueue({ onSummary }: { onSummary?: (s: { waitin
                   </span>
                   <span className={cn(
                     'btn btn-sm shrink-0',
-                    unread ? 'btn-primary' : 'btn-secondary opacity-0 transition-opacity group-hover:opacity-100 max-sm:hidden',
+                    // One lit key: the customer who has waited longest. The rest
+                    // stay quiet so the neon still means "this one, next".
+                    unread && i === 0 ? 'btn-primary' : unread ? 'btn-secondary' : 'btn-secondary opacity-0 transition-opacity group-hover:opacity-100 max-sm:hidden',
                   )}>
                     <CornerUpLeft aria-hidden="true" className="icon-mirror" />
                     <span className="hidden sm:inline">{t('today.queue.reply')}</span>

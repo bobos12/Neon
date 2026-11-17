@@ -1,36 +1,24 @@
-# Project name is PINNED, and must not be changed.
-#
-# Compose derives its project name from the containing directory, and that name
-# prefixes every volume. So renaming the folder silently repoints the stack at a
-# brand-new empty volume: the containers start, Postgres reports healthy, and the
-# app connects to a database with zero tables. Every query then fails while
-# nothing looks broken at the Docker level.
-#
-# That is exactly what happened when this folder became "meta crm" — the data
-# (contacts, conversations, messages) stayed behind in the volume created under
-# the previous folder name, which is why this value looks unrelated to the
-# current directory. Pinning it here makes the stack immune to future renames.
-#
-# To move to a differently-named volume you must copy the data across first;
-# changing this line on its own loses access to it.
-name: whatsappsystembaileyes
+# Project name is PINNED so Neon's containers and volumes never collide with any
+# other local stack (Compose otherwise derives it from the folder name, and a
+# rename would silently point at a new, empty volume).
+name: neon
 
 services:
   postgres:
     image: postgres:15
     environment:
-      POSTGRES_DB: whatsapp_system
+      POSTGRES_DB: neon
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
     ports:
-      - "5433:5432"
+      - "5435:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     # Lets `docker-compose up -d --wait` block until Postgres actually accepts
     # connections. Without it the backend can start first and fail its initial
     # queries against a container that is running but not yet ready.
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d whatsapp_system"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d neon"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -38,7 +26,7 @@ services:
   redis:
     image: redis:7-alpine
     ports:
-      - "6380:6379"
+      - "6381:6379"
     volumes:
       - redis_data:/data
     healthcheck:

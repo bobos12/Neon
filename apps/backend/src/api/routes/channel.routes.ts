@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import { Router } from 'express';
 import { z } from 'zod';
 import { authMiddleware, checkPermission, type AuthRequest } from '../../auth/auth.middleware';
@@ -6,6 +7,8 @@ import { asMetaError } from '../../providers/meta/graph';
 import {
   configureWebhook,
   discoverNumbers,
+  embeddedSignupConfig,
+  exchangeSignupCode,
   getWebhookState,
   inspectToken,
   numberHealth,
@@ -21,6 +24,7 @@ import { validateBody } from '../validate';
 import { getTenantId } from '../../lib/tenant-context';
 import { isCredentialEncryptionConfigured } from '../../lib/crypto';
 import { HttpError } from '../../auth/authorize';
+import { requestAppDataSync } from '../../providers/meta/coexistence';
 import { logger } from '../../lib/logger';
 import {
   disconnectCloud,
@@ -228,6 +232,79 @@ const connectSchema = z.object({
 
 type StepResult = { id: string; status: 'ok' | 'warn' | 'fail'; code: string; detail?: string };
 
+/**
+ * Everything after the credentials are saved: verify, subscribe the app to the
+ * account, point the webhook here, and prove sending works. Shared by the manual
+ * and Embedded Signup flows so both report the same rows.
+ */
+async function runConnectSteps({
+  accessToken,
+  appId,
+  appSecret,
+  number,
+}: {
+  accessToken: string;
+  appId: string;
+  appSecret: string;
+  number: Awaited<ReturnType<typeof numberHealth>>;
+}) {
+  const steps: StepResult[] = [];
+  try {
+    await providerByName('meta').connect();
+    steps.push({ id: 'verify', status: 'ok', code: 'VERIFIED', detail: number.displayPhoneNumber });
+  } catch (err) {
+    steps.push({ id: 'verify', status: 'fail', code: 'VERIFY_FAILED', detail: err instanceof Error ? err.message : String(err) });
+  }
+
+  if (number.wabaId) {
+    try {
+      await subscribeApp(accessToken, number.wabaId);
+      steps.push({ id: 'subscribe', status: 'ok', code: 'SUBSCRIBED' });
+    } catch (err) {
+      steps.push({ id: 'subscribe', status: 'fail', code: 'SUBSCRIBE_FAILED', detail: asMetaError(err).userMessage });
+    }
+  }
+
+  let manualWebhook: { callbackUrl: string | null; verifyToken: string | null } | null = null;
+  try {
+    const state = await getWebhookState(appId, appSecret);
+    if (!state.matches || state.missingFields.length) await configureWebhook(appId, appSecret);
+    steps.push({ id: 'webhook', status: 'ok', code: 'WEBHOOK_OK' });
+  } catch (err) {
+    // Usually PUBLIC_API_URL is not reachable from the internet (local dev).
+    // Hand the manager the two values to paste instead of a dead end.
+    manualWebhook = {
+      callbackUrl: webhookCallbackUrl(),
+      verifyToken: process.env.META_WEBHOOK_VERIFY_TOKEN ?? null,
+    };
+    steps.push({ id: 'webhook', status: 'fail', code: 'WEBHOOK_AUTO_FAILED', detail: err instanceof Error ? err.message : String(err) });
+  }
+
+  const probe = await probeSendPermission(accessToken, number.phoneNumberId);
+  steps.push(
+    probe === 'ok' ? { id: 'sending', status: 'ok', code: 'SENDING_OK' }
+    : probe === 'not_registered' ? { id: 'sending', status: 'fail', code: 'NOT_REGISTERED_HERE' }
+    : probe === 'token' ? { id: 'sending', status: 'fail', code: 'TOKEN_INVALID' }
+    : { id: 'sending', status: 'warn', code: 'SENDING_UNKNOWN' },
+  );
+  if (number.issues[0]) {
+    steps.push({ id: 'account', status: number.canSend === false ? 'fail' : 'warn', code: number.issues[0].code, detail: number.issues[0].message });
+  }
+
+  // Approved templates already in Meta become usable immediately. Not awaited:
+  // a large catalogue must not hold the setup screen.
+  void (async () => {
+    try {
+      const channel = await getChannel();
+      if (channel.cloud) await syncTemplates(channel.cloud);
+    } catch (err) {
+      logger.warn('channel.initial_template_sync_failed', { error: err instanceof Error ? err.message : String(err) });
+    }
+  })();
+
+  return { steps, manualWebhook };
+}
+
 router.post('/connect', checkPermission('update', 'whatsapp'), validateBody(connectSchema), async (req, res) => {
   try {
     requireTenant();
@@ -266,61 +343,98 @@ router.post('/connect', checkPermission('update', 'whatsapp'), validateBody(conn
     });
     invalidateHealth();
 
-    const steps: StepResult[] = [];
-    try {
-      await providerByName('meta').connect();
-      steps.push({ id: 'verify', status: 'ok', code: 'VERIFIED', detail: number.displayPhoneNumber });
-    } catch (err) {
-      steps.push({ id: 'verify', status: 'fail', code: 'VERIFY_FAILED', detail: err instanceof Error ? err.message : String(err) });
-    }
-
-    if (number.wabaId) {
-      try {
-        await subscribeApp(accessToken, number.wabaId);
-        steps.push({ id: 'subscribe', status: 'ok', code: 'SUBSCRIBED' });
-      } catch (err) {
-        steps.push({ id: 'subscribe', status: 'fail', code: 'SUBSCRIBE_FAILED', detail: asMetaError(err).userMessage });
-      }
-    }
-
-    let manualWebhook: { callbackUrl: string | null; verifyToken: string | null } | null = null;
-    try {
-      const state = await getWebhookState(token.appId!, appSecret);
-      if (!state.matches) await configureWebhook(token.appId!, appSecret);
-      steps.push({ id: 'webhook', status: 'ok', code: 'WEBHOOK_OK' });
-    } catch (err) {
-      // Usually PUBLIC_API_URL is not reachable from the internet (local dev).
-      // Hand the manager the two values to paste instead of a dead end.
-      manualWebhook = {
-        callbackUrl: webhookCallbackUrl(),
-        verifyToken: process.env.META_WEBHOOK_VERIFY_TOKEN ?? null,
-      };
-      steps.push({ id: 'webhook', status: 'fail', code: 'WEBHOOK_AUTO_FAILED', detail: err instanceof Error ? err.message : String(err) });
-    }
-
-    const probe = await probeSendPermission(accessToken, number.phoneNumberId);
-    steps.push(
-      probe === 'ok' ? { id: 'sending', status: 'ok', code: 'SENDING_OK' }
-      : probe === 'not_registered' ? { id: 'sending', status: 'fail', code: 'NOT_REGISTERED_HERE' }
-      : probe === 'token' ? { id: 'sending', status: 'fail', code: 'TOKEN_INVALID' }
-      : { id: 'sending', status: 'warn', code: 'SENDING_UNKNOWN' },
-    );
-    if (number.issues[0]) {
-      steps.push({ id: 'account', status: number.canSend === false ? 'fail' : 'warn', code: number.issues[0].code, detail: number.issues[0].message });
-    }
-
-    // Approved templates already in Meta become usable immediately. Not awaited:
-    // a large catalogue must not hold the setup screen.
-    void (async () => {
-      try {
-        const channel = await getChannel();
-        if (channel.cloud) await syncTemplates(channel.cloud);
-      } catch (err) {
-        logger.warn('channel.initial_template_sync_failed', { error: err instanceof Error ? err.message : String(err) });
-      }
-    })();
-
+    const { steps, manualWebhook } = await runConnectSteps({ accessToken, appId: token.appId!, appSecret, number });
     res.json({ steps, manualWebhook, channel: await channelView() });
+  } catch (err) {
+    handle(res, err);
+  }
+});
+
+// ── Embedded Signup ──────────────────────────────────────────────────────────
+
+/** What the browser needs to open Meta's signup popup. Ids only — both are public by design. */
+router.get('/signup-config', checkPermission('read', 'whatsapp'), (_req, res) => {
+  const cfg = embeddedSignupConfig();
+  res.json(
+    cfg
+      ? { enabled: true, appId: cfg.appId, configId: cfg.configId, graphVersion: process.env.META_GRAPH_VERSION || 'v21.0' }
+      : { enabled: false },
+  );
+});
+
+const embeddedSchema = z.object({
+  code: z.string().trim().min(1),
+  // Sent by Meta's popup when the browser received its session message; we can
+  // find both from the token when it didn't.
+  wabaId: z.string().trim().regex(/^\d+$/).optional().nullable(),
+  phoneNumberId: z.string().trim().regex(/^\d+$/).optional().nullable(),
+  /** The number stays in the WhatsApp Business app on the phone (coexistence). */
+  coexistence: z.boolean().optional(),
+});
+
+router.post('/embedded-signup', checkPermission('update', 'whatsapp'), validateBody(embeddedSchema), async (req, res) => {
+  try {
+    requireTenant();
+    const cfg = embeddedSignupConfig();
+    if (!cfg) throw new HttpError(503, 'One-click signup is not set up on this server.', 'EMBEDDED_SIGNUP_DISABLED');
+    if (!isCredentialEncryptionConfigured()) {
+      throw new HttpError(503, 'This server cannot store credentials securely yet.', 'ENCRYPTION_NOT_CONFIGURED');
+    }
+
+    const accessToken = await exchangeSignupCode(cfg, req.body.code).catch((err) => {
+      logger.warn('channel.signup_code_exchange_failed', { error: err instanceof Error ? err.message : String(err) });
+      throw new HttpError(400, 'Meta did not accept the signup. Please try again.', 'SIGNUP_CODE_INVALID');
+    });
+
+    let phoneNumberId: string | null = req.body.phoneNumberId ?? null;
+    if (!phoneNumberId) {
+      const token = await inspectToken(accessToken).catch(() => null);
+      const wabaIds = [...new Set([...(req.body.wabaId ? [req.body.wabaId] : []), ...(token?.wabaIds ?? [])])];
+      const found = wabaIds.length ? await discoverNumbers(accessToken, { wabaIds }) : [];
+      phoneNumberId = found[0]?.phoneNumberId ?? null;
+    }
+    if (!phoneNumberId) {
+      throw new HttpError(400, 'No WhatsApp number was added during signup.', 'SIGNUP_NO_NUMBER');
+    }
+
+    // A number added through signup has to be registered for the Cloud API
+    // before it can send. The PIN becomes its two-step verification PIN; a
+    // number that already has one refuses, and the "move your number" card
+    // that follows asks for it instead.
+    // A Business-app number (coexistence) is already registered by the phone
+    // app; registering it again would pull it off the phone, so it is skipped.
+    const coexistence = req.body.coexistence === true;
+    if (!coexistence) {
+      const pin = String(crypto.randomInt(0, 1_000_000)).padStart(6, '0');
+      await registerNumber(accessToken, phoneNumberId, pin).catch((err) => {
+        logger.info('channel.signup_register_skipped', { phoneNumberId, error: asMetaError(err).message });
+      });
+    }
+
+    const number = await numberHealth(accessToken, phoneNumberId).catch((err) => {
+      throw new HttpError(400, asMetaError(err).userMessage, 'NUMBER_UNREACHABLE');
+    });
+
+    await saveCloudCredentials({
+      phoneNumberId: number.phoneNumberId,
+      wabaId: number.wabaId ?? req.body.wabaId ?? null,
+      businessId: number.businessId,
+      appId: cfg.appId,
+      accessToken,
+      clearAppSecret: true,
+    });
+    invalidateHealth();
+
+    const { steps, manualWebhook } = await runConnectSteps({
+      accessToken,
+      appId: cfg.appId,
+      appSecret: cfg.appSecret,
+      number: { ...number, wabaId: number.wabaId ?? req.body.wabaId ?? null },
+    });
+    // After the webhook is wired, so the contacts and history Meta sends back
+    // have somewhere to land. Not awaited: the import arrives by webhook anyway.
+    if (coexistence) void requestAppDataSync(accessToken, number.phoneNumberId);
+    res.json({ steps, manualWebhook, number: number.displayPhoneNumber, channel: await channelView() });
   } catch (err) {
     handle(res, err);
   }

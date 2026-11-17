@@ -8,7 +8,7 @@ import { normalizePhone, phoneFingerprint } from '../lib/phone';
 // transaction client, so a single client type keeps the payload types clean.
 type DbClient = GuardedPrisma;
 
-async function resolveDefaultTeamId(db: DbClient) {
+export async function resolveDefaultTeamId(db: DbClient) {
   const explicitTeamId = process.env.WHATSAPP_TEAM_ID?.trim();
   if (explicitTeamId) return explicitTeamId;
 
@@ -87,7 +87,7 @@ async function mergeDuplicateConversations(db: DbClient, primaryId: string, dupl
   await db.conversation.deleteMany({ where: { id: { in: duplicateIds } } });
 }
 
-async function findMatchingContact(db: DbClient, phone: string, teamId?: string | null) {
+export async function findMatchingContact(db: DbClient, phone: string, teamId?: string | null) {
   const variants = buildPhoneVariants(phone);
   const contacts = await db.contact.findMany({
     where: {

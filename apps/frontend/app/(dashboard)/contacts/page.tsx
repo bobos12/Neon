@@ -73,7 +73,7 @@ function FilterToggle({
         'inline-flex h-9 items-center gap-1.5 rounded-xl border px-3 text-sm font-medium transition-colors',
         active
           ? 'border-brand/40 bg-brand/10 text-brand'
-          : 'border-line bg-white dark:bg-raised text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/10',
+          : 'border-line bg-surface text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/10',
       )}
     >
       {active ? <Check className="h-3.5 w-3.5" /> : icon}

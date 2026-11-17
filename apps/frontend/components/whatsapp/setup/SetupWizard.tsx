@@ -1,8 +1,10 @@
 'use client';
 
 /**
- * Connect a WhatsApp number in three steps: paste two values from Meta, pick a
- * number from the ones Meta lists, and watch the CRM wire everything up.
+ * Connect a WhatsApp number. When the platform has its own Meta app this is one
+ * button: Meta's popup does the login, business and number, and the CRM wires
+ * the rest. Otherwise (or for people bringing their own Meta app) it falls back
+ * to three steps: paste two values from Meta, pick a number, watch it connect.
  *
  * The old flow asked for five values from four Meta screens and a webhook set
  * up by hand, and most failures surfaced days later as a send that silently
@@ -14,13 +16,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { ArrowLeft, ArrowRight, ChevronDown, ExternalLink, Eye, EyeOff, Loader2, PartyPopper, Phone } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ChevronDown, ExternalLink, Eye, EyeOff, Loader2, MessageCircle, PartyPopper, Phone, Smartphone } from 'lucide-react';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { META_LINKS, Notice, StatusIcon, TOKEN_PERMISSIONS, errorText, type RowStatus } from './shared';
 import { ManualWebhookCard, PaymentCard, RegisterNumberCard } from './FixCards';
+import { SignupCancelled, useEmbeddedSignup } from './useEmbeddedSignup';
 
-type Step = 'credentials' | 'number' | 'finish';
+type Step = 'quick' | 'credentials' | 'number' | 'finish';
+/** The manual flow's stepper; the one-click flow has no steps to show. */
 const STEPS: Step[] = ['credentials', 'number', 'finish'];
 
 interface DiscoveredNumber {
@@ -55,10 +59,22 @@ export interface SetupWizardProps {
 }
 
 export default function SetupWizard({ hasStoredCredentials, onConnecting, onFinish, onCancel }: SetupWizardProps) {
-  const { t } = useTranslation('whatsapp');
+  const { t, i18n } = useTranslation('whatsapp');
   const reduceMotion = useReducedMotion();
+  const signup = useEmbeddedSignup(i18n.language);
 
-  const [step, setStep] = useState<Step>('credentials');
+  // Null until we know whether one-click signup is available, so neither
+  // screen flashes up only to be swapped for the other.
+  const [step, setStep] = useState<Step | null>(null);
+  const [quick, setQuick] = useState(false);
+  useEffect(() => {
+    if (signup.config === undefined || step !== null) return;
+    setQuick(signup.config.enabled);
+    setStep(signup.config.enabled ? 'quick' : 'credentials');
+  }, [signup.config, step]);
+  const [quickError, setQuickError] = useState<{ text: string; cancelled: boolean } | null>(null);
+  const [launching, setLaunching] = useState(false);
+  const [quickNumber, setQuickNumber] = useState<string | null>(null);
 
   // ── Step 1 ──
   const [token, setToken] = useState('');
@@ -153,6 +169,44 @@ export default function SetupWizard({ hasStoredCredentials, onConnecting, onFini
     }
   };
 
+  const startQuick = (coexistence = false) => {
+    if (!signup.ready || launching) return;
+    setLaunching(true);
+    setQuickError(null);
+    // FB.login has to run inside this click, before any await, or the popup is blocked.
+    signup
+      .launch({ coexistence })
+      .then(async (result) => {
+        onConnecting?.();
+        setStep('finish');
+        setConnecting(true);
+        setResults(null);
+        setRevealed(0);
+        setConnectError(null);
+        setManualWebhook(null);
+        try {
+          const res = await api.post('/api/channel/embedded-signup', result);
+          setQuickNumber(res.number ?? null);
+          const ordered = [...(res.steps as ConnectStep[])].sort((a, b) => ROW_ORDER.indexOf(a.id) - ROW_ORDER.indexOf(b.id));
+          setResults(ordered);
+          setManualWebhook(res.manualWebhook ?? null);
+        } catch (err) {
+          setConnectError(errorText(t, err));
+        } finally {
+          setConnecting(false);
+        }
+      })
+      .catch((err) => {
+        const cancelled = err instanceof SignupCancelled;
+        setQuickError({ text: cancelled ? t('setup.quick.cancelled') : errorText(t, err), cancelled });
+      })
+      .finally(() => setLaunching(false));
+  };
+
+  // Codes from Meta's popup are single-use, so a retry means opening it again.
+  const retry = quick ? () => setStep('quick') : connect;
+  const back = () => setStep(quick ? 'quick' : 'credentials');
+
   // Results arrive at once; revealing them row by row lets the eye follow what
   // was checked instead of being handed a finished list.
   useEffect(() => {
@@ -170,7 +224,8 @@ export default function SetupWizard({ hasStoredCredentials, onConnecting, onFini
   // campaigns stop. Softer warnings stay visible on their row only.
   const openIssues = results?.filter((r) => r.status === 'fail' || r.code === 'PAYMENT_METHOD') ?? [];
 
-  const stepIndex = STEPS.indexOf(step);
+  const stepIndex = step ? STEPS.indexOf(step) : 0;
+  const number = (quick ? quickNumber : chosen?.displayPhoneNumber) ?? '';
   const finished = allRevealed && !failedVerify && !connectError;
   const slide = reduceMotion
     ? {}
@@ -178,9 +233,68 @@ export default function SetupWizard({ hasStoredCredentials, onConnecting, onFini
 
   return (
     <div className="flex flex-col">
-      <Stepper current={finished ? STEPS.length : stepIndex} labels={STEPS.map((s) => t(`setup.steps.${s}`))} stepOf={t('setup.stepOf', { n: Math.min(stepIndex + 1, STEPS.length) })} />
+      {step === null && (
+        <div className="grid min-h-[240px] place-items-center" aria-busy="true">
+          <Loader2 className="h-5 w-5 animate-spin text-ink-4" aria-label={t('setup.quick.loading')} />
+        </div>
+      )}
+      {step !== null && !quick && (
+        <Stepper current={finished ? STEPS.length : stepIndex} labels={STEPS.map((s) => t(`setup.steps.${s}`))} stepOf={t('setup.stepOf', { n: Math.min(stepIndex + 1, STEPS.length) })} />
+      )}
 
       <AnimatePresence mode="wait" initial={false}>
+        {/* ── One click · Meta Embedded Signup ────────────────────────────── */}
+        {step === 'quick' && (
+          <motion.div key="quick" {...slide} className="flex flex-col gap-5">
+            <header>
+              <h2 className="text-lg font-semibold tracking-[-0.01em] text-ink">{t('setup.quick.title')}</h2>
+              <p className="mt-1 text-[13px] leading-5 text-ink-3">{t('setup.quick.body')}</p>
+            </header>
+
+            <ol className="stagger flex flex-col gap-3">
+              {(t('setup.quick.steps', { returnObjects: true }) as string[]).map((text, i) => (
+                <li key={i} className="flex items-start gap-3">
+                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand/10 text-xs font-semibold text-brand">{i + 1}</span>
+                  <p className="pt-0.5 text-[13px] leading-5 text-ink-2">{text}</p>
+                </li>
+              ))}
+            </ol>
+
+            {quickError && <Notice tone={quickError.cancelled ? 'info' : 'error'}>{quickError.text}</Notice>}
+            {signup.sdkFailed && <Notice tone="error">{t('setup.quick.sdkFailed')}</Notice>}
+
+            <button
+              type="button"
+              onClick={() => startQuick()}
+              disabled={!signup.ready || launching}
+              className="btn btn-primary btn-lg w-full"
+            >
+              {launching || !signup.ready ? <Loader2 className="animate-spin" aria-hidden="true" /> : <MessageCircle aria-hidden="true" />}
+              {launching ? t('setup.quick.waiting') : t('setup.quick.cta')}
+            </button>
+            <button
+              type="button"
+              onClick={() => startQuick(true)}
+              disabled={!signup.ready || launching}
+              className="btn btn-secondary w-full"
+            >
+              <Smartphone aria-hidden="true" />
+              {t('setup.quick.ctaBusinessApp')}
+            </button>
+
+            <p className="text-xs leading-5 text-ink-3">{t('setup.quick.note')}</p>
+
+            <div className="flex flex-col-reverse items-stretch gap-2 border-t border-line pt-4 sm:flex-row sm:items-center sm:justify-between">
+              {onCancel ? (
+                <button type="button" onClick={onCancel} className="btn btn-ghost">{t('panel.cancel')}</button>
+              ) : <span />}
+              <button type="button" onClick={() => { setQuick(false); setStep('credentials'); }} className="btn btn-ghost text-ink-3">
+                {t('setup.quick.manual')}
+              </button>
+            </div>
+          </motion.div>
+        )}
+
         {/* ── 1 · Credentials ─────────────────────────────────────────────── */}
         {step === 'credentials' && (
           <motion.form key="credentials" {...slide} onSubmit={discover} className="mt-6 flex flex-col gap-5" noValidate>
@@ -193,7 +307,9 @@ export default function SetupWizard({ hasStoredCredentials, onConnecting, onFini
 
             <div>
               <label htmlFor="wa-token" className="label">{t('setup.credentials.token')}</label>
-              <div className="relative">
+              {/* LTR like the token itself, so the eye button sits on the same
+                  side as the input's end padding in Arabic too. */}
+              <div className="relative" dir="ltr">
                 <input
                   id="wa-token"
                   dir="ltr"
@@ -263,7 +379,11 @@ export default function SetupWizard({ hasStoredCredentials, onConnecting, onFini
             {credError && <div ref={credErrorRef}><Notice tone="error">{credError.text}</Notice></div>}
 
             <Actions>
-              {onCancel ? (
+              {signup.config?.enabled ? (
+                <button type="button" onClick={() => { setQuick(true); setStep('quick'); }} className="btn btn-ghost">
+                  <ArrowLeft className="icon-mirror" aria-hidden="true" /> {t('setup.quick.backToQuick')}
+                </button>
+              ) : onCancel ? (
                 <button type="button" onClick={onCancel} className="btn btn-ghost">{t('panel.cancel')}</button>
               ) : <span />}
               <button type="submit" disabled={!canDiscover || discovering} className="btn btn-primary btn-lg">
@@ -325,7 +445,7 @@ export default function SetupWizard({ hasStoredCredentials, onConnecting, onFini
           <motion.div key="finish" {...slide} className="mt-6 flex flex-col gap-5">
             <header>
               <h2 className="text-lg font-semibold tracking-[-0.01em] text-ink">
-                {t('setup.finish.title', { number: chosen?.displayPhoneNumber ?? '' })}
+                {number ? t('setup.finish.title', { number }) : t('setup.finish.titleQuick')}
               </h2>
             </header>
 
@@ -360,10 +480,10 @@ export default function SetupWizard({ hasStoredCredentials, onConnecting, onFini
               <>
                 <Notice tone="error" title={t('setup.finish.failedTitle')}>{connectError}</Notice>
                 <Actions>
-                  <button type="button" onClick={() => setStep('credentials')} className="btn btn-ghost">
+                  <button type="button" onClick={back} className="btn btn-ghost">
                     <ArrowLeft className="icon-mirror" aria-hidden="true" /> {t('setup.number.back')}
                   </button>
-                  <button type="button" onClick={connect} className="btn btn-primary">{t('setup.finish.tryAgain')}</button>
+                  <button type="button" onClick={retry} className="btn btn-primary">{t('setup.finish.tryAgain')}</button>
                 </Actions>
               </>
             )}
@@ -372,16 +492,16 @@ export default function SetupWizard({ hasStoredCredentials, onConnecting, onFini
               <>
                 <Notice tone="error" title={t('setup.finish.failedTitle')}>{failedVerify.detail}</Notice>
                 <Actions>
-                  <button type="button" onClick={() => setStep('credentials')} className="btn btn-ghost">
+                  <button type="button" onClick={back} className="btn btn-ghost">
                     <ArrowLeft className="icon-mirror" aria-hidden="true" /> {t('setup.number.back')}
                   </button>
-                  <button type="button" onClick={connect} className="btn btn-primary">{t('setup.finish.tryAgain')}</button>
+                  <button type="button" onClick={retry} className="btn btn-primary">{t('setup.finish.tryAgain')}</button>
                 </Actions>
               </>
             )}
 
             {allRevealed && !failedVerify && openIssues.length === 0 && (
-              <Success number={chosen?.displayPhoneNumber ?? ''} onOpen={onFinish} />
+              <Success number={number} onOpen={onFinish} />
             )}
 
             {allRevealed && !failedVerify && openIssues.length > 0 && (

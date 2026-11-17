@@ -54,7 +54,7 @@ export default function RuleForm({ rule, onSave, onCancel }: RuleFormProps) {
                 required
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="mt-1 block w-full border border-line bg-white dark:bg-raised rounded-md shadow-sm py-2 px-3 text-ink focus:outline-none focus:ring-brand focus:border-brand dark:focus:ring-brand dark:focus:border-brand"
+                className="mt-1 block w-full border border-line bg-surface rounded-md shadow-sm py-2 px-3 text-ink focus:outline-none focus:ring-brand focus:border-brand dark:focus:ring-brand dark:focus:border-brand"
               />
             </div>
 
@@ -63,7 +63,7 @@ export default function RuleForm({ rule, onSave, onCancel }: RuleFormProps) {
               <select
                 value={formData.trigger}
                 onChange={(e) => setFormData({ ...formData, trigger: e.target.value })}
-                className="mt-1 block w-full border border-line bg-white dark:bg-raised rounded-md shadow-sm py-2 px-3 text-ink focus:outline-none focus:ring-brand focus:border-brand dark:focus:ring-brand dark:focus:border-brand"
+                className="mt-1 block w-full border border-line bg-surface rounded-md shadow-sm py-2 px-3 text-ink focus:outline-none focus:ring-brand focus:border-brand dark:focus:ring-brand dark:focus:border-brand"
               >
                 <option value="KEYWORD">{t('triggers.KEYWORD')}</option>
                 <option value="FIRST_MESSAGE">{t('triggers.FIRST_MESSAGE')}</option>
@@ -80,7 +80,7 @@ export default function RuleForm({ rule, onSave, onCancel }: RuleFormProps) {
                   required
                   value={formData.keyword}
                   onChange={(e) => setFormData({ ...formData, keyword: e.target.value })}
-                  className="mt-1 block w-full border border-line bg-white dark:bg-raised rounded-md shadow-sm py-2 px-3 text-ink focus:outline-none focus:ring-brand focus:border-brand dark:focus:ring-brand dark:focus:border-brand"
+                  className="mt-1 block w-full border border-line bg-surface rounded-md shadow-sm py-2 px-3 text-ink focus:outline-none focus:ring-brand focus:border-brand dark:focus:ring-brand dark:focus:border-brand"
                 />
               </div>
             )}
@@ -92,7 +92,7 @@ export default function RuleForm({ rule, onSave, onCancel }: RuleFormProps) {
                 rows={4}
                 value={formData.response}
                 onChange={(e) => setFormData({ ...formData, response: e.target.value })}
-                className="mt-1 block w-full border border-line bg-white dark:bg-raised rounded-md shadow-sm py-2 px-3 text-ink focus:outline-none focus:ring-brand focus:border-brand dark:focus:ring-brand dark:focus:border-brand"
+                className="mt-1 block w-full border border-line bg-surface rounded-md shadow-sm py-2 px-3 text-ink focus:outline-none focus:ring-brand focus:border-brand dark:focus:ring-brand dark:focus:border-brand"
               />
             </div>
 

@@ -49,7 +49,7 @@ export default function MobileDrawer({ open, onClose }: { open: boolean; onClose
         <>
           <motion.div
             key="drawer-backdrop"
-            className="fixed inset-0 z-40 bg-[rgb(8_12_10/0.45)]"
+            className="fixed inset-0 z-40 bg-[rgb(var(--scrim)/0.45)]"
             aria-hidden
             onClick={onClose}
             initial={{ opacity: 0 }}
@@ -64,7 +64,7 @@ export default function MobileDrawer({ open, onClose }: { open: boolean; onClose
             key="drawer-sheet"
             role="dialog"
             aria-modal="true"
-            className="fixed inset-x-0 bottom-0 z-50 flex max-h-[calc(100dvh-env(safe-area-inset-top)-1rem)] flex-col rounded-t-2xl bg-surface pb-safe shadow-pop"
+            className="fixed inset-x-0 bottom-0 z-50 flex max-h-[calc(100dvh-env(safe-area-inset-top)-1rem)] flex-col rounded-t-[28px] bg-surface pb-safe shadow-pop"
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}

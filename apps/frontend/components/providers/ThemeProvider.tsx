@@ -19,11 +19,13 @@ export function useTheme() {
 }
 
 // Status bar colour tracks the header surface (--surface in globals.css).
+// The marketing pages (/ and /en) are always dark and set their own.
 function applyTheme(theme: Theme) {
   document.documentElement.classList.toggle('dark', theme === 'dark');
+  if (location.pathname === '/' || location.pathname === '/en') return;
   document
     .querySelector('meta[name="theme-color"]')
-    ?.setAttribute('content', theme === 'dark' ? '#1D1F1F' : '#FFFFFF');
+    ?.setAttribute('content', theme === 'dark' ? '#070C09' : '#F3F4EE');
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {

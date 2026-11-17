@@ -12,10 +12,13 @@
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  Pause, Play, Send, Trash2, Copy, Pencil, CalendarX, Loader2, Eye, CircleStop,
+  Pause, Play, Send, Trash2, Copy, Pencil, CalendarX, Loader2, Eye, CircleStop, MoreHorizontal,
   Image as ImageIcon, Video, FileText, Mic, Layers, Timer, Check, ShieldAlert,
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
 import { batchProgress } from '../../lib/smart-sending';
 import { type PreflightReport } from '../../lib/preflight';
 
@@ -294,10 +297,10 @@ export function IconButton({
       title={label}
       aria-label={label}
       className={cn(
-        'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border transition-colors disabled:cursor-not-allowed disabled:opacity-40',
+        'press-icon flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] transition-colors disabled:cursor-not-allowed disabled:opacity-40',
         danger
-          ? 'border-red-400/20 bg-red-400/8 text-red-500 hover:bg-red-400/15 dark:text-red-400'
-          : 'border-gray-200 bg-gray-50 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:border-white/10 dark:bg-white/5 dark:text-ink-3 dark:hover:bg-white/10 dark:hover:text-white',
+          ? 'bg-red-500/8 text-red-600 hover:bg-red-500/15 dark:text-red-400'
+          : 'bg-surface text-ink-3 shadow-glass hover:text-ink',
       )}
     >
       <Icon className="h-3.5 w-3.5" />
@@ -357,7 +360,7 @@ export function BroadcastActions({
   // The table's actions column is narrow until the widest breakpoint; a card or a
   // page header always has room for the word. `title`/`aria-label` carry the
   // meaning either way.
-  const labelCls = compact ? 'hidden xl:inline' : 'inline';
+  const labelCls = compact ? 'hidden 2xl:inline' : 'inline';
 
   // Stopping a live campaign is weightier than deleting a draft, so it gets its
   // own confirmation copy rather than sharing the delete prompt.
@@ -459,6 +462,50 @@ export function BroadcastActions({
         {sending ? <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" /> : <Send className="h-3.5 w-3.5 shrink-0" />}
         <span className={labelCls}>{label}</span>
       </button>
+    );
+  }
+
+  // The table: the one action this campaign needs, View, and everything else
+  // behind "more" — six icon buttons used to wrap every row onto three lines.
+  if (compact) {
+    const item = 'gap-2.5 [&_svg]:h-4 [&_svg]:w-4 [&_svg]:text-ink-3';
+    return (
+      <div className={cn('flex items-center gap-1.5', justify)}>
+        {primary}
+        {onView && <IconButton icon={Eye} label={t('actions.view', { defaultValue: 'View' })} onClick={onView} />}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              disabled={busy}
+              aria-label={t('actions.more', { defaultValue: 'More actions' })}
+              title={t('actions.more', { defaultValue: 'More actions' })}
+              className="press-icon flex h-8 w-8 shrink-0 items-center justify-center rounded-[9px] text-ink-3 transition-colors hover:bg-raised hover:text-ink data-[state=open]:bg-raised data-[state=open]:text-ink disabled:opacity-40"
+            >
+              <MoreHorizontal className="h-4 w-4" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align={align === 'end' ? 'end' : 'start'} className="w-52">
+            {editable && (
+              <DropdownMenuItem className={item} onSelect={onEdit}><Pencil />{t('common:actions.edit')}</DropdownMenuItem>
+            )}
+            <DropdownMenuItem className={item} onSelect={onDuplicate}><Copy />{t('actions.duplicate', { defaultValue: 'Duplicate' })}</DropdownMenuItem>
+            {broadcast.status === 'SCHEDULED' && (
+              <DropdownMenuItem className={item} onSelect={onUnschedule}><CalendarX />{t('actions.unschedule', { defaultValue: 'Unschedule' })}</DropdownMenuItem>
+            )}
+            <DropdownMenuSeparator />
+            {cancellable && (
+              <DropdownMenuItem className={cn(item, 'text-red-600 focus:bg-red-500/10 focus:text-red-600 dark:text-red-400 [&_svg]:text-current')} onSelect={onAskCancel!}>
+                <CircleStop />{t('actions.cancel', { defaultValue: 'Cancel campaign' })}
+              </DropdownMenuItem>
+            )}
+            <DropdownMenuItem className={cn(item, 'text-red-600 focus:bg-red-500/10 focus:text-red-600 dark:text-red-400 [&_svg]:text-current')} onSelect={onAskDelete}>
+              <Trash2 />
+              {live ? t('actions.stopAndDelete', { defaultValue: 'Stop sending and delete' }) : t('common:actions.delete')}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     );
   }
 

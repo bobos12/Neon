@@ -127,7 +127,7 @@ export default function ContactTagSelector({ contactId, initialTags = [], onChan
 
       {/* Dropdown — fixed list only, no inline create */}
       {open && (
-        <div className="absolute left-0 top-full z-50 mt-1 w-56 rounded-xl border border-line bg-white dark:bg-raised shadow-lg">
+        <div className="absolute left-0 top-full z-50 mt-1 w-56 rounded-xl border border-line bg-surface shadow-lg">
           {/* Search within existing tags */}
           <div className="p-2 border-b border-line">
             <div className="relative">

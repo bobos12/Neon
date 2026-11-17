@@ -165,6 +165,12 @@ export interface PersistExtra {
   senderName?: string | null;
   /** CRM contact name (overrides phone/pushName in notification title). */
   contactName?: string | null;
+  /**
+   * Imported history (WhatsApp Business app coexistence). Arrives out of order
+   * and in bulk, so it never moves a conversation's "last message" backwards
+   * and emits no per-message realtime events — the importer refreshes once.
+   */
+  historical?: boolean;
 }
 
 export async function persistNormalizedMessage(
@@ -228,6 +234,21 @@ export async function persistNormalizedMessage(
   });
 
   const preview = conversationPreview(content);
+
+  if (extra?.historical) {
+    const olderThan = (field: 'lastMessageAt' | 'lastInboundAt') => ({
+      id: msg.conversationId,
+      OR: [{ [field]: null }, { [field]: { lt: timestamp } }],
+    });
+    await prisma.conversation.updateMany({
+      where: olderThan('lastMessageAt') as any,
+      data: { lastMessage: preview, lastMessagePreview: preview, lastMessageAt: timestamp },
+    });
+    if (!fromMe) {
+      await prisma.conversation.updateMany({ where: olderThan('lastInboundAt') as any, data: { lastInboundAt: timestamp } });
+    }
+    return { messageId: created.id, conversationId: msg.conversationId };
+  }
 
   // ── Conversation update ───────────────────────────────────────────────────
   await prisma.conversation.update({

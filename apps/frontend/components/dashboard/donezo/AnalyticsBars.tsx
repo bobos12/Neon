@@ -75,7 +75,7 @@ export default function AnalyticsBars({ data }: { data: DayDatum[] }) {
               <div key={d.date} className="flex flex-1 flex-col items-center gap-2.5">
                 <div className="relative flex w-full flex-1 items-end justify-center">
                   {isPeak && (
-                    <span className="absolute top-0 z-10 -translate-y-1 whitespace-nowrap rounded-lg bg-brand-strong px-2 py-1 text-[10px] font-bold tabular-nums text-white shadow-md dark:bg-brand dark:text-brand-fg">
+                    <span className="absolute top-0 z-10 -translate-y-1 whitespace-nowrap rounded-lg bg-brand px-2 py-1 text-[10px] font-bold tabular-nums text-brand-fg shadow-md">
                       {d.total.toLocaleString(locale)}
                       <span className="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 bg-brand-strong dark:bg-brand" aria-hidden="true" />
                     </span>

@@ -1,16 +1,11 @@
-import { IBM_Plex_Sans_Arabic, Instrument_Sans } from 'next/font/google'
+import { Almarai } from 'next/font/google'
 
-// Self-hosted by next/font and scoped to the landing page through CSS
-// variables, so the app keeps its own system-font stack.
-export const nxLatin = Instrument_Sans({
-  subsets: ['latin'],
-  variable: '--nx-font-latin',
-  display: 'swap',
-})
-
-export const nxArabic = IBM_Plex_Sans_Arabic({
-  subsets: ['arabic'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--nx-font-arabic',
+// Almarai: the heavy, friendly Arabic face Saudi commercial brands sell in.
+// One family for both scripts and every size, self-hosted by next/font and
+// scoped to the landing page through a CSS variable.
+export const neonFont = Almarai({
+  subsets: ['arabic', 'latin'],
+  weight: ['400', '700', '800'],
+  variable: '--ne-font',
   display: 'swap',
 })

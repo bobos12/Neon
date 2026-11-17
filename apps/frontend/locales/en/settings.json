@@ -151,14 +151,14 @@
   "notify": {
     "tab": "Notifications",
     "title": "Notifications",
-    "description": "Get alerts on this phone or computer — even when Nexus is closed.",
+    "description": "Get alerts on this phone or computer — even when NEON is closed.",
     "device": {
       "label": "This device",
       "on": "On — alerts arrive here even when the app is closed.",
-      "off": "Off — you'll only see alerts while Nexus is open.",
+      "off": "Off — you'll only see alerts while NEON is open.",
       "blocked": "Blocked in your browser settings.",
       "unsupported": "This browser can't show notifications.",
-      "needsInstall": "Add Nexus to your Home Screen to get alerts on this iPhone.",
+      "needsInstall": "Add NEON to your Home Screen to get alerts on this iPhone.",
       "serverOff": "Phone alerts aren't set up on the server yet.",
       "turnOn": "Turn on",
       "turnOff": "Turn off",
@@ -205,7 +205,7 @@
     "saveFailed": "Couldn't save that change.",
     "prompt": {
       "title": "Never miss a customer",
-      "body": "Turn on notifications to hear about new messages, chats assigned to you, mentions and due tasks — even when Nexus is closed.",
+      "body": "Turn on notifications to hear about new messages, chats assigned to you, mentions and due tasks — even when NEON is closed.",
       "points": [
         "New customer messages, with sound",
         "Chats and tasks assigned to you",
@@ -220,14 +220,14 @@
       "iosSteps": [
         "Tap the Share button in Safari",
         "Choose “Add to Home Screen”",
-        "Open Nexus from the new icon and tap Allow"
+        "Open NEON from the new icon and tap Allow"
       ],
       "blockedTitle": "Notifications are blocked",
-      "blockedBody": "This browser was told not to show notifications from Nexus. To turn them back on:",
+      "blockedBody": "This browser was told not to show notifications from NEON. To turn them back on:",
       "blockedSteps": {
         "ios": [
           "Open the Settings app",
-          "Tap Notifications, then Nexus",
+          "Tap Notifications, then NEON",
           "Turn on Allow Notifications"
         ],
         "android": [

@@ -17,7 +17,9 @@ function Sparkline({ points }: { points: number[] }) {
   const line = coords.map(([x, y], i) => `${i ? 'L' : 'M'}${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
   const area = `${line} L${W},${H} L0,${H} Z`;
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="h-7 w-full overflow-visible text-sky-500 rtl:-scale-x-100 dark:text-sky-400" aria-hidden="true">
+    // Drawn in by a clip reveal: a dash trick with pathLength breaks under
+    // non-scaling-stroke (dashes are measured in screen space) and left gaps.
+    <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" className="reveal-x h-7 w-full overflow-visible text-brand rtl:-scale-x-100 dark:drop-shadow-[0_0_4px_rgb(216_252_52/0.5)]" aria-hidden="true">
       <defs>
         <linearGradient id="nx-spark" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="currentColor" stopOpacity="0.22" />
@@ -26,7 +28,7 @@ function Sparkline({ points }: { points: number[] }) {
       </defs>
       <path d={area} fill="url(#nx-spark)" />
       <path d={line} fill="none" stroke="currentColor" strokeWidth={1.75} strokeLinecap="round" strokeLinejoin="round"
-        vectorEffect="non-scaling-stroke" pathLength={1} style={{ strokeDasharray: 1, animation: 'nxDraw 1.1s var(--ease-out) both' }} />
+        vectorEffect="non-scaling-stroke" />
     </svg>
   );
 }
@@ -38,18 +40,19 @@ function SplitBar({ answered, waiting }: { answered: number; waiting: number }) 
   return (
     <div className="h-1.5 w-full overflow-hidden rounded-full bg-amber-500/30" aria-hidden="true">
       <div
-        className="h-full origin-left rounded-full bg-brand rtl:origin-right"
+        className="h-full origin-left rounded-full bg-brand-ink rtl:origin-right dark:shadow-[0_0_8px_rgb(216_252_52/0.6)]"
         style={{ width: `${pct}%`, animation: 'nxGrowX 0.9s var(--ease-out) both' }}
       />
     </div>
   );
 }
 
+// One quiet tile for every figure; only the one that asks for action is lit.
 const TONES = {
-  brand:  'bg-brand/12 text-brand',
-  sky:    'bg-sky-500/12 text-sky-600 dark:text-sky-400',
-  orange: 'bg-orange-500/12 text-orange-600 dark:text-orange-400',
-  violet: 'bg-violet-500/12 text-violet-600 dark:text-violet-400',
+  brand:  'bg-brand text-brand-fg shadow-[inset_0_1px_0_rgb(255_255_255/0.4)]',
+  sky:    'bg-raised text-ink-2',
+  orange: 'bg-raised text-ink-2',
+  violet: 'bg-raised text-ink-2',
 } as const;
 
 type Cell = {
@@ -95,7 +98,7 @@ export default function PulseStrip({ data, series, locale }: { data: OverviewDat
       badge: delta !== null && (
         <span className={cn(
           'inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[11px] font-semibold tabular-nums',
-          delta >= 0 ? 'bg-brand/12 text-brand' : 'bg-raised text-ink-3',
+          delta >= 0 ? 'bg-brand/25 text-brand-strong dark:bg-brand/12' : 'bg-raised text-ink-3',
         )}>
           {delta >= 0 ? <ArrowUpRight className="h-3 w-3" aria-hidden="true" /> : <ArrowDownRight className="h-3 w-3" aria-hidden="true" />}
           {fmt(Math.abs(delta))}%
@@ -118,7 +121,7 @@ export default function PulseStrip({ data, series, locale }: { data: OverviewDat
     {
       key: 'contacts', href: '/contacts', label: t('today.pulse.contacts'), value: data.totalContacts, icon: Users, tone: 'violet',
       badge: data.newContactsToday > 0 && (
-        <span className="rounded-full bg-violet-500/12 px-1.5 py-0.5 text-[11px] font-semibold tabular-nums text-violet-600 dark:text-violet-400">
+        <span className="rounded-full bg-raised px-1.5 py-0.5 text-[11px] font-semibold tabular-nums text-ink-2">
           +{fmt(data.newContactsToday)}
         </span>
       ),
@@ -139,7 +142,7 @@ export default function PulseStrip({ data, series, locale }: { data: OverviewDat
           {t('today.pulse.live')}
         </span>
       </div>
-      <ul className="overflow-hidden rounded-xl border border-line bg-surface">
+      <ul className="panel overflow-hidden">
         {cells.map((c, i) => (
           <li
             key={c.key}
@@ -169,32 +172,32 @@ export default function PulseStrip({ data, series, locale }: { data: OverviewDat
       </ul>
     </section>
 
-    <section className="hidden grid-cols-2 overflow-hidden rounded-xl border border-line bg-surface sm:grid lg:grid-cols-4" aria-label={t('crmOverview')}>
+    <section className="panel hidden grid-cols-2 overflow-hidden sm:grid lg:grid-cols-4" aria-label={t('crmOverview')}>
       {cells.map((c, i) => (
         <Link
           key={c.key}
           href={c.href}
           className={cn(
             'group relative flex min-w-0 flex-col p-4 outline-none transition-colors duration-base sm:p-5',
-            'hover:bg-raised/60 focus-visible:bg-raised/60 active:bg-raised',
+            'hover:bg-surface/60 focus-visible:bg-surface/60 active:bg-raised',
             i % 2 === 1 && 'border-s border-line',
             i >= 2 && 'border-t border-line lg:border-t-0',
             i === 2 && 'lg:border-s',
           )}
         >
           {/* hover: a brand rule draws in along the cell's foot */}
-          <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-0.5 origin-center scale-x-0 bg-brand transition-transform duration-base ease-out group-hover:scale-x-100 group-focus-visible:scale-x-100" />
+          <span aria-hidden="true" className="pointer-events-none absolute inset-x-6 bottom-0 h-0.5 origin-center scale-x-0 rounded-full bg-brand shadow-[0_0_12px_rgb(var(--brand)/0.9)] transition-transform duration-base ease-out group-hover:scale-x-100 group-focus-visible:scale-x-100" />
 
           <div className="flex items-center gap-2">
             <span className={cn('grid h-7 w-7 shrink-0 place-items-center rounded-lg transition-transform duration-base group-hover:scale-105', TONES[c.tone])}>
               <c.icon className="h-4 w-4" aria-hidden="true" />
             </span>
-            <span className="min-w-0 truncate text-[13px] font-medium text-ink-2">{c.label}</span>
+            <span className="min-w-0 truncate text-[13px] font-medium text-ink-3">{c.label}</span>
             <ArrowUpRight className="ms-auto hidden h-4 w-4 shrink-0 translate-y-0.5 text-ink-3 opacity-0 transition-[opacity,transform] duration-base group-hover:translate-y-0 group-hover:opacity-100 sm:block icon-mirror" aria-hidden="true" />
           </div>
 
           <div className="mt-3 flex items-center gap-2">
-            <AnimatedNumber value={c.value} format={fmt} className="text-[28px] font-semibold leading-none tracking-[-0.03em] text-ink sm:text-[32px]" />
+            <AnimatedNumber value={c.value} format={fmt} className="display text-[30px] leading-none tracking-[-0.035em] sm:text-[36px]" />
             {c.badge}
           </div>
 

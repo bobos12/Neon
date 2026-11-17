@@ -37,7 +37,7 @@ const TONES: Record<Tone, { panel: string; input: string; label: string; muted: 
   auto: {
     panel: 'border-line bg-gray-50 dark:bg-canvas',
     input:
-      'border-line bg-white dark:bg-raised text-ink placeholder:text-ink-4',
+      'border-line bg-surface text-ink placeholder:text-ink-4',
     label: 'text-gray-700 dark:text-gray-200',
     muted: 'text-ink-3',
     ghost:

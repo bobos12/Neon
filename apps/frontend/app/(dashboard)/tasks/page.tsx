@@ -14,6 +14,7 @@ import { TablePagination } from '../../../components/ui/TablePagination';
 import { Modal } from '../../../components/ui/modal';
 import { cn } from '../../../lib/utils';
 import { PageHeader } from '../../../components/ui/page';
+import { Skeleton } from '../../../components/ui/Skeleton';
 import { useSocket } from '../../../hooks/useSocket';
 import { useToast } from '../../../hooks/useToast';
 import { useRemembered } from '@/hooks/useRemembered';
@@ -526,7 +527,119 @@ export default function TasksPage() {
           )}
         </div>
 
-        <div className="overflow-x-auto">
+        {/* ── Phones: one card per task — title and urgency first, status and
+            actions one thumb-reach below. The table below takes over from md. ── */}
+        <ul className="divide-y divide-line md:hidden">
+          {loading ? (
+            [...Array(3)].map((_, i) => (
+              <li key={i} className="space-y-2.5 px-4 py-4">
+                <Skeleton className="h-4 w-3/4 rounded" />
+                <Skeleton className="h-3 w-1/2 rounded" />
+                <Skeleton className="h-7 w-28 rounded-full" />
+              </li>
+            ))
+          ) : paginatedTasks.length === 0 ? (
+            <li className="px-4 py-14 text-center">
+              <CheckSquare className="mx-auto mb-3 h-8 w-8 text-ink-4/40" />
+              <p className="text-sm text-ink-3">
+                {filterStatus === 'ALL' && advancedFilterCount === 0 ? t('noTasks') : t('noResults')}
+              </p>
+              {(filterStatus !== 'ALL' || advancedFilterCount > 0) && (
+                <button
+                  type="button"
+                  onClick={() => { setFilter('ALL'); clearAdvancedFilters(); }}
+                  className="mt-2 text-xs font-medium text-brand hover:underline"
+                >
+                  {t('clearAllFilters')}
+                </button>
+              )}
+            </li>
+          ) : (
+            paginatedTasks.map((task) => {
+              const overdue = isOverdue(task);
+              const who = task.contact?.name || task.contact?.phone;
+              return (
+                <li key={task.id} className={cn('px-4 py-3.5', selectedIds.has(task.id) && 'bg-brand/10')}>
+                  <div className="flex items-start gap-3">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(task.id)}
+                      onChange={() => toggleSelect(task.id)}
+                      aria-label={task.title}
+                      className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer rounded accent-brand"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-start justify-between gap-2">
+                        <p className={cn('text-[15px] font-medium leading-snug text-ink', overdue && 'text-red-600 dark:text-red-300')}>
+                          {task.title}
+                        </p>
+                        <span className={cn('inline-flex shrink-0 items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-semibold', PRIORITY_STYLES[task.priority ?? 'MEDIUM'])}>
+                          <span className={cn('h-1.5 w-1.5 rounded-full', PRIORITY_DOT[task.priority ?? 'MEDIUM'])} />
+                          {t(`priority.${task.priority ?? 'MEDIUM'}`)}
+                        </span>
+                      </div>
+                      <p className="mt-1 flex flex-wrap items-center gap-x-2 text-xs text-ink-3">
+                        {who && <bdi className="truncate">{who}</bdi>}
+                        {task.dueDate && (
+                          <span className={cn('inline-flex items-center gap-1', overdue && 'font-medium text-red-600 dark:text-red-400')}>
+                            <Clock className="h-3 w-3" aria-hidden="true" />
+                            {new Date(task.dueDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                            {overdue && ` · ${t('overdue')}`}
+                          </span>
+                        )}
+                        {(task.assignee?.name || task.assignee?.email) && (
+                          <span className="truncate">· {task.assignee?.name || task.assignee?.email}</span>
+                        )}
+                      </p>
+
+                      <div className="mt-2.5 flex items-center gap-2">
+                        {confirmDeleteId === task.id ? (
+                          <>
+                            <span className="text-xs text-red-600 dark:text-red-300">{t('deleteConfirm.inline')}</span>
+                            <button type="button" onClick={() => handleDelete(task.id)} className="btn btn-sm bg-red-600 text-white hover:bg-red-700">{t('deleteConfirm.yes')}</button>
+                            <button type="button" onClick={() => setConfirmDeleteId(null)} className="btn btn-secondary btn-sm">{t('deleteConfirm.no')}</button>
+                          </>
+                        ) : (
+                          <>
+                            <select
+                              value={task.status}
+                              onChange={(e) => handleStatusChange(task, e.target.value as TaskStatus)}
+                              aria-label={t('table.status')}
+                              className={cn('h-8 cursor-pointer rounded-full border-0 py-0 text-xs font-semibold outline-none', STATUS_STYLES[task.status])}
+                            >
+                              <option value="OPEN">{t('status.OPEN')}</option>
+                              <option value="IN_PROGRESS">{t('status.IN_PROGRESS')}</option>
+                              <option value="DONE">{t('status.DONE')}</option>
+                            </select>
+                            <button
+                              type="button"
+                              onClick={() => { setEditing(task); setShowForm(true); }}
+                              className="btn btn-ghost btn-sm ms-auto"
+                            >
+                              <Pencil className="h-3.5 w-3.5" /> {t('common:actions.edit')}
+                            </button>
+                            {isAdmin && (
+                              <button
+                                type="button"
+                                onClick={() => setConfirmDeleteId(task.id)}
+                                aria-label={t('common:actions.delete')}
+                                className="btn btn-ghost btn-icon btn-sm text-red-600 hover:bg-red-500/10 dark:text-red-400"
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </button>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              );
+            })
+          )}
+        </ul>
+
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full">
             <thead>
               <tr className="border-b border-line bg-raised">
@@ -603,14 +716,14 @@ export default function TasksPage() {
                         />
                       </td>
                       <td className="px-5 py-3.5 max-w-[240px]">
-                        <p className={cn('text-sm font-medium text-ink', overdue && 'text-red-300')}>
+                        <p className={cn('text-sm font-medium text-ink', overdue && 'text-red-600 dark:text-red-300')}>
                           {task.title}
                         </p>
                         {task.description && (
                           <p className="mt-0.5 truncate text-xs text-ink-3">{task.description}</p>
                         )}
                         {overdue && (
-                          <span className="mt-1 inline-flex items-center gap-1 text-[10px] font-medium text-red-400">
+                          <span className="mt-1 inline-flex items-center gap-1 text-[10px] font-medium text-red-600 dark:text-red-400">
                             <Clock className="h-2.5 w-2.5" /> {t('overdue')}
                           </span>
                         )}
@@ -692,7 +805,7 @@ export default function TasksPage() {
 
       {/* ── Bulk action bar ── */}
       {selectedIds.size > 0 && (
-        <div className="fixed bottom-[var(--bottom-nav-space)] sm:bottom-6 left-1/2 z-40 -translate-x-1/2 flex flex-wrap items-center gap-3 rounded-xl border border-line bg-white dark:bg-raised px-5 py-3 shadow-[0_8px_30px_rgba(0,0,0,0.5)]">
+        <div className="fixed bottom-[var(--bottom-nav-space)] sm:bottom-6 left-1/2 z-40 -translate-x-1/2 flex flex-wrap items-center gap-3 rounded-xl border border-line bg-surface px-5 py-3 shadow-pop">
           <span className="text-sm font-medium text-ink">
             {selectedIds.size} {selectedIds.size === 1 ? t('title').toLowerCase().replace(/s$/, '') : t('title').toLowerCase()} selected
           </span>

@@ -1028,7 +1028,7 @@ export default function BroadcastForm({
           onClick={() => setFormData({ ...formData, sendNow: true })}
           className={cn(
             'flex items-start gap-3 rounded-xl border p-4 text-left transition-all',
-            formData.sendNow ? 'border-brand/40 bg-brand/10' : 'border-line bg-white dark:bg-raised hover:border-gray-300 dark:hover:border-white/20',
+            formData.sendNow ? 'border-brand/40 bg-brand/10' : 'border-line bg-surface hover:border-gray-300 dark:hover:border-white/20',
           )}
         >
           <Zap className={cn('mt-0.5 h-5 w-5 shrink-0', formData.sendNow ? 'text-brand' : 'text-ink-3')} />
@@ -1046,7 +1046,7 @@ export default function BroadcastForm({
           onClick={() => setFormData({ ...formData, sendNow: false })}
           className={cn(
             'flex items-start gap-3 rounded-xl border p-4 text-left transition-all',
-            !formData.sendNow ? 'border-brand/40 bg-brand/10' : 'border-line bg-white dark:bg-raised hover:border-gray-300 dark:hover:border-white/20',
+            !formData.sendNow ? 'border-brand/40 bg-brand/10' : 'border-line bg-surface hover:border-gray-300 dark:hover:border-white/20',
           )}
         >
           <Clock className={cn('mt-0.5 h-5 w-5 shrink-0', !formData.sendNow ? 'text-brand' : 'text-ink-3')} />
@@ -1194,7 +1194,7 @@ export default function BroadcastForm({
                   autoFocus
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="w-full rounded-xl border-2 border-line bg-white dark:bg-raised py-4 ps-12 pe-4 text-base font-semibold text-ink placeholder:text-ink-4/70 outline-none transition focus:border-brand/60 focus:ring-[3px] focus:ring-brand/15"
+                  className="field h-14 rounded-2xl ps-12 pe-4 text-base font-semibold placeholder:font-medium"
                   placeholder={t('form.namePlaceholder2')}
                 />
               </div>

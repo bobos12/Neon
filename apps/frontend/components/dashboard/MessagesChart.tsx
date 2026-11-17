@@ -29,9 +29,11 @@ function useIsDark() {
 
 // SVG presentation attributes can't read CSS variables, so the chart takes
 // literal colours — the same values the tokens resolve to in each theme.
+// "Sent" bars are lit tubes — a lime-to-olive gradient by day, lime by night —
+// so the team's own activity is the brightest thing on the chart.
 const PALETTE = {
-  light: { sent: '#128245', received: '#C9D1CD', grid: '#E9EDEB', tick: '#8A948F', cursor: 'rgba(17,23,20,0.04)' },
-  dark:  { sent: '#2ECC74', received: '#36423C', grid: '#1E2622', tick: '#6E7873', cursor: 'rgba(255,255,255,0.04)' },
+  light: { sent: '#5F8209', sentTop: '#A9D11A', sentBottom: '#4A6B06', received: '#D5DACE', grid: '#E5E8DE', tick: '#8C968E', cursor: 'rgba(11,26,16,0.045)' },
+  dark:  { sent: '#D8FC34', sentTop: '#E4FF66', sentBottom: '#8DB30C', received: '#2B3A31', grid: '#18231C', tick: '#6A776E', cursor: 'rgba(216,252,52,0.06)' },
 };
 
 function ChartTooltip({ active, payload, label, locale }: TooltipProps<number, string> & { locale: string }) {
@@ -39,14 +41,15 @@ function ChartTooltip({ active, payload, label, locale }: TooltipProps<number, s
   if (!active || !payload?.length) return null;
   const total = payload.reduce((s, p) => s + (Number(p.value) || 0), 0);
   return (
-    <div className="min-w-[160px] rounded-lg bg-surface px-3 py-2.5 shadow-pop">
+    <div className="min-w-[160px] rounded-xl bg-surface px-3 py-2.5 shadow-pop">
       <p className="mb-2 text-2xs font-medium text-ink-3">
         {new Date(label).toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'short' })}
       </p>
       {payload.map((p) => (
         <div key={p.dataKey as string} className="flex items-center justify-between gap-4 text-xs">
           <span className="flex items-center gap-1.5 text-ink-2">
-            <span className="h-2 w-2 rounded-sm" style={{ background: p.color }} aria-hidden="true" />
+            {/* A gradient fill arrives as `url(#…)`, which a swatch can't paint. */}
+            <span className="h-2 w-2 rounded-sm" style={{ background: String(p.color).startsWith('url(') ? 'rgb(var(--brand-ink))' : p.color }} aria-hidden="true" />
             {p.name}
           </span>
           <span className="font-semibold tabular-nums text-ink">{formatNumber(Number(p.value) || 0, locale)}</span>
@@ -99,7 +102,13 @@ export default function MessagesChart({ data }: MessagesChartProps) {
           <div className="mb-3 px-2 sm:hidden">{legend}</div>
           <div className="h-[280px]" dir="ltr">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data} margin={{ top: 4, right: 8, left: -18, bottom: 0 }} barGap={3} barCategoryGap="24%">
+              <BarChart data={data} margin={{ top: 4, right: 8, left: -8, bottom: 0 }} barGap={3} barCategoryGap="24%">
+                <defs>
+                  <linearGradient id="nx-sent" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={c.sentTop} />
+                    <stop offset="100%" stopColor={c.sentBottom} />
+                  </linearGradient>
+                </defs>
                 <CartesianGrid stroke={c.grid} vertical={false} />
                 <XAxis
                   dataKey="date"
@@ -119,9 +128,9 @@ export default function MessagesChart({ data }: MessagesChartProps) {
                   orientation={language === 'ar' ? 'right' : 'left'}
                 />
                 <Tooltip content={<ChartTooltip locale={locale} />} cursor={{ fill: c.cursor, radius: 6 }} />
-                <Bar dataKey="outgoing" name={t('today.activity.sent')} fill={c.sent} radius={[3, 3, 0, 0]} maxBarSize={26}
+                <Bar dataKey="outgoing" name={t('today.activity.sent')} fill="url(#nx-sent)" radius={[5, 5, 2, 2]} maxBarSize={26}
                   isAnimationActive={!reduce} animationDuration={700} animationEasing="ease-out" />
-                <Bar dataKey="incoming" name={t('today.activity.received')} fill={c.received} radius={[3, 3, 0, 0]} maxBarSize={26}
+                <Bar dataKey="incoming" name={t('today.activity.received')} fill={c.received} radius={[5, 5, 2, 2]} maxBarSize={26}
                   isAnimationActive={!reduce} animationDuration={700} animationBegin={120} animationEasing="ease-out" />
               </BarChart>
             </ResponsiveContainer>

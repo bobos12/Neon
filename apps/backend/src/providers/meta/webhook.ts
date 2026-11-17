@@ -9,6 +9,7 @@ import { findTenantByPhoneNumberId, recordSync, type ResolvedChannel } from '../
 import { downloadMedia } from './media';
 import { applyTemplateStatusUpdate } from './templates';
 import { MetaApiError } from './graph';
+import { handleHistory, handleMessageEchoes, handleStateSync } from './coexistence';
 
 /**
  * Inbound webhook from Meta.
@@ -197,6 +198,16 @@ export async function handleMetaWebhook(params: {
           case 'phone_number_quality_update':
             await handleQualityUpdate(value, tenantId);
             break;
+          // WhatsApp Business app coexistence — see coexistence.ts.
+          case 'smb_message_echoes':
+            await handleMessageEchoes(value, channel);
+            break;
+          case 'history':
+            await handleHistory(value, channel);
+            break;
+          case 'smb_app_state_sync':
+            await handleStateSync(value);
+            break;
           default:
             logger.debug?.('meta_webhook.ignored_field', { field: change.field });
         }
@@ -261,7 +272,7 @@ const TYPE_MAP: Record<string, MessageType> = {
  * attachment is eventually unrecoverable. A failed download degrades to a
  * message without media rather than dropping the message.
  */
-async function buildInboundPayload(message: any, channel: ResolvedChannel, namesByWaId?: Map<string, string>) {
+export async function buildInboundPayload(message: any, channel: ResolvedChannel, namesByWaId?: Map<string, string>) {
   const phone: string | undefined = message?.from;
   const externalId: string | undefined = message?.id;
   if (!phone || !externalId) return null;

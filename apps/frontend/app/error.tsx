@@ -27,12 +27,12 @@ export default function GlobalError({
   }, [error]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 dark:bg-canvas">
-      <div className="w-full max-w-md rounded-xl border border-gray-200 bg-white p-8 text-center shadow-sm dark:border-white/10 dark:bg-surface">
-        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-red-100 dark:bg-red-500/15">
+    <div className="nx-wash flex min-h-screen items-center justify-center px-4">
+      <div className="dialog-enter w-full max-w-md rounded-3xl bg-surface p-8 text-center shadow-pop">
+        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-red-500/10 ring-1 ring-inset ring-red-500/15">
           <AlertTriangle className="h-7 w-7 text-red-500 dark:text-red-400" aria-hidden="true" />
         </div>
-        <h1 className="text-xl font-semibold text-ink">
+        <h1 className="display text-[22px]">
           Something went wrong
         </h1>
         <p className="mt-2 text-sm text-ink-3">
@@ -41,7 +41,7 @@ export default function GlobalError({
         {error.message && (
           <pre
             dir="ltr"
-            className="mt-4 max-h-32 overflow-auto rounded-lg bg-gray-50 px-3 py-2 text-start text-xs text-red-600 dark:bg-black/30 dark:text-red-300"
+            className="mt-4 max-h-32 overflow-auto rounded-xl bg-raised px-3 py-2 text-start text-xs text-red-600 dark:text-red-300"
           >
             {error.message}
           </pre>
@@ -62,7 +62,7 @@ export default function GlobalError({
           </button>
           <Link
             href="/dashboard"
-            className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 dark:border-white/10 dark:text-white dark:hover:bg-white/5"
+            className="btn btn-secondary"
           >
             <Home className="h-4 w-4" aria-hidden="true" />
             Dashboard

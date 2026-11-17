@@ -312,12 +312,16 @@ const ConversationList = forwardRef<ConversationListHandle, ConversationListProp
     const menuItem = 'flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-start text-[13px] text-ink-2 hover:bg-raised hover:text-ink';
 
     return (
-      <div className="flex h-full flex-col bg-surface">
+      <div className="flex h-full flex-col">
         {/* ── Header ── */}
-        <div className="box-content flex h-14 shrink-0 items-center justify-between gap-2 px-4 pt-safe">
-          <h1 className="flex items-center gap-2 text-base font-semibold tracking-[-0.01em] text-ink">
+        <div className="box-content flex h-[60px] shrink-0 items-center justify-between gap-2 px-4 pt-safe">
+          <h1 className="display flex items-center gap-2 text-[22px] leading-none">
             {t('list.inbox')}
-            {totalUnread > 0 && <span className="chip chip-brand tabular-nums">{totalUnread}</span>}
+            {totalUnread > 0 && (
+              <span className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-brand px-1.5 text-[11px] font-bold tabular-nums tracking-normal text-brand-fg shadow-[0_0_12px_-2px_rgb(var(--brand)/0.8)]">
+                {totalUnread}
+              </span>
+            )}
           </h1>
           <div className="relative" ref={filtersRef}>
             <button
@@ -338,7 +342,7 @@ const ConversationList = forwardRef<ConversationListHandle, ConversationListProp
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: -4, scale: 0.98, transition: { duration: 0.1 } }}
                   transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-                  className="absolute end-0 top-[calc(100%+6px)] z-40 w-72 rounded-xl bg-surface p-3 shadow-pop"
+                  className="absolute end-0 top-[calc(100%+6px)] z-40 w-72 rounded-2xl bg-surface p-3 shadow-pop"
                 >
                   <p className="eyebrow mb-2">{t('list.status')}</p>
                   <div className="seg w-full">
@@ -362,7 +366,7 @@ const ConversationList = forwardRef<ConversationListHandle, ConversationListProp
                               onClick={() => setTagFilter(on ? '' : tag.id)}
                               className={cn(
                                 'inline-flex h-7 items-center gap-1.5 rounded-full border px-2.5 text-xs font-medium transition-colors',
-                                on ? 'border-transparent bg-ink text-surface' : 'border-line text-ink-2 hover:border-line-strong hover:text-ink',
+                                on ? 'border-transparent bg-ink text-canvas' : 'border-line text-ink-2 hover:border-line-strong hover:text-ink',
                               )}
                             >
                               <span className="h-2 w-2 rounded-full" style={{ backgroundColor: tag.color }} aria-hidden="true" />
@@ -410,7 +414,7 @@ const ConversationList = forwardRef<ConversationListHandle, ConversationListProp
 
         {/* ── Search + quick chips ── */}
         <div className="shrink-0 space-y-2.5 px-3 pb-2.5">
-          <SearchField value={search} onChange={setSearch} placeholder={t('searchPlaceholder')} inputClassName="h-10 rounded-full border-transparent bg-raised hover:border-transparent focus:border-line focus:bg-surface" />
+          <SearchField value={search} onChange={setSearch} placeholder={t('searchPlaceholder')} inputClassName="h-10 rounded-full border-transparent bg-raised hover:border-transparent focus:border-brand" />
           <div className="flex gap-1.5 overflow-x-auto scrollbar-none">
             {chips.map((c) => (
               <button
@@ -418,10 +422,10 @@ const ConversationList = forwardRef<ConversationListHandle, ConversationListProp
                 type="button"
                 onClick={() => selectChip(c.key)}
                 className={cn(
-                  'h-8 shrink-0 rounded-full border px-3.5 text-[13px] font-medium transition-colors duration-fast',
+                  'press h-8 shrink-0 rounded-full px-3.5 text-[13px] font-medium transition-[background-color,color,box-shadow] duration-fast',
                   activeChip === c.key
-                    ? 'border-transparent bg-brand-soft text-brand-strong dark:text-[#D9FDD3]'
-                    : 'border-line-strong text-ink-3 hover:bg-raised hover:text-ink',
+                    ? 'bg-ink text-canvas shadow-[0_2px_8px_-2px_rgb(var(--shadow)/0.35)]'
+                    : 'bg-raised text-ink-2 hover:bg-overlay/70 hover:text-ink',
                 )}
               >
                 {c.label}
@@ -445,7 +449,7 @@ const ConversationList = forwardRef<ConversationListHandle, ConversationListProp
         </div>
 
         {/* ── Rows ── own scroll; reserves the phone tab bar's footprint (0 on sm+). */}
-        <div className="flex-1 overflow-y-auto px-2 pb-[var(--bottom-nav-space)]">
+        <div className="flex-1 overflow-y-auto px-2 pb-[calc(var(--bottom-nav-space)+0.5rem)] md:pb-2">
           {loading && sorted.length === 0 && <ConversationListSkeleton />}
 
           {!loading && sorted.length === 0 && (
@@ -481,10 +485,16 @@ const ConversationList = forwardRef<ConversationListHandle, ConversationListProp
                     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(conv.id); } }}
                     aria-current={selected ? 'true' : undefined}
                     className={cn(
-                      'group flex w-full cursor-pointer items-center gap-3 rounded-lg px-2.5 py-3 text-start outline-none transition-colors duration-fast focus-visible:bg-raised',
-                      selected ? 'bg-raised' : 'hover:bg-raised/70',
+                      'group relative flex w-full cursor-pointer items-center gap-3 rounded-[14px] px-2.5 py-2.5 text-start outline-none transition-[background-color,box-shadow] duration-fast focus-visible:bg-raised',
+                      selected
+                        ? 'bg-surface shadow-glass [--surface-a:0.95] dark:bg-overlay/60 dark:[--surface-a:1]'
+                        : 'hover:bg-raised/70 active:bg-raised',
                     )}
                   >
+                    {/* The open chat is lit along its leading edge, like the sidebar. */}
+                    {selected && (
+                      <span aria-hidden="true" className="absolute inset-y-4 -start-0.5 w-[3px] rounded-full bg-brand shadow-[0_0_10px_rgb(var(--brand)/0.9)]" />
+                    )}
                     <div className="relative shrink-0">
                       <Avatar src={contact.customFields?.avatarUrl} name={displayName} contactId={contact.id} size={48} />
                       {isSnoozed && (
@@ -500,7 +510,7 @@ const ConversationList = forwardRef<ConversationListHandle, ConversationListProp
                           {displayName.startsWith('+') ? <span dir="ltr">{displayName}</span> : <bdi>{displayName}</bdi>}
                         </span>
                         {conv.lastMessageAt && (
-                          <span className={cn('shrink-0 text-xs tabular-nums', showUnread ? 'font-medium text-brand' : 'text-ink-3')}>
+                          <span className={cn('shrink-0 text-xs tabular-nums', showUnread ? 'font-semibold text-brand' : 'text-ink-4')}>
                             {formatListTime(conv.lastMessageAt, locale, t('window.yesterday'))}
                           </span>
                         )}
@@ -524,7 +534,7 @@ const ConversationList = forwardRef<ConversationListHandle, ConversationListProp
                         <span className="flex shrink-0 items-center gap-1">
                           {conv.isPinned && <Pin className="h-3.5 w-3.5 rotate-45 text-ink-4" aria-hidden="true" />}
                           {showUnread && (
-                            <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-brand px-1.5 text-[11px] font-semibold tabular-nums text-brand-fg">
+                            <span className="pop-enter flex h-5 min-w-[20px] items-center justify-center rounded-full bg-brand px-1.5 text-[11px] font-bold tabular-nums text-brand-fg shadow-[inset_0_1px_0_rgb(255_255_255/0.4)]">
                               {unread > 99 ? '99+' : unread}
                             </span>
                           )}
@@ -563,7 +573,7 @@ const ConversationList = forwardRef<ConversationListHandle, ConversationListProp
                   </div>
 
                   {rowMenu === conv.id && (
-                    <div ref={rowMenuRef} className="pop-enter absolute end-3 top-12 z-30 w-48 rounded-lg bg-surface p-1 shadow-pop">
+                    <div ref={rowMenuRef} className="pop-enter absolute end-3 top-12 z-30 w-52 rounded-xl bg-surface p-1 shadow-pop">
                       <button type="button" onClick={() => togglePin(conv)} className={menuItem}>
                         {conv.isPinned ? <PinOff className="h-4 w-4 text-ink-3" /> : <Pin className="h-4 w-4 text-ink-3" />}
                         {conv.isPinned ? t('list.unpin') : t('list.pin')}

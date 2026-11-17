@@ -283,7 +283,8 @@
     "unschedule": "Unschedule",
     "view": "View",
     "cancel": "Stop campaign",
-    "stopAndDelete": "Stop sending and delete"
+    "stopAndDelete": "Stop sending and delete",
+    "more": "More actions"
   },
   "delivery": {
     "queued": "{{count}} queued",

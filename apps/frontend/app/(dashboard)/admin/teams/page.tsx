@@ -175,7 +175,7 @@ export default function AdminTeamsPage() {
                     className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
                       team.autoAssign
                         ? 'border-brand/40 bg-brand/10 text-brand'
-                        : 'border-line bg-white dark:bg-raised text-gray-500 dark:text-gray-400 hover:bg-raised'
+                        : 'border-line bg-surface text-gray-500 dark:text-gray-400 hover:bg-raised'
                     }`}
                   >
                     {team.autoAssign ? t('teams.autoAssignOn') : t('teams.autoAssignOff')}
@@ -204,7 +204,7 @@ export default function AdminTeamsPage() {
                       {team.members.map((m) => (
                         <li key={m.id} className="flex items-center justify-between rounded-lg bg-raised px-3 py-2">
                           <div className="flex items-center gap-2">
-                            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-bold text-white">
+                            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand text-xs font-bold text-brand-fg">
                               {m.name.charAt(0).toUpperCase()}
                             </div>
                             <div>

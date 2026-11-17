@@ -34,7 +34,7 @@ const emptyForm = { name: '', ownerName: '', ownerEmail: '', ownerPassword: '' }
 
 function StatCard({ icon: Icon, label, value, tint }: { icon: React.ElementType; label: string; value: number | string; tint: string }) {
   return (
-    <div className="rounded-xl border border-line bg-white dark:bg-raised p-5">
+    <div className="rounded-xl border border-line bg-surface p-5">
       <div className="flex items-center gap-3">
         <div className={cn('flex h-10 w-10 items-center justify-center rounded-xl', tint)}>
           <Icon className="h-5 w-5" />
@@ -320,7 +320,7 @@ export default function PlatformPage() {
                   <tr key={t.id} className="group transition-colors hover:bg-raised/60">
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand text-sm font-bold text-white">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand text-sm font-bold text-brand-fg">
                           {t.name.charAt(0).toUpperCase()}
                         </div>
                         <div className="min-w-0">

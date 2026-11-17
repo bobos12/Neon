@@ -1,6 +1,6 @@
 # Backend image. Build context is the REPO ROOT (npm workspaces monorepo).
 #   docker build -f apps/backend/Dockerfile -t crm-backend .
-FROM node:22-slim AS build
+FROM node:22.23.4-slim AS build
 WORKDIR /app
 # Prisma needs openssl present to generate/run its query engine.
 RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates \
@@ -18,7 +18,7 @@ RUN npm run build --workspace=packages/messaging-schema
 RUN npx prisma generate --schema apps/backend/prisma/schema.prisma
 RUN npm run build --workspace=apps/backend
 
-FROM node:22-slim AS runtime
+FROM node:22.23.4-slim AS runtime
 WORKDIR /app
 # openssl: required by the Prisma query engine. ffmpeg: voice-note transcoding
 # (replaces the ffmpeg-static binary download so the build has no GitHub dependency).

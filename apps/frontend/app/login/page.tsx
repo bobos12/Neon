@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/components/providers/ThemeProvider';
 import { useLanguage } from '@/components/providers/I18nProvider';
 import AppUpdateBanner from '@/components/layout/AppUpdateBanner';
+import NeonMark from '@/components/brand/NeonMark';
 
 export default function LoginPage() {
   const { t, i18n } = useTranslation('auth');
@@ -64,247 +65,182 @@ export default function LoginPage() {
 
   if (!mounted) {
     return (
-      <div className="min-h-screen bg-white dark:bg-canvas" />
+      <div className="min-h-screen bg-canvas" />
     );
   }
 
+  const toggles = (
+    <div className="flex items-center gap-1">
+      <button
+        type="button"
+        onClick={() => setLanguage(language === 'en' ? 'ar' : 'en')}
+        className="btn btn-ghost btn-sm"
+        aria-label="Toggle language"
+      >
+        <Globe aria-hidden="true" />
+        <span>{language === 'en' ? 'العربية' : 'EN'}</span>
+      </button>
+      <button
+        type="button"
+        onClick={toggleTheme}
+        className="btn btn-ghost btn-icon btn-sm"
+        aria-label="Toggle theme"
+      >
+        {theme === 'dark' ? <Sun aria-hidden="true" /> : <Moon aria-hidden="true" />}
+      </button>
+    </div>
+  );
+
   return (
-    <div className="min-h-screen overflow-hidden bg-gray-50 dark:bg-canvas">
+    <div className="nx-wash min-h-dvh overflow-hidden">
       <AppUpdateBanner />
 
-      <div className="relative min-h-screen flex flex-col lg:flex-row">
-        {/* Left side - Premium preview (desktop only) */}
-        <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 relative overflow-hidden">
-          {/* Decorative elements */}
-          <div className="absolute inset-0 -z-10">
-            <div className="absolute top-20 left-12 h-64 w-64 rounded-3xl bg-gradient-to-br from-brand/10 to-emerald-400/5 blur-2xl" />
-            <div className="absolute bottom-32 right-12 h-72 w-72 rounded-full bg-gradient-to-tl from-blue-400/10 to-cyan-400/5 blur-3xl" />
+      <div className="relative flex min-h-dvh flex-col lg:flex-row">
+        {/* ── The neon room (desktop): the product's signature dark glass, with
+            the mark lit inside it. One headline, three words of proof — no
+            feature cards, nothing to read before signing in. ── */}
+        <aside className="relative m-3 hidden flex-col justify-between overflow-hidden rounded-[28px] bg-neon-deep p-12 text-[#ECF3ED] shadow-[inset_0_1px_0_rgb(255_255_255/0.07),0_30px_60px_-30px_rgb(0_0_0/0.5)] lg:flex lg:w-[46%]">
+          <div aria-hidden="true" className="pointer-events-none absolute -start-32 -top-40 h-[560px] w-[560px] rounded-full bg-[radial-gradient(closest-side,rgb(216_252_52/0.16),transparent)]" />
+          <div aria-hidden="true" className="chat-doodle pointer-events-none absolute inset-0 !opacity-[0.04] [filter:invert(1)]" />
+
+          <div className="relative flex items-center gap-3" dir="ltr">
+            <NeonMark glow className="h-8 w-auto" />
+            <span className="text-[17px] font-bold tracking-[0.18em]">NEON</span>
           </div>
 
-          {/* Top logo */}
-          <div className="flex items-center gap-3 text-2xl font-bold">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/icons/logo-tight.png" alt="Nexus CRM" className="h-12 w-12 rounded-2xl shadow-lg" />
-            <span className="text-ink">CRM</span>
-          </div>
-
-          {/* Center content */}
-          <div className="max-w-md space-y-8">
-            <div className="space-y-4">
-              <h1 className="text-5xl font-bold text-ink leading-tight">
-                Professional Messaging at Scale
-              </h1>
-              <p className="text-lg text-gray-600 dark:text-gray-400">
-                Manage customer conversations, qualify leads, and automate workflows with AI-powered insights.
-              </p>
+          <div className="relative max-w-md">
+            <div className="relative mb-10 flex h-24 w-24 items-center justify-center">
+              <span aria-hidden="true" className="app-splash__halo !-inset-10" />
+              <NeonMark glow className="relative h-20 w-auto" />
             </div>
-
-            {/* Feature cards */}
-            <div className="space-y-3">
-              {[
-                { icon: '🚀', title: 'Real-time Sync', desc: 'Instant message delivery' },
-                { icon: '🤖', title: 'AI-Powered', desc: 'Smart lead qualification' },
-                { icon: '📊', title: 'Analytics', desc: 'Track your performance' },
-              ].map((feature) => (
-                <div
-                  key={feature.title}
-                  className="group flex items-start gap-4 p-4 rounded-xl bg-white/50 dark:bg-white/5 backdrop-blur-sm border border-gray-200/50 dark:border-white/10 hover:bg-white/70 dark:hover:bg-white/10 transition-all duration-300"
-                >
-                  <span className="text-2xl flex-shrink-0">{feature.icon}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-ink">{feature.title}</p>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{feature.desc}</p>
-                  </div>
-                  <ArrowRight className="h-5 w-5 text-gray-400 group-hover:text-brand transition-colors flex-shrink-0 mt-0.5" />
-                </div>
+            <h1 className="text-[40px] font-semibold leading-[1.1] tracking-[-0.03em]">{t('login.heroTitle')}</h1>
+            <p className="mt-4 text-[15px] leading-7 text-[#ECF3ED]/65">{t('login.heroSubtitle')}</p>
+            <ul className="mt-8 flex flex-wrap items-center gap-2">
+              {(['inbox', 'ai', 'campaigns'] as const).map((k) => (
+                <li key={k} className="inline-flex h-8 items-center gap-2 rounded-full bg-white/[0.06] px-3.5 text-[13px] font-medium text-[#ECF3ED]/85 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.07)]">
+                  <span className="h-1.5 w-1.5 rounded-full bg-brand-400 shadow-[0_0_8px_rgb(216_252_52/0.9)]" aria-hidden="true" />
+                  {t(`login.points.${k}`)}
+                </li>
               ))}
+            </ul>
+          </div>
+
+          <p className="relative flex items-center gap-2 text-xs text-[#ECF3ED]/55">
+            <Lock className="h-3.5 w-3.5 text-brand-400" aria-hidden="true" />
+            {t('login.security')}
+          </p>
+        </aside>
+
+        {/* ── Sign in ── */}
+        <main className="flex flex-1 flex-col px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-[max(1.25rem,env(safe-area-inset-top))] sm:px-8">
+          {/* Phones and tablets: the mark and the toggles share the top line. */}
+          <div className="flex items-center justify-between lg:justify-end">
+            <div className="flex items-center gap-2.5 lg:hidden" dir="ltr">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-neon-deep shadow-[inset_0_1px_0_rgb(255_255_255/0.08)]">
+                <NeonMark className="h-5 w-auto" />
+              </span>
+              <span className="text-[15px] font-bold tracking-[0.16em] text-ink">NEON</span>
             </div>
+            {toggles}
           </div>
 
-          {/* Bottom security notice */}
-          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-            <Lock className="h-4 w-4 text-brand" />
-            <span>{t('login.security')}</span>
-          </div>
-        </div>
+          <div className="flex flex-1 items-center justify-center py-10">
+            <div className="enter w-full max-w-[400px]">
+              <h2 className="display text-[30px] leading-tight">{t('login.title')}</h2>
+              <p className="mt-2 text-[15px] text-ink-3">{t('login.subtitle')}</p>
 
-        {/* Right side - Login card */}
-        <div className="flex w-full lg:w-1/2 flex-col items-center justify-center px-4 sm:px-6 lg:px-12 py-8 lg:py-0">
-          {/* Top controls (mobile visible, desktop hidden) */}
-          <div className="mb-8 flex w-full max-w-sm items-center justify-between lg:hidden">
-            <button
-              type="button"
-              onClick={() => setLanguage(language === 'en' ? 'ar' : 'en')}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-raised text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-200 dark:hover:bg-white/20 transition-all duration-200"
-              aria-label="Toggle language"
-            >
-              <Globe className="h-4 w-4" />
-              <span>{language === 'en' ? 'العربية' : 'EN'}</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={toggleTheme}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg bg-raised text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/20 transition-all duration-200"
-              aria-label="Toggle theme"
-            >
-              {theme === 'dark' ? (
-                <Sun className="h-4 w-4" />
-              ) : (
-                <Moon className="h-4 w-4" />
-              )}
-            </button>
-          </div>
-
-          {/* Main login card */}
-          <div className="w-full max-w-sm">
-            {/* Card header */}
-            <div className="mb-8 text-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/icons/logo-tight.png" alt="Nexus CRM" className="mx-auto mb-6 h-16 w-16 rounded-2xl shadow-lg shadow-brand/30" />
-              <h2 className="text-3xl font-bold text-ink mb-2">
-                {t('login.title')}
-              </h2>
-              <p className="text-base text-gray-600 dark:text-gray-400">
-                {t('login.subtitle')}
-              </p>
-            </div>
-
-            {/* Login card container */}
-            <div className="rounded-xl border border-gray-200/60 dark:border-white/10 bg-white/80 dark:bg-surface/80 backdrop-blur-xl shadow-lg dark:shadow-[0_8px_32px_rgba(0,0,0,0.5)] p-8 space-y-6">
-              {/* Error alert */}
-              {error && (
-                <div className="animate-in fade-in slide-in-from-top-2 rounded-xl border border-red-200/50 dark:border-red-500/30 bg-red-50/80 dark:bg-red-500/10 backdrop-blur px-4 py-3">
-                  <p className="text-sm font-medium text-red-800 dark:text-red-300">{error}</p>
-                </div>
-              )}
-
-              <form className="space-y-5" onSubmit={handleSubmit}>
-                {/* Email field */}
-                <div className="space-y-2">
-                  <label htmlFor="email" className="block text-sm font-semibold text-gray-700 dark:text-gray-200">
-                    {t('login.emailLabel')}
-                  </label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    required
-                    autoComplete="email"
-                    disabled={loading}
-                    className="field w-full transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                    placeholder={t('login.emailPlaceholder')}
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                  />
-                </div>
-
-                {/* Password field */}
-                <div className="space-y-2">
-                  <label htmlFor="password" className="block text-sm font-semibold text-gray-700 dark:text-gray-200">
-                    {t('login.passwordLabel')}
-                  </label>
-                  <div className="relative group">
-                    <input
-                      id="password"
-                      name="password"
-                      type={showPassword ? 'text' : 'password'}
-                      required
-                      autoComplete="current-password"
-                      disabled={loading}
-                      className="field w-full transition-all pr-12 disabled:opacity-50 disabled:cursor-not-allowed"
-                      placeholder={t('login.passwordPlaceholder')}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
-                      aria-label={showPassword ? 'Hide password' : 'Show password'}
-                    >
-                      {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                    </button>
+              <div className="mt-8 rounded-3xl bg-surface p-6 shadow-pop sm:p-7">
+                {/* Error alert */}
+                {error && (
+                  <div role="alert" className="pop-enter mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 dark:border-red-500/30 dark:bg-red-500/10">
+                    <p className="text-sm font-medium text-red-700 dark:text-red-300">{error}</p>
                   </div>
+                )}
+
+                <form className="space-y-5" onSubmit={handleSubmit}>
+                  <div>
+                    <label htmlFor="email" className="label text-[13px]">{t('login.emailLabel')}</label>
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      required
+                      autoComplete="email"
+                      disabled={loading}
+                      dir="ltr"
+                      className="field h-11 text-[15px]"
+                      placeholder={t('login.emailPlaceholder')}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="password" className="label text-[13px]">{t('login.passwordLabel')}</label>
+                    <div className="relative">
+                      <input
+                        id="password"
+                        name="password"
+                        type={showPassword ? 'text' : 'password'}
+                        required
+                        autoComplete="current-password"
+                        disabled={loading}
+                        className="field h-11 pe-12 text-[15px]"
+                        placeholder={t('login.passwordPlaceholder')}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="press-icon absolute end-1.5 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-lg text-ink-4 transition-colors hover:bg-raised hover:text-ink"
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      >
+                        {showPassword ? <EyeOff className="h-[18px] w-[18px]" /> : <Eye className="h-[18px] w-[18px]" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <label className="flex w-fit cursor-pointer items-center gap-2.5">
+                    <input
+                      type="checkbox"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                      disabled={loading}
+                      className="h-4 w-4 cursor-pointer rounded accent-brand disabled:cursor-not-allowed disabled:opacity-50"
+                    />
+                    <span className="text-[13px] font-medium text-ink-2">{t('login.rememberMe')}</span>
+                  </label>
+
+                  <button type="submit" disabled={loading} className="btn btn-primary btn-lg group h-11 w-full text-[15px]">
+                    {loading ? (
+                      <>
+                        <Loader className="animate-spin" aria-hidden="true" />
+                        <span>{t('login.signingIn')}</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>{t('login.submitButton')}</span>
+                        <ArrowRight className="icon-mirror transition-transform duration-base ease-out group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5" aria-hidden="true" />
+                      </>
+                    )}
+                  </button>
+                </form>
+              </div>
+
+              <div className="mt-6 flex items-center justify-between gap-4 px-1 text-xs text-ink-3">
+                <p className="flex items-center gap-1.5 lg:hidden">
+                  <Lock className="h-3.5 w-3.5 text-brand" aria-hidden="true" />
+                  {t('login.security')}
+                </p>
+                <div className="ms-auto flex items-center gap-4">
+                  <a href="/privacy" className="transition-colors hover:text-ink">{t('login.privacy')}</a>
+                  <a href="/terms" className="transition-colors hover:text-ink">{t('login.terms')}</a>
                 </div>
-
-                {/* Remember me */}
-                <label className="flex items-center gap-3 cursor-pointer group">
-                  <input
-                    type="checkbox"
-                    checked={rememberMe}
-                    onChange={(e) => setRememberMe(e.target.checked)}
-                    disabled={loading}
-                    className="h-4 w-4 rounded border border-line-strong bg-white dark:bg-white/5 text-brand transition-all checked:border-brand focus:border-brand focus:ring-[3px] focus:ring-brand/15 disabled:opacity-50 disabled:cursor-not-allowed"
-                  />
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
-                    {t('login.rememberMe')}
-                  </span>
-                </label>
-
-                {/* Sign in button */}
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full px-4 py-3 text-sm font-semibold text-white rounded-xl bg-gradient-to-r from-brand to-emerald-600 hover:from-brand/90 hover:to-emerald-600/90 shadow-lg shadow-brand/30 hover:shadow-brand/40 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group"
-                >
-                  {loading ? (
-                    <>
-                      <Loader className="h-4 w-4 animate-spin" />
-                      <span>{t('login.signingIn')}</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>{t('login.submitButton')}</span>
-                      <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
-                    </>
-                  )}
-                </button>
-              </form>
-
-              {/* Security notice - desktop visible */}
-              <div className="hidden sm:flex items-center gap-2 p-3 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-sm">
-                <Lock className="h-4 w-4 text-brand flex-shrink-0" />
-                <span className="text-emerald-800 dark:text-emerald-300">{t('login.security')}</span>
-              </div>
-            </div>
-
-            {/* Bottom controls (desktop) */}
-            <div className="mt-8 hidden lg:flex items-center justify-between text-xs text-gray-600 dark:text-gray-400">
-              <div className="flex items-center gap-4">
-                <a href="#" className="hover:text-ink transition-colors">
-                  {t('login.privacy')}
-                </a>
-                <a href="#" className="hover:text-ink transition-colors">
-                  {t('login.terms')}
-                </a>
-              </div>
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => setLanguage(language === 'en' ? 'ar' : 'en')}
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-raised transition-colors"
-                  aria-label="Toggle language"
-                >
-                  <Globe className="h-4 w-4" />
-                  <span>{language === 'en' ? 'العربية' : 'EN'}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={toggleTheme}
-                  className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-raised transition-colors"
-                  aria-label="Toggle theme"
-                >
-                  {theme === 'dark' ? (
-                    <Sun className="h-4 w-4" />
-                  ) : (
-                    <Moon className="h-4 w-4" />
-                  )}
-                </button>
               </div>
             </div>
           </div>
-        </div>
+        </main>
       </div>
     </div>
   );

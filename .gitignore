@@ -77,3 +77,7 @@ New XLSX Worksheet.xlsx
 
 # Local env backups contain real secrets
 **/.env.backup*
+
+# Local-only secrets
+hostinger-recovery-codes.txt
+apps/frontend/certificates/

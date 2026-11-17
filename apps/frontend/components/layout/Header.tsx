@@ -12,6 +12,7 @@ import NotificationBell from '@/components/notifications/NotificationBell';
 import AccountMenu from './AccountMenu';
 import { NAV_GROUPS, SETTINGS_ITEM, isActive } from './nav-config';
 import { openCommandPalette } from './CommandPalette';
+import NeonMark from '../brand/NeonMark';
 
 /**
  * Phone-only top bar. On tablet and desktop the sidebar carries everything this
@@ -36,16 +37,17 @@ export default function Header() {
   if (headerHidden || chatWindowOpen || pathname?.startsWith('/conversations')) return null;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-surface pt-safe sm:hidden">
+    <header className="glass-chrome sticky top-0 z-40 pt-safe shadow-[0_1px_0_rgb(var(--line)/0.8)] sm:hidden">
       <div className="flex h-14 items-center gap-2 px-3">
         <Link href="/dashboard" className="flex min-w-0 flex-1 items-center gap-2.5" aria-label={t('appName')}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/icons/logo-tight.png" alt="" className="h-7 w-7 shrink-0" />
-          <span className="truncate text-base font-semibold tracking-[-0.01em] text-ink">{title}</span>
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-neon-deep shadow-[inset_0_1px_0_rgb(255_255_255/0.08)]">
+            <NeonMark className="h-[18px] w-auto" />
+          </span>
+          <span className="truncate text-[17px] font-semibold tracking-[-0.02em] text-ink">{title}</span>
           <span
             className={cn(
               'h-1.5 w-1.5 shrink-0 rounded-full',
-              connection === 'connected' ? 'bg-brand' : connection === 'connecting' ? 'bg-amber-400' : 'bg-red-500',
+              connection === 'connected' ? 'bg-success-500' : connection === 'connecting' ? 'bg-amber-400' : 'bg-red-500',
             )}
             title={tCommon(`status.${connection === 'connected' ? 'connected' : connection === 'connecting' ? 'connecting' : 'disconnected'}`)}
             aria-hidden="true"

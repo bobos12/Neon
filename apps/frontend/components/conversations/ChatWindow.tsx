@@ -51,6 +51,7 @@ import InternalNotes from './InternalNotes';
 import AssignmentHistory from './AssignmentHistory';
 import EmojiPicker from '../ui/EmojiPicker';
 import Avatar from '../ui/Avatar';
+import NeonMark from '../brand/NeonMark';
 import ForwardModal from './ForwardModal';
 import ContactTagSelector from '../contacts/ContactTagSelector';
 import QualificationPanel from '../leads/QualificationPanel';
@@ -1225,15 +1226,17 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
 
   if (!conversationId) {
     return (
-      <div dir={dir} className="relative flex h-full w-full min-w-0 items-center justify-center overflow-hidden bg-chat">
+      <div dir={dir} className="relative flex h-full w-full min-w-0 items-center justify-center overflow-hidden bg-chat md:rounded-[20px] md:shadow-glass">
         <div className="chat-doodle pointer-events-none absolute inset-0" aria-hidden="true" />
+        <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgb(var(--brand)/0.16),transparent)] dark:bg-[radial-gradient(closest-side,rgb(var(--brand)/0.09),transparent)]" />
         <div className="enter relative max-w-sm px-8 text-center">
-          <span className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-xl border border-line bg-surface shadow-soft">
-            <MessageSquare className="h-6 w-6 text-brand" strokeWidth={1.75} aria-hidden="true" />
+          {/* The mark in its own lit glass tile — the inbox at rest. */}
+          <span className="relative mx-auto mb-6 flex h-[72px] w-[72px] items-center justify-center rounded-[22px] bg-neon-deep shadow-[inset_0_1px_0_rgb(255_255_255/0.08),0_18px_40px_-16px_rgb(var(--shadow)/0.6),0_0_0_1px_rgb(255_255_255/0.04)]">
+            <NeonMark glow className="h-9 w-auto" />
           </span>
-          <h2 className="text-lg font-semibold tracking-[-0.01em] text-ink">{t('window.emptyTitle')}</h2>
-          <p className="mt-1.5 text-[13px] leading-6 text-ink-3">{t('window.emptySubtitle')}</p>
-          <p className="mt-6 inline-flex items-center gap-1.5 text-2xs text-ink-4">
+          <h2 className="display text-[22px]">{t('window.emptyTitle')}</h2>
+          <p className="mt-2 text-[13.5px] leading-6 text-ink-3">{t('window.emptySubtitle')}</p>
+          <p className="mt-7 inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1.5 text-2xs text-ink-3 shadow-glass">
             <span className="kbd">⌘</span><span className="kbd">K</span>
             <span className="ms-1">{t('common:palette.placeholder')}</span>
           </p>
@@ -1244,15 +1247,15 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
 
   if (!conversation) {
     return (
-      <div dir={dir} className="relative flex h-full w-full min-w-0 flex-col bg-chat">
-        <div className="flex h-[60px] shrink-0 items-center gap-3 border-b border-line bg-surface px-4">
+      <div dir={dir} className="relative flex h-full w-full min-w-0 flex-col overflow-hidden bg-chat md:rounded-[20px] md:shadow-glass">
+        <div className="glass-chrome box-content flex h-[60px] shrink-0 items-center gap-3 px-4 pt-safe shadow-[0_1px_0_rgb(var(--line)/0.7)]">
           <Skeleton className="h-10 w-10 rounded-full" />
           <div className="space-y-2"><Skeleton className="h-3 w-36 rounded" /><Skeleton className="h-2.5 w-24 rounded" /></div>
         </div>
         <div className="flex-1 space-y-3 px-[6%] py-6" aria-hidden="true">
           {[52, 38, 64, 30, 46].map((w, i) => (
             <div key={i} className={`flex ${i % 2 ? 'justify-end' : 'justify-start'}`}>
-              <Skeleton className="h-10 rounded-lg" style={{ width: `${w}%` } as React.CSSProperties} />
+              <Skeleton className="h-10 rounded-[18px]" style={{ width: `${w}%` } as React.CSSProperties} />
             </div>
           ))}
         </div>
@@ -1295,14 +1298,14 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
     backgroundPosition: isRTL ? 'left 10px center' : 'right 10px center',
   };
 
-  const iconBtn = 'flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink-3 transition-colors hover:bg-raised hover:text-ink';
+  const iconBtn = 'press-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink-3 transition-colors hover:bg-raised hover:text-ink';
 
   return (
-    <div dir={dir} className="relative flex h-full w-full min-w-0 overflow-hidden bg-chat">
+    <div dir={dir} className="relative flex h-full w-full min-w-0 gap-2 overflow-hidden">
       {/* ===== MAIN CHAT AREA ===== */}
-      <div className="relative flex min-w-0 flex-1 flex-col">
-        {/* Header */}
-        <header className="relative z-20 box-content flex h-[60px] shrink-0 items-center gap-1.5 border-b border-line bg-surface px-2 pt-safe sm:gap-2 sm:px-3">
+      <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden bg-chat md:rounded-[20px] md:shadow-glass">
+        {/* Header — glass the conversation scrolls under. */}
+        <header className="glass-chrome absolute inset-x-0 top-0 z-20 box-content flex h-[60px] items-center gap-1.5 px-2 pt-safe shadow-[0_1px_0_rgb(var(--line)/0.7)] sm:gap-2 sm:px-3">
           {onBack && (
             <button type="button" onClick={onBack} className={`${iconBtn} md:hidden`} aria-label={t('common:actions.back', 'Back')}>
               <ArrowLeft className="h-5 w-5 icon-mirror" />
@@ -1317,7 +1320,7 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
             <div className="relative shrink-0">
               <Avatar src={contactAvatar} name={contactName} contactId={contactId} size={40} />
               <span className={`absolute -bottom-0.5 -end-0.5 h-3 w-3 rounded-full ring-2 ring-surface ${
-                statusLabel === 'open' ? 'bg-brand' : statusLabel === 'pending' ? 'bg-amber-400' : 'bg-ink-4'
+                statusLabel === 'open' ? 'bg-success-500' : statusLabel === 'pending' ? 'bg-amber-400' : 'bg-ink-4'
               }`} aria-hidden="true" />
             </div>
             <div className="min-w-0 flex-1">
@@ -1345,13 +1348,15 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
               disabled={headerBot.busy}
               onClick={headerBot.toggle}
               title={headerBot.title}
-              className={`inline-flex h-8 shrink-0 items-center gap-2 rounded-full border px-2.5 text-xs font-medium transition-colors disabled:opacity-60 ${
-                headerBot.on ? 'border-brand/30 bg-brand/10 text-brand' : 'border-line bg-surface text-ink-3 hover:text-ink'
+              className={`press inline-flex h-8 shrink-0 items-center gap-2 rounded-full px-2.5 text-xs font-medium transition-[background-color,color,box-shadow] disabled:opacity-60 ${
+                headerBot.on
+                  ? 'bg-brand/25 text-brand-strong shadow-[inset_0_0_0_1px_rgb(var(--brand-ink)/0.25)] dark:bg-brand/10 dark:shadow-[inset_0_0_0_1px_rgb(var(--brand)/0.3),0_0_16px_-6px_rgb(var(--brand)/0.8)]'
+                  : 'bg-surface text-ink-3 shadow-glass hover:text-ink'
               }`}
             >
               <Bot className="h-3.5 w-3.5" aria-hidden="true" />
               <span className="hidden lg:inline">{headerBot.label}</span>
-              <span className={`relative inline-flex h-3.5 w-6 items-center rounded-full transition-colors ${headerBot.on ? 'bg-brand' : 'bg-line-strong'}`} aria-hidden="true">
+              <span className={`relative inline-flex h-3.5 w-6 items-center rounded-full transition-colors ${headerBot.on ? 'bg-brand-ink dark:bg-brand' : 'bg-line-strong'}`} aria-hidden="true">
                 <span className={`inline-block h-2.5 w-2.5 rounded-full bg-white shadow transition-transform duration-base ease-spring ${headerBot.on ? 'translate-x-3 rtl:-translate-x-3' : 'translate-x-0.5 rtl:-translate-x-0.5'}`} />
               </span>
             </button>
@@ -1390,9 +1395,10 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
         {/* Messages */}
         <div className="relative flex-1 overflow-hidden">
           <div className="chat-doodle pointer-events-none absolute inset-0" aria-hidden="true" />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-56 bg-[radial-gradient(70%_100%_at_50%_0%,rgb(var(--brand)/0.10),transparent)] dark:bg-[radial-gradient(70%_100%_at_50%_0%,rgb(var(--brand)/0.06),transparent)]" />
           <div
             ref={scrollContainerRef}
-            className="relative h-full overflow-y-auto overflow-x-hidden px-3 pb-3 pt-3 sm:px-[5%] xl:px-[8%]"
+            className="relative h-full overflow-y-auto overflow-x-hidden px-3 pb-3 pt-[calc(60px+env(safe-area-inset-top)+0.75rem)] sm:px-[5%] xl:px-[8%]"
             onScroll={() => {
               const el = scrollContainerRef.current;
               if (!el) return;
@@ -1406,7 +1412,7 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
           >
             {messages.length === 0 ? (
               <div className="flex h-full min-h-[300px] items-center justify-center">
-                <div className="pop-enter max-w-xs rounded-xl bg-surface/90 px-6 py-5 text-center shadow-soft ring-1 ring-line">
+                <div className="pop-enter max-w-xs rounded-2xl bg-surface px-6 py-5 text-center shadow-glass">
                   <p className="text-[13px] font-semibold text-ink">{t('window.noMessages')}</p>
                   <p className="mt-1 text-xs text-ink-3">{t('window.noMessagesSubtitle')}</p>
                 </div>
@@ -1415,7 +1421,7 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
               <>
                 {isLoadingOlder && (
                   <div className="flex justify-center py-2">
-                    <span className="inline-flex items-center gap-2 rounded-full bg-surface px-3 py-1.5 text-2xs text-ink-3 shadow-soft">
+                    <span className="inline-flex items-center gap-2 rounded-full bg-surface px-3 py-1.5 text-2xs text-ink-3 shadow-glass">
                       <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
                       {t('window.loadingOlder')}
                     </span>
@@ -1442,9 +1448,12 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
 
                   return (
                     <div key={msg.id}>
+                      {/* Sticky offsets count from the scroller's padding edge, which
+                          already clears the glass header — so -4px lands the
+                          pill 8px under it. */}
                       {showDateSeparator && (
-                        <div className="sticky top-1 z-[5] my-3 flex justify-center">
-                          <span className="rounded-md bg-surface px-2.5 py-1 text-2xs font-medium text-ink-3 shadow-soft">
+                        <div className="sticky -top-1 z-[5] my-3 flex justify-center">
+                          <span className="rounded-full bg-surface px-3 py-1 text-2xs font-semibold text-ink-3 shadow-glass [--surface-a:0.85]">
                             {dateLabel}
                           </span>
                         </div>
@@ -1486,7 +1495,7 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
             <button
               type="button"
               onClick={scrollToBottom}
-              className="pop-enter absolute bottom-4 end-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-surface text-ink-3 shadow-pop transition-colors hover:text-ink"
+              className="press-icon pop-enter absolute bottom-4 end-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-surface text-ink-2 shadow-pop transition-colors hover:text-ink"
               aria-label={t('window.scrollToBottom')}
             >
               {unreadWhileScrolled > 0 && (
@@ -1500,7 +1509,9 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
         </div>
 
         {/* Composer */}
-        <footer className="relative z-10 shrink-0 border-t border-line bg-surface px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 sm:px-3">
+        {/* Composer — a floating capsule on the conversation, with the send key
+            beside it: the shape everyone already types into on their phone. */}
+        <footer className="relative z-10 shrink-0 px-2 pb-[max(0.625rem,env(safe-area-inset-bottom))] pt-1 sm:px-4 sm:pb-3">
           {(peerTyping || sendError || recordingError || replyTo || attachment || recordedAudio || isRecording || slashMatches.length > 0) && (
             <div className="mb-2 space-y-2">
               {peerTyping && (
@@ -1514,7 +1525,7 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
                 </p>
               )}
               {sendError && (
-                <div className="pop-enter flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs font-medium text-red-700 dark:border-red-500/25 dark:bg-red-500/10 dark:text-red-300">
+                <div className="pop-enter flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-medium text-red-700 dark:border-red-500/25 dark:bg-red-500/10 dark:text-red-300">
                   <X className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                   <p className="flex-1">{sendError}</p>
                 </div>
@@ -1525,7 +1536,7 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
                 </div>
               )}
               {slashMatches.length > 0 && (
-                <div className="pop-enter overflow-hidden rounded-lg border border-line bg-surface shadow-soft" role="listbox" aria-label={t('composer.savedReplies')}>
+                <div className="pop-enter overflow-hidden rounded-2xl bg-surface shadow-pop" role="listbox" aria-label={t('composer.savedReplies')}>
                   <p className="eyebrow border-b border-line px-3 py-1.5">{t('composer.savedReplies')}</p>
                   {slashMatches.map((r, i) => (
                     <button
@@ -1535,7 +1546,7 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
                       aria-selected={i === slashIndex}
                       onMouseEnter={() => setSlashIndex(i)}
                       onClick={() => pickSlash(r)}
-                      className={`flex w-full items-baseline gap-3 px-3 py-2 text-start transition-colors ${i === slashIndex ? 'bg-raised' : ''}`}
+                      className={`flex w-full items-baseline gap-3 px-3 py-2 text-start transition-colors ${i === slashIndex ? 'bg-brand/20 dark:bg-brand/10' : ''}`}
                     >
                       <span className="shrink-0 font-mono text-xs font-medium text-brand">{r.shortcut}</span>
                       <span className="truncate text-[13px] text-ink-2"><bdi>{expandReply(r.message)}</bdi></span>
@@ -1544,7 +1555,7 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
                 </div>
               )}
               {replyTo && (
-                <div className="pop-enter flex items-start gap-3 rounded-lg border-s-[3px] border-brand bg-raised px-3 py-2">
+                <div className="pop-enter flex items-start gap-3 rounded-2xl border-s-[3px] border-brand bg-surface px-3 py-2 shadow-glass dark:border-brand">
                   <div className="min-w-0 flex-1">
                     <p className="text-xs font-semibold text-brand">
                       {replyTo.fromMe ? t('window.replyingToSelf') : t('window.replyingTo', { name: contactName })}
@@ -1557,8 +1568,8 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
                 </div>
               )}
               {(attachment || recordedAudio) && (
-                <div className="pop-enter flex items-center gap-3 rounded-lg border border-line bg-raised px-3 py-2">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-brand">
+                <div className="pop-enter flex items-center gap-3 rounded-2xl bg-surface px-3 py-2 shadow-glass">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand text-brand-fg">
                     {recordedAudio ? <Mic className="h-4 w-4" /> : attachment?.type?.startsWith('image/') ? <ImageIcon className="h-4 w-4" /> : attachment?.type?.startsWith('video/') ? <Video className="h-4 w-4" /> : <FileText className="h-4 w-4" />}
                   </span>
                   <div className="min-w-0 flex-1">
@@ -1571,7 +1582,7 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
                 </div>
               )}
               {isRecording && (
-                <div className="pop-enter flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 dark:border-red-500/25 dark:bg-red-500/10">
+                <div className="pop-enter flex items-center gap-3 rounded-2xl border border-red-200 bg-red-50 px-3 py-2 dark:border-red-500/25 dark:bg-red-500/10">
                   <span className="relative flex h-2.5 w-2.5" aria-hidden="true">
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
                     <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
@@ -1586,7 +1597,8 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
             </div>
           )}
 
-          <div className="flex items-end gap-1">
+          <div className="flex items-end gap-2">
+            <div className="flex min-w-0 flex-1 items-end gap-0.5 rounded-[24px] bg-surface p-1 shadow-glass transition-[box-shadow,background-color] duration-base [--surface-a:0.92] focus-within:shadow-[inset_0_1px_0_rgb(255_255_255/var(--glass-hi)),0_0_0_1px_rgb(var(--brand-ink)/0.35),0_0_0_4px_rgb(var(--brand)/0.22)] dark:[--surface-a:0.86] dark:focus-within:shadow-[0_0_0_1px_rgb(var(--brand)/0.4),0_0_22px_-6px_rgb(var(--brand)/0.5)]">
             <div className="relative" ref={emojiBarRef}>
               <button
                 ref={emojiButtonRef}
@@ -1618,7 +1630,7 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
               </button>
               <input ref={fileInputRef} type="file" onChange={handleAttachmentChange} className="hidden" />
               {showAttachmentMenu && (
-                <div className="pop-enter absolute bottom-full start-0 z-50 mb-2 w-56 rounded-xl bg-surface p-1.5 shadow-pop">
+                <div className="pop-enter absolute bottom-full start-0 z-50 mb-3 w-60 rounded-2xl bg-surface p-1.5 shadow-pop">
                   {ATTACHMENT_OPTIONS.map((option) => {
                     const Icon = option.icon;
                     return (
@@ -1626,9 +1638,9 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
                         key={option.labelKey}
                         type="button"
                         onClick={() => openAttachmentPicker(option.accept)}
-                        className="flex w-full items-center gap-3 rounded-lg px-2.5 py-2 text-start text-[13px] font-medium text-ink-2 transition-colors hover:bg-raised hover:text-ink"
+                        className="flex w-full items-center gap-3 rounded-xl px-2.5 py-2 text-start text-[13px] font-medium text-ink-2 transition-colors hover:bg-raised hover:text-ink"
                       >
-                        <span className={`flex h-8 w-8 items-center justify-center rounded-full ${option.tone}`}>
+                        <span className={`flex h-8 w-8 items-center justify-center rounded-[10px] ${option.tone}`}>
                           <Icon className="h-4 w-4" />
                         </span>
                         {t(option.labelKey)}
@@ -1651,7 +1663,7 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
                   <FileText className="h-5 w-5" />
                 </button>
                 {showTemplatePicker && (
-                  <div className="pop-enter absolute bottom-full start-0 z-50 mb-2 w-80 overflow-hidden rounded-xl bg-surface shadow-pop">
+                  <div className="pop-enter absolute bottom-full start-0 z-50 mb-3 w-80 overflow-hidden rounded-2xl bg-surface shadow-pop">
                     <div className="flex items-center justify-between border-b border-line px-3 py-2">
                       <span className="eyebrow">{t('templates:title')} · {templates.length}</span>
                       <button type="button" onClick={() => setShowTemplatePicker(false)} className="btn btn-ghost btn-icon btn-sm" aria-label={t('common:actions.close', 'Close')}>
@@ -1743,7 +1755,7 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
                               setShowTemplatePicker(false);
                               textareaRef.current?.focus();
                             }}
-                            className="w-full rounded-lg px-2.5 py-2 text-start transition-colors hover:bg-raised"
+                            className="w-full rounded-xl px-2.5 py-2 text-start transition-colors hover:bg-raised"
                           >
                             <div className="flex items-center gap-1.5">
                               <p className="flex-1 truncate text-[13px] font-semibold text-ink">{tpl.name}</p>
@@ -1768,31 +1780,34 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
                 onKeyDown={onComposerKeyDown}
                 placeholder={t('composer.placeholder')}
                 dir="auto"
-                className="block max-h-[140px] min-h-[40px] w-full resize-none rounded-[20px] border border-transparent bg-raised px-4 py-2.5 text-[14.5px] leading-5 text-ink outline-none transition-[border-color,box-shadow,background-color] placeholder:text-ink-4 focus:border-line focus:bg-surface focus:ring-[3px] focus:ring-brand/10"
+                className="block max-h-[140px] min-h-[40px] w-full resize-none border-0 bg-transparent px-2 py-2.5 text-[14.5px] leading-5 text-ink outline-none placeholder:text-ink-4 focus:ring-0"
                 rows={1}
               />
               {typingHint && (
-                <span className="pointer-events-none absolute bottom-2.5 end-3 rounded-full bg-brand/10 px-2 py-0.5 text-[10px] font-semibold text-brand">
+                <span className="pointer-events-none absolute bottom-2.5 end-2 rounded-full bg-brand/25 px-2 py-0.5 text-[10px] font-semibold text-brand-strong dark:bg-brand/10">
                   {typingHint}
                 </span>
               )}
             </div>
+            </div>
 
+            {/* The send key swaps in for the mic the moment there is something to
+                send — and it is the one lit control in the composer. */}
             {message.trim() || attachment || recordedAudio ? (
               <button
                 onClick={sendMessage}
                 disabled={isSending}
-                className="press flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand text-brand-fg shadow-brand transition-colors hover:bg-brand-strong disabled:opacity-70"
+                className="press pop-enter flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-brand text-brand-fg shadow-brand transition-[background-color,box-shadow] hover:bg-brand-strong hover:shadow-[inset_0_1px_0_rgb(255_255_255/0.5),0_0_0_4px_rgb(var(--brand)/0.2),0_6px_22px_-6px_rgb(var(--brand)/0.8)] disabled:opacity-70"
                 type="button"
                 aria-label={t('composer.sendMessage')}
               >
-                {isSending ? <Loader2 className="h-[18px] w-[18px] animate-spin" /> : <Send className="h-[18px] w-[18px] icon-mirror" />}
+                {isSending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5 icon-mirror" />}
               </button>
             ) : (
               <button
                 onClick={isRecording ? stopRecording : startRecording}
-                className={`press flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors ${
-                  isRecording ? 'bg-red-500 text-white' : 'text-ink-3 hover:bg-raised hover:text-ink'
+                className={`press flex h-12 w-12 shrink-0 items-center justify-center rounded-full transition-colors ${
+                  isRecording ? 'bg-red-500 text-white shadow-[0_0_0_4px_rgb(239_68_68/0.2)]' : 'bg-surface text-ink-2 shadow-glass [--surface-a:0.92] hover:text-ink'
                 }`}
                 type="button"
                 aria-label={isRecording ? t('composer.stopRecording') : t('composer.recordVoice')}
@@ -1811,7 +1826,7 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
             {/* Overlay below the width where the panel can dock beside the chat */}
             <motion.div
               key="details-backdrop"
-              className="absolute inset-0 z-40 bg-[rgb(8_12_10/0.3)] min-[1440px]:hidden"
+              className="absolute inset-0 z-40 bg-[rgb(var(--scrim)/0.28)] md:rounded-[20px] min-[1440px]:hidden"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               onClick={() => setShowRightPanel(false)}
               aria-hidden="true"
@@ -1822,7 +1837,7 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: isRTL ? '-100%' : '100%', opacity: 0.6 }}
               transition={{ type: 'spring', stiffness: 420, damping: 42 }}
-              className="absolute inset-y-0 end-0 z-50 flex w-full flex-col bg-surface pb-safe pt-safe sm:w-[min(92vw,360px)] sm:border-s sm:border-line sm:shadow-pop min-[1440px]:relative min-[1440px]:z-0 min-[1440px]:w-[340px] min-[1440px]:shadow-none"
+              className="absolute inset-y-0 end-0 z-50 flex w-full flex-col overflow-hidden bg-surface pb-safe pt-safe sm:w-[min(92vw,360px)] sm:shadow-pop md:rounded-[20px] min-[1440px]:relative min-[1440px]:z-0 min-[1440px]:w-[340px] min-[1440px]:shadow-glass"
             >
               {showInteractiveSidebar ? (
                 <div className="flex h-full flex-col overflow-hidden">
@@ -1835,7 +1850,7 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
               ) : (
                 <>
                   {/* Phones: one back arrow, where the chat's was. Larger screens: a close X. */}
-                  <div className="flex h-[60px] shrink-0 items-center gap-1 border-b border-line pe-2 ps-1 sm:justify-between sm:ps-4">
+                  <div className="flex h-[60px] shrink-0 items-center gap-1 border-b border-line/70 pe-2 ps-1 sm:justify-between sm:ps-4">
                     <button
                       type="button"
                       onClick={() => setShowRightPanel(false)}
@@ -1851,7 +1866,7 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
                   </div>
 
                   {/* Tabs — the underline glides between them */}
-                  <div className="flex shrink-0 gap-1 border-b border-line px-3" role="tablist">
+                  <div className="flex shrink-0 gap-1 border-b border-line/70 px-3" role="tablist">
                     {([
                       { id: 'details' as const, labelKey: 'details.tabDetails' },
                       { id: 'notes' as const, labelKey: 'details.tabNotes' },
@@ -1868,7 +1883,7 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
                           className={`relative px-2 py-2.5 text-xs font-medium transition-colors ${active ? 'text-ink' : 'text-ink-3 hover:text-ink'}`}
                         >
                           {t(tab.labelKey)}
-                          {active && <motion.span layoutId="details-tab" className="absolute inset-x-1 -bottom-px h-0.5 rounded-full bg-brand" transition={{ type: 'spring', stiffness: 520, damping: 40 }} />}
+                          {active && <motion.span layoutId="details-tab" className="absolute inset-x-1 -bottom-px h-0.5 rounded-full bg-brand-ink shadow-[0_0_8px_rgb(var(--brand)/0.8)] dark:bg-brand" transition={{ type: 'spring', stiffness: 520, damping: 40 }} />}
                         </button>
                       );
                     })}
@@ -1878,7 +1893,7 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
                     <div className="flex-1 overflow-y-auto">
                       {/* Contact */}
                       {conversation.contact && (
-                        <section className="border-b border-line p-4">
+                        <section className="border-b border-line/70 p-4">
                           <div className="flex items-center gap-3">
                             <Avatar src={contactAvatar} name={contactName} contactId={contactId} size={48} />
                             <div className="min-w-0 flex-1">
@@ -1911,7 +1926,7 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
                       )}
 
                       {/* Conversation fields */}
-                      <section className="space-y-3 border-b border-line p-4">
+                      <section className="space-y-3 border-b border-line/70 p-4">
                         <p className="eyebrow">{t('panel.conversation')}</p>
                         <label className="grid grid-cols-[96px_1fr] items-center gap-3">
                           <span className="text-xs text-ink-3">{t('details.status')}</span>
@@ -1949,7 +1964,7 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
                       </section>
 
                       {/* AI agent for this chat */}
-                      <section className="space-y-2.5 border-b border-line p-4">
+                      <section className="space-y-2.5 border-b border-line/70 p-4">
                         <div className="flex items-center justify-between">
                           <p className="eyebrow">{t('panel.ai')}</p>
                           {isBotToggling && <Loader2 className="h-3.5 w-3.5 animate-spin text-ink-4" aria-hidden="true" />}
@@ -1989,7 +2004,7 @@ export default function ChatWindow({ conversationId, recipientContacts = [], onC
                       </section>
 
                       {contactId && (
-                        <section className="space-y-2.5 border-b border-line p-4">
+                        <section className="space-y-2.5 border-b border-line/70 p-4">
                           <p className="eyebrow">{t('details.tags')}</p>
                           <ContactTagSelector contactId={contactId} />
                         </section>

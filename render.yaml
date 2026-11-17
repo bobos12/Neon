@@ -33,7 +33,14 @@ services:
       - key: PUBLIC_API_URL
         sync: false
       - key: META_GRAPH_VERSION
-        value: v21.0
+        value: v24.0
+      # One-click "Connect WhatsApp" (Meta Embedded Signup).
+      - key: META_APP_ID
+        sync: false
+      - key: META_APP_SECRET
+        sync: false
+      - key: META_EMBEDDED_SIGNUP_CONFIG_ID
+        sync: false
       - key: OWNER_EMAIL
         sync: false
       - key: OWNER_PASSWORD

@@ -111,7 +111,10 @@ function toResolved(tenantId: string, row: ChannelRow | null): ResolvedChannel {
         businessId: row.businessId,
         appId: row.appId,
         accessToken,
-        appSecret: tryDecryptSecret(row.appSecretEnc),
+        // Embedded Signup tenants live on the platform's app, so its secret is theirs.
+        appSecret:
+          tryDecryptSecret(row.appSecretEnc) ??
+          (row.appId && row.appId === process.env.META_APP_ID?.trim() ? process.env.META_APP_SECRET?.trim() || null : null),
         displayPhoneNumber: row.displayPhoneNumber,
         verifiedName: row.verifiedName,
       };
@@ -224,6 +227,8 @@ export interface SaveCloudCredentialsInput {
   accessToken?: string;
   /** Blank keeps the stored secret. Never returned to a client, so it cannot be echoed back. */
   appSecret?: string | null;
+  /** Moving onto the platform's app: drop any secret left from the tenant's own app. */
+  clearAppSecret?: boolean;
 }
 
 /**
@@ -288,7 +293,9 @@ export async function saveCloudCredentials(
    * silently disabled all inbound messaging.
    */
   const suppliedSecret = input.appSecret?.trim();
-  const secretColumn = suppliedSecret ? { appSecretEnc: encryptSecret(suppliedSecret) } : {};
+  const secretColumn = suppliedSecret
+    ? { appSecretEnc: encryptSecret(suppliedSecret) }
+    : input.clearAppSecret ? { appSecretEnc: null } : {};
 
   await prisma.whatsAppChannel.upsert({
     where: { tenantId },

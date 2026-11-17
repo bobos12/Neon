@@ -69,7 +69,7 @@ A comprehensive WhatsApp automation platform built with Node.js, Next.js, and mo
    npm run db:push
    ```
 
-   If you already have another Postgres instance on port `5432` or Redis on `6379`, this project uses `5433` for Postgres and `6380` for Redis on the host to avoid collisions.
+   If you already have another Postgres instance on port `5432` or Redis on `6379`, this project uses `5435` for Postgres and `6381` for Redis on the host to avoid collisions.
 
 4. **Start Development Servers**:
    ```bash

@@ -83,7 +83,7 @@ export default function FlowBuilder({ initial, onSave, onCancel }: Props) {
       closeOnBackdrop={false}
       aria-label={initial ? t('flow.editTitle') : t('flow.createTitle')}
       overlayClassName="bg-black/50"
-      className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white dark:bg-raised p-6 shadow-xl"
+      className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-surface p-6 shadow-xl"
     >
         <h2 className="text-lg font-semibold text-ink mb-4">
           {initial ? t('flow.editTitle') : t('flow.createTitle')}

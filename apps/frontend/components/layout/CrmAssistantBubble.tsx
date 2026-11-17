@@ -267,7 +267,7 @@ export default function CrmAssistantBubble() {
         <>
           <motion.div
             key="assistant-backdrop"
-            className="fixed inset-0 z-40 bg-[rgb(8_12_10/0.25)] sm:bg-transparent"
+            className="fixed inset-0 z-40 bg-[rgb(var(--scrim)/0.25)] sm:bg-transparent"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             onClick={() => setOpen(false)}
             aria-hidden="true"

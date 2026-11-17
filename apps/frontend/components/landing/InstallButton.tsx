@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, type ReactNode } from 'react'
-import { Download, RefreshCw, Share, MoreVertical, ArrowDown } from 'lucide-react'
+import { Download, RefreshCw, Share, MoreVertical, ArrowDown, Check } from 'lucide-react'
 import { hardRefresh } from '@/lib/hard-refresh'
 
 interface BeforeInstallPromptEvent extends Event {
@@ -57,14 +57,15 @@ function openInSystemBrowser(platform: Platform) {
 }
 
 interface InstallButtonProps {
-  variant?: 'hero' | 'section' | 'onSignal'
+  lang: 'ar' | 'en'
   className?: string
-  label?: string
-  hint?: string
-  installedLabel?: string
+  label: string
+  hint: string
+  installedLabel: string
+  texts: { homeTitle: string; desktopTitle: string; updating: string; update: string }
 }
 
-export function InstallButton({ variant = 'hero', className = '', label, hint, installedLabel }: InstallButtonProps) {
+export function InstallButton({ lang, className = '', label, hint, installedLabel, texts }: InstallButtonProps) {
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null)
   const [isInstalled, setIsInstalled] = useState(false)
   const [platform, setPlatform] = useState<Platform>('unknown')
@@ -143,78 +144,66 @@ export function InstallButton({ variant = 'hero', className = '', label, hint, i
     setGuide(platform === 'android' ? 'android' : desktopGuide())
   }
 
-  const surface =
-    variant === 'hero' ? 'nx-btn-ghost' : variant === 'onSignal' ? 'nx-btn-outline-ink' : 'nx-btn-primary'
+  const steps = GUIDE_STEPS[lang]
 
   if (isInstalled) {
     if (updateAvailable) {
       return (
-        <button
-          type="button"
-          onClick={applyUpdate}
-          disabled={updating}
-          className={`nx-btn disabled:cursor-wait ${surface} ${className}`}
-        >
+        <button type="button" onClick={applyUpdate} disabled={updating} className={`ne-btn ne-btn-ghost disabled:cursor-wait ${className}`}>
           <RefreshCw className={`h-4 w-4 ${updating ? 'animate-spin' : ''}`} />
-          {updating ? 'Updating…' : 'Update Available — Tap to Update'}
+          {updating ? texts.updating : texts.update}
         </button>
       )
     }
     return (
-      <span className={`inline-flex h-[3.25rem] items-center gap-2 text-sm font-semibold ${variant === 'onSignal' ? 'text-[var(--nx-signal-ink)]' : 'text-[var(--nx-signal)]'} ${className}`}>
-        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
-        </svg>
-        {installedLabel ?? 'App Installed'}
+      <span className={`inline-flex min-h-[3.25rem] items-center gap-2 font-medium text-[var(--ne-lime)] ${className}`}>
+        <Check className="h-4 w-4" aria-hidden />
+        {installedLabel}
       </span>
     )
   }
 
   return (
     <>
-      <button
-        type="button"
-        onClick={handleClick}
-        className={`nx-btn nx-btn-app ${variant === 'onSignal' ? 'nx-btn-app-ink' : ''} ${className}`}
-      >
-        <span className="nx-btn-app__icon">
+      <button type="button" onClick={handleClick} className={`ne-btn ne-btn-app ${className}`}>
+        <span className="ne-btn-app__icon">
           <Download className="h-5 w-5" />
         </span>
         <span className="flex flex-col items-start leading-tight">
-          <span className="text-base font-bold">{label ?? 'Download the app'}</span>
-          <span className="text-xs font-medium opacity-60">{hint ?? 'iPhone · Android · Desktop'}</span>
+          <span className="font-medium">{label}</span>
+          <span className="text-xs text-[var(--ne-text-3)]">{hint}</span>
         </span>
       </button>
 
       {guide && (
-        <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 backdrop-blur-sm"
-          onClick={() => setGuide(null)}
-        >
+        <div className="ne-sheet-backdrop" onClick={() => setGuide(null)}>
           <div
-            className={`w-full max-w-sm bg-[#0a1712] border border-white/10 rounded-2xl p-5 mx-4 pb-[max(1.25rem,env(safe-area-inset-bottom))] ${guide === 'ios' ? 'mb-24' : 'mb-4 sm:mb-auto sm:mt-[20vh]'}`}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="ne-install-title"
+            className={`ne-sheet ${guide === 'ios' ? 'mb-24' : 'sm:mb-auto sm:mt-[20vh]'}`}
             onClick={(e) => e.stopPropagation()}
           >
-            <p className="font-semibold text-white text-base mb-4">
-              {guide === 'ios' || guide === 'android' ? 'Add Nexus to your Home Screen' : 'Install Nexus on this computer'}
+            <p id="ne-install-title" className="mb-4 font-medium">
+              {guide === 'ios' || guide === 'android' ? texts.homeTitle : texts.desktopTitle}
             </p>
-            <ol className="space-y-3 text-sm text-white/70">
+            <ol className="space-y-3 text-sm text-[var(--ne-text-2)]">
               <li className="flex items-center gap-3">
-                <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
-                  {guide === 'ios' ? <Share className="w-4 h-4 text-[#25D366]" /> : <MoreVertical className="w-4 h-4 text-[#25D366]" />}
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/10">
+                  {guide === 'ios' ? <Share className="h-4 w-4 text-[var(--ne-lime)]" /> : <MoreVertical className="h-4 w-4 text-[var(--ne-lime)]" />}
                 </span>
-                {GUIDE_STEPS[guide][0]}
+                {steps[guide][0]}
               </li>
               <li className="flex items-center gap-3">
-                <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
-                  <Download className="w-4 h-4 text-[#25D366]" />
+                <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/10">
+                  <Download className="h-4 w-4 text-[var(--ne-lime)]" />
                 </span>
-                {GUIDE_STEPS[guide][1]}
+                {steps[guide][1]}
               </li>
             </ol>
           </div>
           {guide === 'ios' && (
-            <ArrowDown className="pointer-events-none absolute bottom-6 left-1/2 -translate-x-1/2 w-8 h-8 text-[#25D366] animate-bounce motion-reduce:animate-none" />
+            <ArrowDown className="pointer-events-none absolute bottom-6 left-1/2 h-8 w-8 -translate-x-1/2 animate-bounce text-[var(--ne-lime)] motion-reduce:animate-none" />
           )}
         </div>
       )}
@@ -222,27 +211,52 @@ export function InstallButton({ variant = 'hero', className = '', label, hint, i
   )
 }
 
-const b = (t: string) => <strong className="text-white">{t}</strong>
+const b = (t: string) => <strong className="font-medium text-[var(--ne-text)]">{t}</strong>
+const q = (t: string) => <span className="text-[var(--ne-text-3)]">{t}</span>
 
-const GUIDE_STEPS: Record<Guide, [ReactNode, ReactNode]> = {
-  ios: [
-    <span key="1">Tap {b('Share')} below <span className="text-white/40">(inside ⋯ on newer iPhones)</span></span>,
-    <span key="2">Tap {b('Add to Home Screen')}</span>,
-  ],
-  android: [
-    <span key="1">Tap the browser menu {b('⋮')}</span>,
-    <span key="2">Tap {b('Install app')} <span className="text-white/40">(or Add to Home screen)</span></span>,
-  ],
-  chromium: [
-    <span key="1">Click the install icon at the right end of the {b('address bar')}</span>,
-    <span key="2">Click {b('Install')} <span className="text-white/40">(already installed? it says Open in app)</span></span>,
-  ],
-  'safari-mac': [
-    <span key="1">Open Safari&apos;s {b('File')} menu</span>,
-    <span key="2">Choose {b('Add to Dock')}</span>,
-  ],
-  unsupported: [
-    <span key="1">This browser can&apos;t install apps. Open this page in {b('Chrome')} or {b('Edge')}</span>,
-    <span key="2">Click {b('Download the app')} again</span>,
-  ],
+const GUIDE_STEPS: Record<'ar' | 'en', Record<Guide, [ReactNode, ReactNode]>> = {
+  en: {
+    ios: [
+      <span key="1">Tap {b('Share')} below {q('(inside ⋯ on newer iPhones)')}</span>,
+      <span key="2">Tap {b('Add to Home Screen')}</span>,
+    ],
+    android: [
+      <span key="1">Tap the browser menu {b('⋮')}</span>,
+      <span key="2">Tap {b('Install app')} {q('(or Add to Home screen)')}</span>,
+    ],
+    chromium: [
+      <span key="1">Click the install icon at the end of the {b('address bar')}</span>,
+      <span key="2">Click {b('Install')} {q('(already installed? it says Open in app)')}</span>,
+    ],
+    'safari-mac': [
+      <span key="1">Open Safari&apos;s {b('File')} menu</span>,
+      <span key="2">Choose {b('Add to Dock')}</span>,
+    ],
+    unsupported: [
+      <span key="1">This browser can&apos;t install apps. Open this page in {b('Chrome')} or {b('Edge')}</span>,
+      <span key="2">Click {b('Download the app')} again</span>,
+    ],
+  },
+  ar: {
+    ios: [
+      <span key="1">اضغط {b('مشاركة')} في الأسفل {q('(داخل ⋯ في الآيفونات الأحدث)')}</span>,
+      <span key="2">اختر {b('إضافة إلى الشاشة الرئيسية')}</span>,
+    ],
+    android: [
+      <span key="1">اضغط قائمة المتصفح {b('⋮')}</span>,
+      <span key="2">اختر {b('تثبيت التطبيق')} {q('(أو إضافة إلى الشاشة الرئيسية)')}</span>,
+    ],
+    chromium: [
+      <span key="1">اضغط أيقونة التثبيت في طرف {b('شريط العنوان')}</span>,
+      <span key="2">اضغط {b('تثبيت')} {q('(إن كان مثبتًا ستجد: فتح في التطبيق)')}</span>,
+    ],
+    'safari-mac': [
+      <span key="1">افتح قائمة {b('ملف')} في سفاري</span>,
+      <span key="2">اختر {b('إضافة إلى Dock')}</span>,
+    ],
+    unsupported: [
+      <span key="1">هذا المتصفح لا يثبّت التطبيقات. افتح الصفحة في {b('Chrome')} أو {b('Edge')}</span>,
+      <span key="2">ثم اضغط {b('حمّل التطبيق')} مرة أخرى</span>,
+    ],
+  },
 }

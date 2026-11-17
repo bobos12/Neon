@@ -50,11 +50,13 @@ function WhenCell({ broadcast, now }: { broadcast: Broadcast; now: number }) {
   return (
     <div className="min-w-0">
       <span
-        className="inline-flex items-center gap-1 text-blue-500 dark:text-blue-300"
+        className="flex max-w-[13rem] items-center gap-1 text-blue-600 dark:text-blue-300"
         title={`${broadcast.scheduledAtLocal} · ${broadcast.timezone}`}
       >
         <Clock className="h-3 w-3 shrink-0" />
-        <span className="truncate">{formatSchedule(broadcast.scheduledAtLocal, broadcast.timezone)}</span>
+        {/* Capped so a long zone name can't push the actions column off the table;
+            the full value is in the tooltip. */}
+        <span className="min-w-0 truncate">{formatSchedule(broadcast.scheduledAtLocal, broadcast.timezone)}</span>
       </span>
       {countdown && (
         <p className={cn('mt-0.5 text-[11px]', countdown.overdue ? 'text-amber-500' : 'text-ink-4/70')}>
@@ -275,7 +277,7 @@ export default function BroadcastsPage() {
       aria-label={label}
       onClick={() => handleSort(k)}
       className={cn(
-        'cursor-pointer select-none px-3 py-4 text-start text-xs font-semibold uppercase tracking-wider transition-colors lg:px-5 xl:px-6',
+        'cursor-pointer select-none px-3 py-3 text-start text-2xs font-semibold uppercase tracking-[0.08em] transition-colors lg:px-4',
         sortKey === k ? 'text-brand' : 'text-ink-3 hover:text-ink',
         className,
       )}
@@ -724,8 +726,8 @@ export default function BroadcastsPage() {
         <div className="hidden overflow-x-auto md:block">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-line bg-raised">
-                <th scope="col" className="w-10 px-3 py-4 lg:px-5 xl:px-6">
+              <tr className="border-b border-line bg-raised/50">
+                <th scope="col" className="w-10 px-3 py-3 lg:px-4">
                   <span className="sr-only">Select</span>
                   <input
                     type="checkbox"
@@ -737,10 +739,12 @@ export default function BroadcastsPage() {
                 </th>
                 <SortTh k="name"           label={t('table.campaign', { defaultValue: 'Campaign' })} />
                 <SortTh k="status"         label={t('table.status')} />
-                <SortTh k="recipientCount" label={t('table.audience', { defaultValue: 'Audience' })} className="hidden xl:table-cell" />
+                {/* Delivery already reads "512 / 860" and "3,420 queued", so the audience
+                    column is only worth its width on the widest screens. */}
+                <SortTh k="recipientCount" label={t('table.audience', { defaultValue: 'Audience' })} className="hidden 2xl:table-cell" />
                 <SortTh k="progress"       label={t('table.delivery', { defaultValue: 'Delivery' })} />
                 <SortTh k="createdAt"      label={t('table.when', { defaultValue: 'When' })} className="hidden lg:table-cell" />
-                <th scope="col" className="px-3 py-4 text-end text-xs font-semibold uppercase tracking-wider text-gray-500 lg:px-5 xl:px-6 dark:text-ink-3">
+                <th scope="col" className="px-3 py-3 text-end text-2xs font-semibold uppercase tracking-[0.08em] text-ink-3 lg:px-4">
                   {t('table.actions')}
                 </th>
               </tr>
@@ -749,13 +753,13 @@ export default function BroadcastsPage() {
               {loading ? (
                 [...Array(3)].map((_, i) => (
                   <tr key={i} className="animate-pulse">
-                    <td className="px-3 py-4 lg:px-5 xl:px-6"><div className="h-4 w-4 rounded bg-gray-100 dark:bg-white/8" /></td>
-                    <td className="px-3 py-4 lg:px-5 xl:px-6"><div className="h-4 w-40 rounded bg-gray-100 dark:bg-white/8" /></td>
-                    <td className="px-3 py-4 lg:px-5 xl:px-6"><div className="h-5 w-20 rounded-full bg-gray-100 dark:bg-white/8" /></td>
-                    <td className="hidden px-3 py-4 lg:px-5 xl:table-cell xl:px-6"><div className="h-3 w-8 rounded bg-raised" /></td>
-                    <td className="px-3 py-4 lg:px-5 xl:px-6"><div className="h-3 w-8 rounded bg-raised" /></td>
-                    <td className="hidden px-3 py-4 lg:table-cell lg:px-5 xl:px-6"><div className="h-3 w-20 rounded bg-raised" /></td>
-                    <td className="px-3 py-4 lg:px-5 xl:px-6"><div className="h-7 w-24 rounded bg-raised" /></td>
+                    <td className="px-3 py-4 lg:px-4"><div className="h-4 w-4 rounded bg-gray-100 dark:bg-white/8" /></td>
+                    <td className="px-3 py-4 lg:px-4"><div className="h-4 w-40 rounded bg-gray-100 dark:bg-white/8" /></td>
+                    <td className="px-3 py-4 lg:px-4"><div className="h-5 w-20 rounded-full bg-gray-100 dark:bg-white/8" /></td>
+                    <td className="hidden px-3 py-4 lg:px-4 2xl:table-cell"><div className="h-3 w-8 rounded bg-raised" /></td>
+                    <td className="px-3 py-4 lg:px-4"><div className="h-3 w-8 rounded bg-raised" /></td>
+                    <td className="hidden px-3 py-4 lg:table-cell lg:px-4"><div className="h-3 w-20 rounded bg-raised" /></td>
+                    <td className="px-3 py-4 lg:px-4"><div className="h-7 w-24 rounded bg-raised" /></td>
                   </tr>
                 ))
               ) : paginatedBroadcasts.length === 0 ? (
@@ -794,7 +798,7 @@ export default function BroadcastsPage() {
                       selectedIds.has(broadcast.id) && 'bg-brand/8',
                     )}
                   >
-                    <td className="px-3 py-3 lg:px-5 xl:px-6">
+                    <td className="px-3 py-3 lg:px-4">
                       <input
                         type="checkbox"
                         checked={selectedIds.has(broadcast.id)}
@@ -802,7 +806,7 @@ export default function BroadcastsPage() {
                         className="h-4 w-4 cursor-pointer rounded border-line-strong accent-brand"
                       />
                     </td>
-                    <td className="max-w-[12rem] px-3 py-3 lg:px-5 xl:max-w-none xl:px-6">
+                    <td className="max-w-[12rem] px-3 py-3 lg:px-4 xl:max-w-none">
                       <div className="flex items-center gap-2">
                         <Link
                           href={`/broadcasts/${broadcast.id}`}
@@ -826,7 +830,7 @@ export default function BroadcastsPage() {
                         </span>
                       )}
                     </td>
-                    <td className="px-3 py-3 lg:px-5 xl:px-6">
+                    <td className="px-3 py-3 lg:px-4">
                       <div className="flex flex-col items-start gap-1">
                         <span className={cn('inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium', STATUS_STYLES[broadcast.status] ?? STATUS_STYLES.DRAFT)}>
                           <span className={cn('h-1.5 w-1.5 rounded-full', STATUS_DOTS[broadcast.status] ?? 'bg-gray-400')} />
@@ -835,19 +839,19 @@ export default function BroadcastsPage() {
                         <RiskBadge canSend={(broadcast as any).preflight?.canSend} />
                       </div>
                     </td>
-                    <td className="hidden px-3 py-3 lg:px-5 xl:table-cell xl:px-6">
+                    <td className="hidden px-3 py-3 lg:px-4 2xl:table-cell">
                       <span className="inline-flex items-center gap-1.5 text-sm tabular-nums text-ink-3">
                         <Users className="h-3.5 w-3.5 shrink-0 opacity-60" />
                         {broadcast.recipientCount.toLocaleString()}
                       </span>
                     </td>
-                    <td className="px-3 py-3 lg:px-5 xl:px-6">
+                    <td className="px-3 py-3 lg:px-4">
                       <DeliveryCell broadcast={broadcast} />
                     </td>
-                    <td className="hidden px-3 py-3 text-sm text-gray-500 lg:table-cell lg:px-5 xl:px-6 dark:text-ink-3">
+                    <td className="hidden px-3 py-3 text-sm text-gray-500 lg:table-cell lg:px-4 dark:text-ink-3">
                       <WhenCell broadcast={broadcast} now={now} />
                     </td>
-                    <td className="px-3 py-3 lg:px-5 xl:px-6">
+                    <td className="px-3 py-3 lg:px-4">
                       <BroadcastActions
                         broadcast={broadcast}
                         align="end"
@@ -887,7 +891,7 @@ export default function BroadcastsPage() {
 
       {/* ── Bulk action bar ── */}
       {selectedIds.size > 0 && (
-        <div className="fixed bottom-[var(--bottom-nav-space)] sm:bottom-6 left-1/2 z-40 -translate-x-1/2 flex flex-wrap items-center gap-3 rounded-xl border border-line bg-white dark:bg-raised px-5 py-3 shadow-[0_8px_30px_rgba(0,0,0,0.5)]">
+        <div className="fixed bottom-[var(--bottom-nav-space)] sm:bottom-6 left-1/2 z-40 -translate-x-1/2 flex flex-wrap items-center gap-3 rounded-xl border border-line bg-surface px-5 py-3 shadow-pop">
           <span className="text-sm font-medium text-ink">
             {t('selectedCount', { count: selectedIds.size })}
           </span>

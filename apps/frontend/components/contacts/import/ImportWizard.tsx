@@ -467,7 +467,7 @@ export default function ImportWizard({ onClose, onImported }: { onClose: () => v
                             return next;
                           });
                         }}
-                        className="w-full rounded-lg border border-line bg-white dark:bg-raised px-2 py-1.5 text-xs text-ink outline-none focus:border-brand"
+                        className="w-full rounded-lg border border-line bg-surface px-2 py-1.5 text-xs text-ink outline-none focus:border-brand"
                       >
                         <option value={SKIP}>{t('import.dontImport', { defaultValue: "Don't import" })}</option>
                         {targets.map((target) => (
@@ -520,7 +520,7 @@ export default function ImportWizard({ onClose, onImported }: { onClose: () => v
                 'flex items-start gap-2.5 rounded-xl border p-3 text-left transition',
                 strategy === entry.id
                   ? 'border-brand/50 bg-brand/10'
-                  : 'border-line bg-white dark:bg-raised hover:border-gray-300 dark:hover:border-white/20',
+                  : 'border-line bg-surface hover:border-gray-300 dark:hover:border-white/20',
               )}
             >
               <span

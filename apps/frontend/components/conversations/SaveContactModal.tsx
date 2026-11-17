@@ -79,7 +79,7 @@ export default function SaveContactModal({ isOpen, onClose, phone, name, onSucce
               value={contactName}
               onChange={(e) => setContactName(e.target.value)}
               placeholder={t('form.namePlaceholder')}
-              className="mt-1 block w-full rounded-lg border border-line bg-white dark:bg-raised px-3 py-2 text-ink focus:outline-none focus:ring-2 focus:ring-brand"
+              className="mt-1 block w-full rounded-lg border border-line bg-surface px-3 py-2 text-ink focus:outline-none focus:ring-2 focus:ring-brand"
             />
           </div>
 

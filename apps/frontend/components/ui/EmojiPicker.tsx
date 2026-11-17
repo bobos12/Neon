@@ -80,7 +80,7 @@ export default function EmojiPicker({ onSelect, onClose, anchorRef }: EmojiPicke
     <div
       ref={containerRef}
       style={fixedStyle ? { position: 'fixed', zIndex: 9999, ...fixedStyle } : undefined}
-      className={`${!fixedStyle ? 'absolute bottom-full mb-2 start-0 z-[9999]' : ''} w-72 rounded-xl border border-line bg-white dark:bg-raised shadow-xl overflow-hidden`}
+      className={`${!fixedStyle ? 'absolute bottom-full mb-2 start-0 z-[9999]' : ''} w-72 overflow-hidden rounded-2xl bg-surface shadow-pop`}
     >
       {/* Search */}
       <div className="p-2 border-b border-line">
@@ -90,7 +90,7 @@ export default function EmojiPicker({ onSelect, onClose, anchorRef }: EmojiPicke
           placeholder={t('composer.searchEmoji')}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full rounded-lg border border-line bg-gray-50 dark:bg-surface px-3 py-1.5 text-sm text-ink placeholder:text-ink-4 outline-none focus:border-brand"
+          className="field h-8 rounded-full bg-raised px-3 text-sm"
         />
       </div>
 

@@ -45,15 +45,23 @@ export default function BottomNav() {
     return (
       <span className="relative flex h-7 w-12 items-center justify-center">
         {active && (
-          <motion.span layoutId="tab-pill" className="absolute inset-0 rounded-full bg-brand/12" transition={spring} aria-hidden="true" />
+          // The selected tab is lit: a lime lozenge that glides between tabs.
+          <motion.span
+            layoutId="tab-pill"
+            className="absolute inset-0 rounded-full bg-brand shadow-[inset_0_1px_0_rgb(255_255_255/0.45),0_0_14px_-2px_rgb(var(--brand)/0.7)]"
+            transition={spring}
+            aria-hidden="true"
+          />
         )}
         <Icon
-          className={cn('relative h-[19px] w-[19px] transition-colors duration-fast', active ? 'text-brand' : 'text-ink-3')}
-          strokeWidth={active ? 2.3 : 1.9}
+          className={cn('relative h-[19px] w-[19px] transition-colors duration-fast', active ? 'text-brand-fg' : 'text-ink-3')}
           aria-hidden="true"
         />
         {!!badge && badge > 0 && (
-          <span className="absolute -top-1 end-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-brand px-1 text-[9px] font-bold tabular-nums text-brand-fg ring-2 ring-surface">
+          <span className={cn(
+            'absolute -top-1.5 end-0 flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[9px] font-bold tabular-nums ring-2 ring-surface',
+            active ? 'bg-neon-deep text-brand-400' : 'bg-brand text-brand-fg',
+          )}>
             {badge > 99 ? '99+' : badge}
           </span>
         )}
@@ -63,8 +71,10 @@ export default function BottomNav() {
 
   return (
     <>
+      {/* A floating glass bar, inset from the edges and lifted off the home
+          indicator — the way the platform's own tab bars now sit. */}
       <nav
-        className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface/95 pb-[max(0.25rem,calc(env(safe-area-inset-bottom)-0.875rem))] backdrop-blur-md sm:hidden"
+        className="glass-chrome fixed inset-x-3 bottom-[max(0.5rem,calc(env(safe-area-inset-bottom)-0.625rem))] z-30 rounded-[26px] shadow-[inset_0_1px_0_rgb(255_255_255/var(--glass-hi)),0_0_0_1px_rgb(var(--glass-edge)/0.09),0_14px_34px_-12px_rgb(var(--shadow)/0.32)] sm:hidden"
         aria-label="Primary"
       >
         <div className="flex items-stretch">
@@ -79,7 +89,7 @@ export default function BottomNav() {
                 className={cell}
               >
                 <Glyph Icon={icon} active={active} badge={live ? openConversations ?? 0 : 0} />
-                <span className={cn('text-[10px] font-medium leading-none transition-colors duration-fast', active ? 'text-ink' : 'text-ink-3')}>
+                <span className={cn('text-[10px] leading-none transition-colors duration-fast', active ? 'font-semibold text-ink' : 'font-medium text-ink-3')}>
                   {t(`nav.${key}`)}
                 </span>
               </Link>
@@ -94,7 +104,7 @@ export default function BottomNav() {
             className={cell}
           >
             <Glyph Icon={LayoutGrid} active={onMore} />
-            <span className={cn('text-[10px] font-medium leading-none', onMore ? 'text-ink' : 'text-ink-3')}>{t('nav.more')}</span>
+            <span className={cn('text-[10px] leading-none', onMore ? 'font-semibold text-ink' : 'font-medium text-ink-3')}>{t('nav.more')}</span>
           </button>
         </div>
       </nav>
