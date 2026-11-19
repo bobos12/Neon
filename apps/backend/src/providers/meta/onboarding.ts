@@ -263,6 +263,10 @@ export async function discoverNumbers(
         logger.warn('onboarding.waba_list_failed', { edge, error: asMetaError(err).message });
       }
     }
+    // Listing a business's accounts needs business_management, which many tokens
+    // lack (and system-user tokens no longer name their accounts). The id the
+    // person pasted may be the WhatsApp Business Account itself — try it as one.
+    if (wabas.size === 0) wabas.set(opts.businessId, null);
   }
 
   // The same number can be listed under more than one account (a partner's and

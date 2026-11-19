@@ -39,9 +39,9 @@
       "finding": "Looking up your numbers…",
       "business": {
         "title": "Which business is this?",
-        "body": "Meta didn't say which business this token belongs to. Paste your Business ID and we'll find its numbers.",
-        "label": "Business ID",
-        "hint": "Business Settings → Business info. It's also the number after business_id= in the address bar."
+        "body": "Meta didn't say which account this token can use. Paste your WhatsApp Business Account ID (or your Business ID) and we'll find its numbers.",
+        "label": "WhatsApp Business Account ID",
+        "hint": "WhatsApp Manager → Account tools → Phone numbers shows it, or Business settings → Accounts → WhatsApp accounts. A Business ID also works if the token has business_management."
       },
       "guide": {
         "toggle": "Where do I find these?",
