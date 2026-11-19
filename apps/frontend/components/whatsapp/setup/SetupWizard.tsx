@@ -231,7 +231,9 @@ export default function SetupWizard({ hasStoredCredentials, onConnecting, onFini
   const openIssues = results?.filter((r) => r.status === 'fail' || r.code === 'PAYMENT_METHOD') ?? [];
 
   const stepIndex = step ? STEPS.indexOf(step) : 0;
-  const number = (quick ? quickNumber : chosen?.displayPhoneNumber) ?? '';
+  const rawNumber = (quick ? quickNumber : chosen?.displayPhoneNumber) ?? '';
+  // LTR isolate, so "+1 555-173-2878" isn't reordered inside Arabic sentences.
+  const number = rawNumber ? `⁦${rawNumber}⁩` : '';
   const finished = allRevealed && !failedVerify && !connectError;
   const slide = reduceMotion
     ? {}
@@ -566,11 +568,10 @@ export default function SetupWizard({ hasStoredCredentials, onConnecting, onFini
                   />
                 )}
                 {openIssues.some((r) => r.code === 'PAYMENT_METHOD') && <PaymentCard />}
-                <div className="pt-1">
-                  <button type="button" onClick={onFinish} className="btn btn-ghost text-ink-3">
-                    {t('setup.finish.skip')}
-                  </button>
-                </div>
+                <button type="button" onClick={onFinish} className="btn btn-secondary btn-lg mt-1 w-full">
+                  {t('setup.finish.skip')}
+                  <ArrowRight className="icon-mirror" aria-hidden="true" />
+                </button>
               </div>
             )}
           </motion.div>
