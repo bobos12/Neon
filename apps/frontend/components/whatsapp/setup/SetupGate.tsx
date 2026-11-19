@@ -98,9 +98,9 @@ function SetupScreen({ onConnecting, onFinish }: { onConnecting: () => void; onF
   return (
     <Frame>
       <div className="mx-auto max-w-[600px]">
-        <p className="eyebrow enter mb-3 text-center">{t('setup.eyebrow')}</p>
-        <section className="enter rounded-2xl border border-line bg-surface px-5 py-7 shadow-pop sm:px-9 sm:py-9" style={{ animationDelay: '60ms' }}>
-          <SetupWizard onConnecting={onConnecting} onFinish={onFinish} />
+        <p className="eyebrow enter mb-3 hidden text-center sm:block">{t('setup.eyebrow')}</p>
+        <section className="enter pt-2 sm:rounded-2xl sm:border sm:border-line sm:bg-surface sm:px-9 sm:py-9 sm:shadow-pop" style={{ animationDelay: '60ms' }}>
+          <SetupWizard page onConnecting={onConnecting} onFinish={onFinish} />
         </section>
       </div>
     </Frame>

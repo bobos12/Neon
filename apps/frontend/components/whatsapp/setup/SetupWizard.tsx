@@ -57,9 +57,11 @@ export interface SetupWizardProps {
   /** The user is done here — show them the CRM. */
   onFinish: () => void;
   onCancel?: () => void;
+  /** Full-screen setup (not a modal): on a phone the primary button stays pinned to the bottom. */
+  page?: boolean;
 }
 
-export default function SetupWizard({ hasStoredCredentials, onConnecting, onFinish, onCancel }: SetupWizardProps) {
+export default function SetupWizard({ hasStoredCredentials, onConnecting, onFinish, onCancel, page = false }: SetupWizardProps) {
   const { t, i18n } = useTranslation('whatsapp');
   const reduceMotion = useReducedMotion();
   const signup = useEmbeddedSignup(i18n.language);
@@ -251,12 +253,12 @@ export default function SetupWizard({ hasStoredCredentials, onConnecting, onFini
         {step === 'quick' && (
           <motion.div key="quick" {...slide} className="flex flex-col">
             <ConnectHero />
-            <header className="mt-5 text-center">
-              <h2 className="text-[22px] font-bold leading-8 tracking-[-0.015em] text-ink sm:text-2xl sm:leading-9">{t('setup.quick.title')}</h2>
+            <header className="mt-4 text-center sm:mt-5">
+              <h2 className="text-xl font-bold leading-8 tracking-[-0.015em] text-ink sm:text-2xl sm:leading-9">{t('setup.quick.title')}</h2>
               <p className="mx-auto mt-1.5 max-w-[440px] text-sm leading-6 text-ink-3">{t('setup.quick.body')}</p>
             </header>
 
-            <div role="radiogroup" aria-labelledby="wa-kind-label" className="mt-7">
+            <div role="radiogroup" aria-labelledby="wa-kind-label" className="mt-6 sm:mt-7">
               <p id="wa-kind-label" className="text-[13px] font-semibold text-ink">{t('setup.quick.choice.label')}</p>
               <div className="mt-2.5 grid gap-2">
                 <KindOption
@@ -298,19 +300,22 @@ export default function SetupWizard({ hasStoredCredentials, onConnecting, onFini
               </div>
             )}
 
-            <button
-              type="button"
-              onClick={() => startQuick(kind === 'app')}
-              disabled={!signup.ready || launching}
-              className="btn btn-primary mt-5 h-12 w-full rounded-xl text-[15px]"
-            >
-              {launching || !signup.ready ? <Loader2 className="animate-spin" aria-hidden="true" /> : <WhatsAppGlyph className="h-[18px] w-[18px]" />}
-              {launching ? t('setup.quick.waiting') : t('setup.quick.cta')}
-            </button>
-            <p className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-ink-3">
-              <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />{t('setup.quick.trust')}</span>
-              <span className="inline-flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" aria-hidden="true" />{t('setup.time')}</span>
-            </p>
+            {/* On a phone the full-screen setup pins the one action to the thumb zone. */}
+            <div className={cn('mt-5', page && 'max-sm:sticky max-sm:bottom-0 max-sm:z-10 max-sm:-mx-4 max-sm:bg-[linear-gradient(to_top,rgb(var(--canvas))_70%,rgb(var(--canvas)/0))] max-sm:px-4 max-sm:pt-4 max-sm:pb-[max(12px,env(safe-area-inset-bottom))]')}>
+              <button
+                type="button"
+                onClick={() => startQuick(kind === 'app')}
+                disabled={!signup.ready || launching}
+                className="btn btn-primary h-12 w-full rounded-xl text-[15px]"
+              >
+                {launching || !signup.ready ? <Loader2 className="animate-spin" aria-hidden="true" /> : <WhatsAppGlyph className="h-[18px] w-[18px]" />}
+                {launching ? t('setup.quick.waiting') : t('setup.quick.cta')}
+              </button>
+              <p className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-ink-3">
+                <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />{t('setup.quick.trust')}</span>
+                <span className="inline-flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" aria-hidden="true" />{t('setup.time')}</span>
+              </p>
+            </div>
 
             <div className="mt-7 rounded-xl bg-raised/60 px-4 py-4 ring-1 ring-line sm:px-5">
               <p className="text-xs font-semibold text-ink-2">{t('setup.quick.next')}</p>
@@ -709,7 +714,7 @@ function KindOption({
       <span className="min-w-0 flex-1">
         <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <span className="text-sm font-semibold text-ink">{title}</span>
-          {tag && <span className="chip chip-neutral">{tag}</span>}
+          {tag && <span className="chip chip-neutral hidden sm:inline-flex">{tag}</span>}
         </span>
         <span className="mt-0.5 block text-xs leading-5 text-ink-3">{body}</span>
       </span>
