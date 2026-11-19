@@ -78,18 +78,36 @@ export function embeddedSignupConfig(): EmbeddedSignupConfig | null {
   return appId && appSecret && configId ? { appId, appSecret, configId } : null;
 }
 
-/** Trade the popup's one-time code for the business's long-lived token. */
-export async function exchangeSignupCode(cfg: EmbeddedSignupConfig, code: string): Promise<string> {
-  const url = new URL(`${GRAPH_BASE}/oauth/access_token`);
-  url.searchParams.set('client_id', cfg.appId);
-  url.searchParams.set('client_secret', cfg.appSecret);
-  url.searchParams.set('code', code);
-  const res = await fetch(url);
-  const body: any = await res.json().catch(() => ({}));
-  if (!res.ok || !body?.access_token) {
-    throw new Error(body?.error?.error_user_msg || body?.error?.message || `Code exchange failed (${res.status})`);
+/**
+ * Trade the popup's one-time code for the business's long-lived token.
+ * Meta documents the exchange without a redirect_uri, but some apps get
+ * "redirect_uri is identical…" (subcode 36008) unless it names the page that
+ * opened the dialog — so on that specific error, retry with the page URL.
+ */
+export async function exchangeSignupCode(cfg: EmbeddedSignupConfig, code: string, pageUrl?: string | null): Promise<string> {
+  const candidates: (string | null)[] = [null];
+  if (pageUrl) {
+    const u = new URL(pageUrl);
+    u.hash = '';
+    candidates.push(u.toString(), `${u.origin}/`);
   }
-  return String(body.access_token);
+  let lastError = 'Code exchange failed';
+  for (const redirectUri of [...new Set(candidates)]) {
+    const url = new URL(`${GRAPH_BASE}/oauth/access_token`);
+    url.searchParams.set('client_id', cfg.appId);
+    url.searchParams.set('client_secret', cfg.appSecret);
+    url.searchParams.set('code', code);
+    if (redirectUri) url.searchParams.set('redirect_uri', redirectUri);
+    const res = await fetch(url);
+    const body: any = await res.json().catch(() => ({}));
+    if (res.ok && body?.access_token) {
+      if (redirectUri) logger.info('channel.signup_code_exchange_redirect', { redirectUri });
+      return String(body.access_token);
+    }
+    lastError = body?.error?.error_user_msg || body?.error?.message || `Code exchange failed (${res.status})`;
+    if (!/redirect_uri/i.test(lastError)) break;
+  }
+  throw new Error(lastError);
 }
 
 // ── Token ────────────────────────────────────────────────────────────────────

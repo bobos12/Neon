@@ -29,6 +29,8 @@ export interface SignupResult {
   phoneNumberId: string | null;
   /** The number stays in the WhatsApp Business app on the phone (coexistence). */
   coexistence: boolean;
+  /** The page that opened the dialog; the server may need it as redirect_uri. */
+  pageUrl: string;
 }
 
 /** The person closed the popup before finishing. Not an error worth shouting about. */
@@ -137,6 +139,7 @@ export function useEmbeddedSignup(language: string) {
                   wabaId: session?.wabaId ?? null,
                   phoneNumberId: session?.phoneNumberId ?? null,
                   coexistence: Boolean(opts?.coexistence || session?.businessApp),
+                  pageUrl: window.location.href,
                 });
               }
               else reject(metaError ? new Error(metaError) : new SignupCancelled());

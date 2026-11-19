@@ -370,6 +370,8 @@ const embeddedSchema = z.object({
   phoneNumberId: z.string().trim().regex(/^\d+$/).optional().nullable(),
   /** The number stays in the WhatsApp Business app on the phone (coexistence). */
   coexistence: z.boolean().optional(),
+  /** The page that opened Meta's dialog — a fallback redirect_uri for the code exchange. */
+  pageUrl: z.string().trim().url().max(2048).optional().nullable(),
 });
 
 router.post('/embedded-signup', checkPermission('update', 'whatsapp'), validateBody(embeddedSchema), async (req, res) => {
@@ -381,7 +383,7 @@ router.post('/embedded-signup', checkPermission('update', 'whatsapp'), validateB
       throw new HttpError(503, 'This server cannot store credentials securely yet.', 'ENCRYPTION_NOT_CONFIGURED');
     }
 
-    const accessToken = await exchangeSignupCode(cfg, req.body.code).catch((err) => {
+    const accessToken = await exchangeSignupCode(cfg, req.body.code, req.body.pageUrl).catch((err) => {
       logger.warn('channel.signup_code_exchange_failed', { error: err instanceof Error ? err.message : String(err) });
       throw new HttpError(400, 'Meta did not accept the signup. Please try again.', 'SIGNUP_CODE_INVALID');
     });
