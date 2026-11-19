@@ -312,23 +312,22 @@ export default function SetupWizard({ hasStoredCredentials, onConnecting, onFini
               <span className="inline-flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" aria-hidden="true" />{t('setup.time')}</span>
             </p>
 
-            <div className="mt-7 border-t border-line pt-5">
+            <div className="mt-7 rounded-xl bg-raised/60 px-4 py-4 ring-1 ring-line sm:px-5">
               <p className="text-xs font-semibold text-ink-2">{t('setup.quick.next')}</p>
-              <ol className="mt-3 grid gap-3 sm:grid-cols-3 sm:gap-4">
-                {(t(`setup.quick.steps.${kind}`, { returnObjects: true }) as string[]).map((text, i) => (
-                  <li key={`${kind}-${i}`} className="flex items-start gap-2.5 sm:flex-col sm:gap-2">
-                    <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-raised text-xs font-semibold tabular-nums text-ink-2 ring-1 ring-line">{i + 1}</span>
-                    <span className="pt-0.5 text-[13px] leading-5 text-ink-2 sm:pt-0">{text}</span>
+              <ol className="mt-3">
+                {(t(`setup.quick.steps.${kind}`, { returnObjects: true }) as string[]).map((text, i, all) => (
+                  <li key={`${kind}-${i}`} className="relative flex items-start gap-3 pb-3 last:pb-0">
+                    {i < all.length - 1 && <span aria-hidden="true" className="absolute start-[11px] top-6 h-[calc(100%-24px)] w-px bg-line-strong" />}
+                    <span className="relative grid h-6 w-6 shrink-0 place-items-center rounded-full bg-surface text-xs font-semibold tabular-nums text-ink-2 ring-1 ring-line-strong">{i + 1}</span>
+                    <span className="pt-0.5 text-[13px] leading-5 text-ink-2">{text}</span>
                   </li>
                 ))}
               </ol>
             </div>
 
-            <div className="mt-6 flex flex-col-reverse items-stretch gap-2 sm:flex-row sm:items-center sm:justify-between">
-              {onCancel ? (
-                <button type="button" onClick={onCancel} className="btn btn-ghost">{t('panel.cancel')}</button>
-              ) : <span className="hidden sm:block" />}
-              <button type="button" onClick={() => { setQuick(false); setStep('credentials'); }} className="btn btn-ghost text-ink-3">
+            <div className={cn('mt-5 flex items-center gap-2', onCancel ? 'justify-between' : 'justify-center')}>
+              {onCancel && <button type="button" onClick={onCancel} className="btn btn-ghost">{t('panel.cancel')}</button>}
+              <button type="button" onClick={() => { setQuick(false); setStep('credentials'); }} className="btn btn-ghost btn-sm text-ink-3">
                 {t('setup.quick.manual')}
                 <ArrowRight className="icon-mirror" aria-hidden="true" />
               </button>
