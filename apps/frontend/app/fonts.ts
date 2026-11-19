@@ -9,11 +9,14 @@ export const fontLatin = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
-  // No generated "Inter Fallback": it is local Arial, which *has* Arabic
-  // glyphs — sitting second in the stack it caught every Arabic character
-  // before Plex was ever reached, so Arabic rendered in Arial.
   adjustFontFallback: false,
 })
+
+// Turbopack emits an "Inter Fallback" face (local Arial, every code point) and
+// bakes it into --font-inter whatever adjustFontFallback says. Second in the
+// stack it caught every Arabic glyph before Plex, so Arabic rendered in Arial.
+// The stacks use Inter's bare family name instead (set on <html> as --font-inter-face).
+export const latinFace = fontLatin.style.fontFamily.split(',')[0].trim()
 
 export const fontArabic = IBM_Plex_Sans_Arabic({
   subsets: ['arabic'],

@@ -4,7 +4,7 @@ import { AuthProvider } from '@/components/providers/SessionProvider'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import { I18nProvider } from '@/components/providers/I18nProvider'
 import SplashController from '@/components/pwa/SplashController'
-import { fontLatin, fontArabic } from './fonts'
+import { fontLatin, fontArabic, latinFace } from './fonts'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -74,7 +74,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" dir="ltr" data-scroll-behavior="smooth" className={`${fontLatin.variable} ${fontArabic.variable}`} suppressHydrationWarning>
+    <html lang="en" dir="ltr" data-scroll-behavior="smooth" className={`${fontLatin.variable} ${fontArabic.variable}`} style={{ '--font-inter-face': latinFace } as React.CSSProperties} suppressHydrationWarning>
       <head />
       <body className="antialiased" suppressHydrationWarning>
         {/* Runs before React hydrates — prevents theme/RTL/PWA flash */}

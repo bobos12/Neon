@@ -86,8 +86,8 @@
   --wa-text-secondary: rgb(var(--ink-3));
   --wa-border-subtle: rgb(var(--line));
 
-  --font-latin: var(--font-inter), var(--font-plex-ar), system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-arabic: var(--font-inter), var(--font-plex-ar), system-ui, -apple-system, 'SF Arabic', 'Segoe UI', sans-serif;
+  --font-latin: var(--font-inter-face, var(--font-inter)), var(--font-plex-ar), system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-arabic: var(--font-inter-face, var(--font-inter)), var(--font-plex-ar), system-ui, -apple-system, 'SF Arabic', 'Segoe UI', sans-serif;
 
   /* ─── Motion — ONE language for the whole product ─────────────────────
      ease-out    : expo-out. Decisive start, calm settle. Entrances, reveals.
@@ -943,6 +943,14 @@ html.pwa-standalone #app-splash {
 .dark .skeleton::after { background: linear-gradient(90deg, transparent, rgb(var(--brand) / 0.06), transparent); }
 @keyframes skeletonSweep { 100% { transform: translateX(100%); } }
 @media (prefers-reduced-motion: reduce) { .skeleton::after { animation: none; } }
+
+/* WhatsApp setup — a pulse running NEON ↔ WhatsApp while the link is made. */
+.connect-dot {
+  background: linear-gradient(90deg, transparent 35%, #25D366 50%, transparent 65%);
+  animation: connectDot 1.8s var(--ease-swift) infinite;
+}
+@keyframes connectDot { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+@media (prefers-reduced-motion: reduce) { .connect-dot { animation: none; opacity: 0; } }
 
 /* Staged content reveal — sections fade + rise in as their data arrives,
    replacing the skeleton in place (layout stays stable, no jumps). */

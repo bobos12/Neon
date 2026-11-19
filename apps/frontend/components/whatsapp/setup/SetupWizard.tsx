@@ -16,10 +16,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { ArrowLeft, ArrowRight, ChevronDown, ExternalLink, Eye, EyeOff, Loader2, MessageCircle, PartyPopper, Phone, Smartphone } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ChevronDown, Clock, ExternalLink, Eye, EyeOff, Info, Loader2, Phone, Plus, ShieldCheck } from 'lucide-react';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
-import { META_LINKS, Notice, StatusIcon, TOKEN_PERMISSIONS, errorText, type RowStatus } from './shared';
+import { WhatsAppGlyph, WhatsAppLogo } from '@/components/brand/WhatsAppLogo';
+import { ConnectHero, META_LINKS, Notice, StatusIcon, TOKEN_PERMISSIONS, errorText, type RowStatus } from './shared';
 import { ManualWebhookCard, PaymentCard, RegisterNumberCard } from './FixCards';
 import { SignupCancelled, useEmbeddedSignup } from './useEmbeddedSignup';
 
@@ -75,6 +76,9 @@ export default function SetupWizard({ hasStoredCredentials, onConnecting, onFini
   const [quickError, setQuickError] = useState<{ text: string; cancelled: boolean } | null>(null);
   const [launching, setLaunching] = useState(false);
   const [quickNumber, setQuickNumber] = useState<string | null>(null);
+  // Most small businesses already run their number on the Business app, so that
+  // is the default; a fresh number is one tap away.
+  const [kind, setKind] = useState<'app' | 'new'>('app');
 
   // ── Step 1 ──
   const [token, setToken] = useState('');
@@ -245,51 +249,88 @@ export default function SetupWizard({ hasStoredCredentials, onConnecting, onFini
       <AnimatePresence mode="wait" initial={false}>
         {/* ── One click · Meta Embedded Signup ────────────────────────────── */}
         {step === 'quick' && (
-          <motion.div key="quick" {...slide} className="flex flex-col gap-5">
-            <header>
-              <h2 className="text-lg font-semibold tracking-[-0.01em] text-ink">{t('setup.quick.title')}</h2>
-              <p className="mt-1 text-[13px] leading-5 text-ink-3">{t('setup.quick.body')}</p>
+          <motion.div key="quick" {...slide} className="flex flex-col">
+            <ConnectHero />
+            <header className="mt-5 text-center">
+              <h2 className="text-[22px] font-bold leading-8 tracking-[-0.015em] text-ink sm:text-2xl sm:leading-9">{t('setup.quick.title')}</h2>
+              <p className="mx-auto mt-1.5 max-w-[440px] text-sm leading-6 text-ink-3">{t('setup.quick.body')}</p>
             </header>
 
-            <ol className="stagger flex flex-col gap-3">
-              {(t('setup.quick.steps', { returnObjects: true }) as string[]).map((text, i) => (
-                <li key={i} className="flex items-start gap-3">
-                  <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-brand/10 text-xs font-semibold text-brand">{i + 1}</span>
-                  <p className="pt-0.5 text-[13px] leading-5 text-ink-2">{text}</p>
-                </li>
-              ))}
-            </ol>
+            <div role="radiogroup" aria-labelledby="wa-kind-label" className="mt-7">
+              <p id="wa-kind-label" className="text-[13px] font-semibold text-ink">{t('setup.quick.choice.label')}</p>
+              <div className="mt-2.5 grid gap-2">
+                <KindOption
+                  selected={kind === 'app'}
+                  onSelect={() => setKind('app')}
+                  icon={<WhatsAppLogo className="h-5 w-5" />}
+                  title={t('setup.quick.choice.app.title')}
+                  body={t('setup.quick.choice.app.body')}
+                  tag={t('setup.quick.choice.app.tag')}
+                />
+                <KindOption
+                  selected={kind === 'new'}
+                  onSelect={() => setKind('new')}
+                  icon={<Plus className="h-5 w-5" aria-hidden="true" />}
+                  title={t('setup.quick.choice.new.title')}
+                  body={t('setup.quick.choice.new.body')}
+                />
+              </div>
+            </div>
 
-            {quickError && <Notice tone={quickError.cancelled ? 'info' : 'error'}>{quickError.text}</Notice>}
-            {signup.sdkFailed && <Notice tone="error">{t('setup.quick.sdkFailed')}</Notice>}
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.p
+                key={kind}
+                initial={reduceMotion ? false : { opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={reduceMotion ? undefined : { opacity: 0, y: 4 }}
+                transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+                className="mt-3 flex items-start gap-2 text-xs leading-5 text-ink-3"
+              >
+                <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                {t(`setup.quick.notes.${kind}`)}
+              </motion.p>
+            </AnimatePresence>
+
+            {(quickError || signup.sdkFailed) && (
+              <div className="mt-4 flex flex-col gap-2">
+                {quickError && <Notice tone={quickError.cancelled ? 'info' : 'error'}>{quickError.text}</Notice>}
+                {signup.sdkFailed && <Notice tone="error">{t('setup.quick.sdkFailed')}</Notice>}
+              </div>
+            )}
 
             <button
               type="button"
-              onClick={() => startQuick()}
+              onClick={() => startQuick(kind === 'app')}
               disabled={!signup.ready || launching}
-              className="btn btn-primary btn-lg w-full"
+              className="btn btn-primary mt-5 h-12 w-full rounded-xl text-[15px]"
             >
-              {launching || !signup.ready ? <Loader2 className="animate-spin" aria-hidden="true" /> : <MessageCircle aria-hidden="true" />}
+              {launching || !signup.ready ? <Loader2 className="animate-spin" aria-hidden="true" /> : <WhatsAppGlyph className="h-[18px] w-[18px]" />}
               {launching ? t('setup.quick.waiting') : t('setup.quick.cta')}
             </button>
-            <button
-              type="button"
-              onClick={() => startQuick(true)}
-              disabled={!signup.ready || launching}
-              className="btn btn-secondary w-full"
-            >
-              <Smartphone aria-hidden="true" />
-              {t('setup.quick.ctaBusinessApp')}
-            </button>
+            <p className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-ink-3">
+              <span className="inline-flex items-center gap-1.5"><ShieldCheck className="h-3.5 w-3.5" aria-hidden="true" />{t('setup.quick.trust')}</span>
+              <span className="inline-flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" aria-hidden="true" />{t('setup.time')}</span>
+            </p>
 
-            <p className="text-xs leading-5 text-ink-3">{t('setup.quick.note')}</p>
+            <div className="mt-7 border-t border-line pt-5">
+              <p className="text-xs font-semibold text-ink-2">{t('setup.quick.next')}</p>
+              <ol className="mt-3 grid gap-3 sm:grid-cols-3 sm:gap-4">
+                {(t(`setup.quick.steps.${kind}`, { returnObjects: true }) as string[]).map((text, i) => (
+                  <li key={`${kind}-${i}`} className="flex items-start gap-2.5 sm:flex-col sm:gap-2">
+                    <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-raised text-xs font-semibold tabular-nums text-ink-2 ring-1 ring-line">{i + 1}</span>
+                    <span className="pt-0.5 text-[13px] leading-5 text-ink-2 sm:pt-0">{text}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
 
-            <div className="flex flex-col-reverse items-stretch gap-2 border-t border-line pt-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="mt-6 flex flex-col-reverse items-stretch gap-2 sm:flex-row sm:items-center sm:justify-between">
               {onCancel ? (
                 <button type="button" onClick={onCancel} className="btn btn-ghost">{t('panel.cancel')}</button>
-              ) : <span />}
+              ) : <span className="hidden sm:block" />}
               <button type="button" onClick={() => { setQuick(false); setStep('credentials'); }} className="btn btn-ghost text-ink-3">
                 {t('setup.quick.manual')}
+                <ArrowRight className="icon-mirror" aria-hidden="true" />
               </button>
             </div>
           </motion.div>
@@ -636,6 +677,50 @@ function PermissionChip({ value }: { value: string }) {
   );
 }
 
+function KindOption({
+  selected,
+  onSelect,
+  icon,
+  title,
+  body,
+  tag,
+}: {
+  selected: boolean;
+  onSelect: () => void;
+  icon: React.ReactNode;
+  title: string;
+  body: string;
+  tag?: string;
+}) {
+  return (
+    <button
+      type="button"
+      role="radio"
+      aria-checked={selected}
+      onClick={onSelect}
+      className={cn(
+        'press group flex w-full items-start gap-3 rounded-xl border p-3.5 text-start outline-none transition-[border-color,box-shadow,background-color] duration-fast',
+        'focus-visible:ring-[3px] focus-visible:ring-brand/25',
+        selected ? 'border-brand bg-brand/[0.05] ring-1 ring-brand/40' : 'border-line bg-surface hover:border-line-strong hover:bg-raised',
+      )}
+    >
+      <span className={cn('grid h-9 w-9 shrink-0 place-items-center rounded-lg ring-1 transition-colors', selected ? 'bg-surface text-ink ring-line-strong' : 'bg-raised text-ink-2 ring-line')}>
+        {icon}
+      </span>
+      <span className="min-w-0 flex-1">
+        <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <span className="text-sm font-semibold text-ink">{title}</span>
+          {tag && <span className="chip chip-neutral">{tag}</span>}
+        </span>
+        <span className="mt-0.5 block text-xs leading-5 text-ink-3">{body}</span>
+      </span>
+      <span className={cn('mt-0.5 grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full border-2 transition-colors', selected ? 'border-brand' : 'border-line-strong')}>
+        <span className={cn('h-2 w-2 rounded-full bg-brand transition-transform duration-fast ease-spring', selected ? 'scale-100' : 'scale-0')} />
+      </span>
+    </button>
+  );
+}
+
 function NumberOption({
   number: n,
   recommended,
@@ -697,10 +782,8 @@ function Success({ number, onOpen }: { number: string; onOpen: () => void }) {
   useEffect(() => { button.current?.focus(); }, []);
   return (
     <div className="pop-enter flex flex-col items-center rounded-xl border border-brand/25 bg-brand/[0.06] px-5 py-7 text-center">
-      <span className="grid h-12 w-12 place-items-center rounded-full bg-brand text-brand-fg shadow-brand">
-        <PartyPopper className="h-6 w-6" aria-hidden="true" />
-      </span>
-      <p className="mt-3 text-base font-semibold text-ink">{t('setup.finish.successTitle')}</p>
+      <ConnectHero size="md" linked />
+      <p className="mt-4 text-base font-semibold text-ink">{t('setup.finish.successTitle')}</p>
       <p className="mt-1 max-w-sm text-[13px] leading-5 text-ink-2">
         {t('setup.finish.successBody', { number })}
       </p>

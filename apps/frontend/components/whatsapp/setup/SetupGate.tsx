@@ -17,12 +17,13 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { useTranslation } from 'react-i18next';
-import { Check, Clock, Hourglass, Loader2, LogOut, RefreshCw } from 'lucide-react';
+import { Loader2, LogOut, RefreshCw } from 'lucide-react';
 import { isManager } from '@/lib/roles';
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
 import ImpersonationBanner from '@/components/layout/ImpersonationBanner';
 import { useWhatsAppConnection } from '../WhatsAppConnectProvider';
 import SetupWizard from './SetupWizard';
+import { ConnectHero } from './shared';
 import NeonMark from '../../brand/NeonMark';
 
 const WAITING_POLL_MS = 15_000;
@@ -92,32 +93,13 @@ function Frame({ children }: { children: ReactNode }) {
 
 function SetupScreen({ onConnecting, onFinish }: { onConnecting: () => void; onFinish: () => void }) {
   const { t } = useTranslation('whatsapp');
-  const why = t('setup.why.items', { returnObjects: true }) as string[];
+  // One column, one job. The wizard carries its own heading, so nothing here
+  // repeats it — the eyebrow just says where in the product this sits.
   return (
     <Frame>
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,340px)_minmax(0,1fr)] lg:gap-14">
-        <aside className="enter lg:pt-2">
-          <p className="eyebrow">{t('setup.eyebrow')}</p>
-          <h1 className="mt-2 text-2xl font-semibold tracking-[-0.02em] text-ink sm:text-[28px] sm:leading-9">
-            {t('setup.title')}
-          </h1>
-          <p className="mt-3 text-sm leading-6 text-ink-2">{t('setup.subtitle')}</p>
-          <p className="mt-4 inline-flex items-center gap-1.5 text-xs font-medium text-ink-3">
-            <Clock className="h-3.5 w-3.5" aria-hidden="true" /> {t('setup.time')}
-          </p>
-          <div className="mt-8 hidden border-t border-line pt-6 lg:block">
-            <p className="text-xs font-semibold text-ink-2">{t('setup.why.title')}</p>
-            <ul className="mt-3 space-y-2.5">
-              {why.map((line) => (
-                <li key={line} className="flex items-start gap-2.5 text-[13px] leading-5 text-ink-3">
-                  <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand" aria-hidden="true" />
-                  {line}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </aside>
-        <section className="enter rounded-2xl border border-line bg-surface p-5 shadow-pop sm:p-7" style={{ animationDelay: '60ms' }}>
+      <div className="mx-auto max-w-[600px]">
+        <p className="eyebrow enter mb-3 text-center">{t('setup.eyebrow')}</p>
+        <section className="enter rounded-2xl border border-line bg-surface px-5 py-7 shadow-pop sm:px-9 sm:py-9" style={{ animationDelay: '60ms' }}>
           <SetupWizard onConnecting={onConnecting} onFinish={onFinish} />
         </section>
       </div>
@@ -142,10 +124,8 @@ function WaitingForAdmin({ onCheck }: { onCheck: () => Promise<void> }) {
   return (
     <Frame>
       <div className="enter mx-auto mt-6 max-w-md rounded-2xl border border-line bg-surface p-7 text-center shadow-pop sm:mt-16">
-        <span className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-raised ring-1 ring-line">
-          <Hourglass className="h-5 w-5 text-ink-2" aria-hidden="true" />
-        </span>
-        <h1 className="mt-4 text-lg font-semibold text-ink">{t('waiting.title')}</h1>
+        <ConnectHero size="md" />
+        <h1 className="mt-5 text-lg font-bold text-ink">{t('waiting.title')}</h1>
         <p className="mt-2 text-[13px] leading-6 text-ink-2">{t('waiting.body')}</p>
         <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-center">
           <button type="button" onClick={check} disabled={checking} className="btn btn-primary">

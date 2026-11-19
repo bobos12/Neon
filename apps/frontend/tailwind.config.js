@@ -48,8 +48,8 @@ module.exports = {
       fontFamily: {
         // Inter for Latin, Almarai (the brand's Arabic face) for Arabic — one
         // stack, so mixed-script lines never jump between fallbacks.
-        sans: ['var(--font-inter)', 'var(--font-plex-ar)', 'system-ui', '-apple-system', '"SF Arabic"', '"Segoe UI"', 'sans-serif'],
-        arabic: ['var(--font-inter)', 'var(--font-plex-ar)', 'system-ui', '-apple-system', '"SF Arabic"', '"Segoe UI"', 'sans-serif'],
+        sans: ['var(--font-inter-face, var(--font-inter))', 'var(--font-plex-ar)', 'system-ui', '-apple-system', '"SF Arabic"', '"Segoe UI"', 'sans-serif'],
+        arabic: ['var(--font-inter-face, var(--font-inter))', 'var(--font-plex-ar)', 'system-ui', '-apple-system', '"SF Arabic"', '"Segoe UI"', 'sans-serif'],
         mono: ['"SF Mono"', 'ui-monospace', '"Cascadia Code"', 'Menlo', 'monospace'],
       },
       fontSize: {

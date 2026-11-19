@@ -4,6 +4,8 @@ import { useState } from 'react';
 import type { TFunction } from 'i18next';
 import { AlertTriangle, Check, CheckCircle2, CircleDashed, Copy, Loader2, XCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import NeonMark from '@/components/brand/NeonMark';
+import { WhatsAppLogo } from '@/components/brand/WhatsAppLogo';
 
 /** Meta screens the setup sends people to. Kept together so a moved page is one edit. */
 export const META_LINKS = {
@@ -87,6 +89,29 @@ export function CopyField({
           {copied ? copiedLabel : copyLabel}
         </button>
       </div>
+    </div>
+  );
+}
+
+/**
+ * NEON and WhatsApp side by side with a line between them, a dot travelling
+ * along it while the link is being made. Says "connect these two" before a
+ * word is read.
+ */
+export function ConnectHero({ size = 'lg', linked = false }: { size?: 'md' | 'lg'; linked?: boolean }) {
+  const tile = size === 'lg' ? 'h-14 w-14 rounded-2xl' : 'h-11 w-11 rounded-xl';
+  return (
+    <div className="flex items-center justify-center gap-2.5" aria-hidden="true">
+      <span className={cn('grid shrink-0 place-items-center bg-neon-deep shadow-[inset_0_1px_0_rgb(255_255_255/0.08),0_8px_20px_-10px_rgb(11_26_16/0.6)]', tile)}>
+        <NeonMark className={size === 'lg' ? 'h-7 w-auto' : 'h-5 w-auto'} />
+      </span>
+      <span dir="ltr" className={cn('relative h-[2px] overflow-hidden rounded-full', size === 'lg' ? 'w-16 sm:w-20' : 'w-12')}>
+        <span className={cn('absolute inset-0 transition-colors duration-slow', linked ? 'bg-[#25D366]' : 'bg-[repeating-linear-gradient(90deg,rgb(var(--line-strong))_0_4px,transparent_4px_8px)]')} />
+        {!linked && <span className="connect-dot absolute inset-0" />}
+      </span>
+      <span className={cn('grid shrink-0 place-items-center bg-white shadow-[0_0_0_1px_rgb(11_26_16/0.06),0_8px_20px_-10px_rgb(11_26_16/0.35)]', tile)}>
+        <WhatsAppLogo className={size === 'lg' ? 'h-8 w-8' : 'h-6 w-6'} />
+      </span>
     </div>
   );
 }

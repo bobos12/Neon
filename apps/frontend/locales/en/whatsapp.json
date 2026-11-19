@@ -13,8 +13,6 @@
   },
   "setup": {
     "eyebrow": "Workspace setup",
-    "title": "Connect your WhatsApp number",
-    "subtitle": "Everything in this CRM runs through your WhatsApp Business number. Connect it once and your whole team uses it.",
     "time": "About 2 minutes",
     "signOut": "Sign out",
     "close": "Close",
@@ -23,14 +21,6 @@
       "credentials": "Connect Meta",
       "number": "Choose number",
       "finish": "Go live"
-    },
-    "why": {
-      "title": "How it works",
-      "items": [
-        "Log in with Facebook — nothing to copy or paste",
-        "We set up incoming messages for you",
-        "Your connection is stored encrypted"
-      ]
     },
     "credentials": {
       "title": "Connect your Meta app",
@@ -135,22 +125,45 @@
       "open": "Open billing"
     },
     "quick": {
-      "title": "Connect your WhatsApp number",
-      "body": "Meta opens a secure window where you log in and choose your number. We take care of everything else.",
-      "steps": [
-        "Log in with the Facebook account that manages your business.",
-        "Choose your business and the WhatsApp number to use — or add a new one.",
-        "Confirm the number with the code Meta sends it by SMS or call."
-      ],
+      "title": "Connect WhatsApp Business",
+      "body": "Meta opens a secure window where you log in and pick your number. We set up everything after that.",
+      "steps": {
+        "app": [
+          "Log in with the Facebook account that runs your business",
+          "Choose your business and number",
+          "Scan the QR code with the WhatsApp Business app"
+        ],
+        "new": [
+          "Log in with the Facebook account that runs your business",
+          "Choose your business and add the number",
+          "Confirm the number with the code you receive"
+        ]
+      },
       "cta": "Connect WhatsApp",
-      "ctaBusinessApp": "My number is on the WhatsApp Business app",
       "waiting": "Finish in the Meta window…",
-      "note": "Using a new number? It can't be active in the WhatsApp or WhatsApp Business app at the same time — delete it from the app first.",
       "manual": "I have my own Meta app",
       "backToQuick": "One-click connect",
       "cancelled": "The Meta window was closed before you finished. Click Connect WhatsApp to try again.",
       "sdkFailed": "Couldn't load Meta's sign-in. Turn off any ad or tracking blocker for this site and reload the page.",
-      "loading": "Loading"
+      "loading": "Loading",
+      "choice": {
+        "label": "Where does your number run today?",
+        "app": {
+          "title": "On the WhatsApp Business app",
+          "body": "Keep using the app on your phone — conversations reach NEON too.",
+          "tag": "Most common"
+        },
+        "new": {
+          "title": "A new number",
+          "body": "Not active on WhatsApp or WhatsApp Business."
+        }
+      },
+      "notes": {
+        "app": "Meta will ask you to scan a QR code with the WhatsApp Business app on your phone to finish.",
+        "new": "If the number is active in any WhatsApp app, delete that account first. You confirm the number by SMS or call."
+      },
+      "next": "What happens next",
+      "trust": "Through Meta’s official window"
     }
   },
   "errors": {
